@@ -22,7 +22,6 @@ import useSeedData from '@/hooks/useSeedData';
 import { CategoryDataProvider } from '@/contexts/CategoryDataProvider';
 import { LocalAuthProvider } from '@/contexts/LocalAuthProvider';
 import { uiLog as log } from '@/lib/logger';
-import OnboardingScreen from '@/features/Onboarding/Onboarding';
 import { CurrencyProvider } from '@/contexts/CurrencyProvider';
 
 const queryClient = new QueryClient({
@@ -106,7 +105,6 @@ export default function RootLayout() {
                   <LocalAuthProvider>
                     <CategoryDataProvider>
                       <MainLayout />
-                      <OnboardingScreen />
                       <GlobalLevelComponents />
                       <StatusBar style={theme === "system" ? "auto" : (theme === "light" ? "dark" : "light")} />
                     </CategoryDataProvider>

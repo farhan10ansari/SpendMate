@@ -14,11 +14,10 @@ import OnboardingButton from './OnboardingButton';
 import usePersistentAppStore from '@/stores/usePersistentAppStore';
 import { useHaptics } from '@/contexts/HapticsProvider';
 import { uiLog as log } from '@/lib/logger';
+import { useRouter } from 'expo-router';
 
 
 export default function OnboardingScreen() {
-  const onboardingCompleted = usePersistentAppStore(state => state.uiFlags.onboardingCompleted);
-  if (onboardingCompleted) return null;
   return <OnboardingSteps />;
 }
 
@@ -30,6 +29,7 @@ export function OnboardingSteps() {
   const updateUIFlag = usePersistentAppStore(state => state.updateUIFlag);
   const onboardingData = useOnboardingData();
   const { hapticNotify } = useHaptics();
+  const router = useRouter();
 
 
   const [settings, setSettings] = useState({
@@ -83,12 +83,14 @@ export function OnboardingSteps() {
     // Navigate to main app
     hapticNotify('success');
     updateUIFlag('onboardingCompleted', true);
+    router.replace('/(tabs)');
     log.info("Onboarding completed, navigating to main app");
   }, [updateUIFlag, hapticNotify]);
 
   const onSkip = useCallback(() => {
     hapticNotify('success');
     updateUIFlag('onboardingCompleted', true);
+    router.replace('/(tabs)');
     log.info("Onboarding skipped, navigating to main app");
   }, [updateUIFlag, hapticNotify]);
 

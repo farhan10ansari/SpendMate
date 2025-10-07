@@ -69,69 +69,6 @@ export default function OnboardingItem({
     };
   }, [index, x]);
 
-  const handleSettingChange = (value: string | boolean) => {
-    if (item.settingKey) {
-      onSettingChange({
-        ...settings,
-        [item.settingKey]: value,
-      });
-    }
-  };
-
-  const renderSettingOptions = () => {
-    if (item.type === 'intro' || !item.options || !item.settingKey) {
-      return null;
-    }
-
-    const currentValue = settings[item.settingKey];
-
-    return (
-      <View style={styles.optionsContainer}>
-        {item.options.map((option, optionIndex) => (
-          <Card
-            key={optionIndex}
-            style={[
-              styles.optionCard,
-              {
-                backgroundColor:
-                  currentValue === option.value
-                    ? theme.colors.primaryContainer
-                    : theme.colors.surface,
-                borderColor:
-                  currentValue === option.value
-                    ? theme.colors.primary
-                    : theme.colors.outline,
-              },
-            ]}
-            onPress={() => handleSettingChange(option.value)}
-          >
-            <Card.Content style={styles.optionContent}>
-              <RadioButton
-                value={option.value.toString()}
-                status={currentValue === option.value ? 'checked' : 'unchecked'}
-                onPress={() => handleSettingChange(option.value)}
-                color={theme.colors.primary}
-              />
-              <Text
-                style={[
-                  styles.optionLabel,
-                  {
-                    color:
-                      currentValue === option.value
-                        ? theme.colors.onPrimaryContainer
-                        : theme.colors.onSurface,
-                  },
-                ]}
-              >
-                {option.label}
-              </Text>
-            </Card.Content>
-          </Card>
-        ))}
-      </View>
-    );
-  };
-
 
   return (
     <Animated.View
@@ -164,7 +101,6 @@ export default function OnboardingItem({
           {item.description}
         </Text>
         {item.component}
-        {renderSettingOptions()}
       </View>
     </Animated.View>
   );

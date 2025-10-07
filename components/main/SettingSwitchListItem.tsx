@@ -1,5 +1,5 @@
 import { useAppTheme } from "@/themes/providers/AppThemeProviders";
-import { StyleSheet } from "react-native";
+import { StyleProp, StyleSheet, ViewStyle } from "react-native";
 import { List, Switch } from "react-native-paper";
 
 interface SettingSwitchListItemProps {
@@ -10,6 +10,7 @@ interface SettingSwitchListItemProps {
     leftIcon: string;
     disabled?: boolean;
     onPress?: () => void;
+    style?: StyleProp<ViewStyle>
 }
 
 const SettingSwitchListItem = ({
@@ -19,7 +20,8 @@ const SettingSwitchListItem = ({
     onValueChange,
     leftIcon,
     disabled = false,
-    onPress
+    onPress,
+    style
 }: SettingSwitchListItemProps) => {
     const { colors } = useAppTheme();
     const styles = StyleSheet.create({
@@ -50,7 +52,7 @@ const SettingSwitchListItem = ({
                 disabled && { opacity: 0.6 }
             ]}
             descriptionStyle={styles.listItemDescription}
-            style={styles.listItem}
+            style={[styles.listItem, style]}
             left={(props) => (
                 <List.Icon
                     {...props}

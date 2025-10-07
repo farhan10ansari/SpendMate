@@ -1,11 +1,16 @@
 import LottieView from 'lottie-react-native';
-import { Icon } from 'react-native-paper';
+import { Button, Card, Icon, List, Text } from 'react-native-paper';
 import { useAppTheme } from "@/themes/providers/AppThemeProviders";
 import { useMemo } from "react";
 import ThemeSelector from '@/components/main/ThemeSelector';
 import useSettings from '@/hooks/settings/useSettings';
 import SettingSwitchListItem from '@/components/main/SettingSwitchListItem';
 import SettingSecureLoginToggle from '@/components/main/SettingSecureLoginToggle';
+import { View, StyleSheet } from 'react-native';
+import { ThemedText } from '@/components/base/ThemedText';
+import { useCurrency } from '@/contexts/CurrencyProvider';
+import { useNavigation, useRouter } from 'expo-router';
+import OnboardingCurrencyStep from './OnboardingCurrencyStep';
 
 export interface OnboardingStep {
   id: string;
@@ -30,7 +35,7 @@ export interface Settings {
 const APP_NAME = process.env.EXPO_PUBLIC_APP_NAME ?? 'Expense Manager';
 
 export const useOnboardingData = () => {
-  const theme = useAppTheme();
+  const { colors } = useAppTheme();
   const {
     haptics,
     handleHapticsToggle,
@@ -49,7 +54,7 @@ export const useOnboardingData = () => {
       type: 'intro',
       title: 'Track Every Transaction',
       description: 'Easily manage your incomes and expenses with customizable categories and payment methods. All data stored locally for your privacy.',
-      icon: <Icon source="chart-bar" size={120} color={theme.colors.primary} />
+      icon: <Icon source="chart-bar" size={120} color={colors.primary} />
     },
     {
       id: '3',
@@ -65,22 +70,17 @@ export const useOnboardingData = () => {
       description: 'Choose your preferred theme for the app. System theme will automatically switch between light and dark based on your device settings.',
       settingKey: 'theme',
       component: <ThemeSelector />,
-      icon: <Icon source="palette-outline" size={120} color={theme.colors.primary} />
+      icon: <Icon source="palette-outline" size={120} color={colors.primary} />
     },
-    // {
-    //   id: '5',
-    //   type: 'setting',
-    //   title: 'Default Currency',
-    //   description: 'Set your primary currency for expense tracking.',
-    //   settingKey: 'currency',
-    //   options: [
-    //     { label: 'US Dollar (USD)', value: 'USD' },
-    //     { label: 'Euro (EUR)', value: 'EUR' },
-    //     { label: 'British Pound (GBP)', value: 'GBP' },
-    //     { label: 'Indian Rupee (INR)', value: 'INR' },
-    //   ],
-    //   icon: 'currency-rupee',
-    // },
+    {
+      id: '5',
+      type: 'setting',
+      title: 'Default Currency',
+      description: 'Set your currency for expense tracking.',
+      settingKey: 'currency',
+      component: <OnboardingCurrencyStep />,
+      icon: 'cash',
+    },
     // {
     //   id: '6',
     //   type: 'setting',
@@ -108,8 +108,11 @@ export const useOnboardingData = () => {
         value={haptics.enabled}
         onValueChange={handleHapticsToggle}
         leftIcon={haptics.enabled ? "vibrate" : "vibrate-off"}
+        style={{
+          backgroundColor: colors.elevation.level3
+        }}
       />,
-      icon: <Icon source="vibrate" size={120} color={theme.colors.primary} />,
+      icon: <Icon source="vibrate" size={120} color={colors.primary} />,
     },
     {
       id: '8',
@@ -119,7 +122,7 @@ export const useOnboardingData = () => {
       settingKey: 'secureLogin',
       component: <SettingSecureLoginToggle showSuccessSnackbar={false} />,
 
-      icon: <Icon source="fingerprint" size={120} color={theme.colors.primary} />,
+      icon: <Icon source="fingerprint" size={120} color={colors.primary} />,
     },
     {
       id: '9',
@@ -128,6 +131,7 @@ export const useOnboardingData = () => {
       description: `You're all set to take control of your finances with ${APP_NAME}. Let's get started!`,
       lottie: <LottieView source={require('../../assets/lottie/success.json')} autoPlay loop style={{ height: "100%", width: "100%" }} />
     }
-  ]), [theme, haptics])
+  ]), [colors, haptics, handleHapticsToggle])
 
 }
+

@@ -34,12 +34,10 @@ export default function MonthTabsContainer({
             paddingVertical: 10,
             borderBottomWidth: 1,
             borderBottomColor: colors.border,
-        },
-        scrollContainer: {
-            paddingHorizontal: 16,
+
         },
         contentContainer: {
-            paddingRight: 16,
+            paddingHorizontal: 16,
             alignItems: 'center',
         },
     });
@@ -69,7 +67,6 @@ export default function MonthTabsContainer({
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={styles.contentContainer}
-                style={styles.scrollContainer}
                 ListHeaderComponent={
                     <MonthTab
                         month="All"

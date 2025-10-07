@@ -2,10 +2,12 @@ import { useAppTheme } from "@/themes/providers/AppThemeProviders";
 import { Stack, useRouter } from "expo-router";
 import CustomBackButton from "../ui/CustomBackButton";
 import { useCallback, useMemo } from "react";
+import usePersistentAppStore from "@/stores/usePersistentAppStore";
 
 export default function MainLayout() {
-  const { colors } = useAppTheme();
   const router = useRouter();
+  const { colors } = useAppTheme();
+  const onboardingCompleted = usePersistentAppStore(state => state.uiFlags.onboardingCompleted);
 
   const handleGoBack = useCallback(() => {
     router.back();
@@ -51,10 +53,19 @@ export default function MainLayout() {
     sheetAllowedDetents: "fitToContents" as const,
   }), [formSheetOptions]);
 
+
   return (
     <Stack screenOptions={screenOptions}>
+      {/* Main Tabs */}
       <Stack.Screen
         name="(tabs)"
+        options={{ headerShown: false }}
+        redirect={!onboardingCompleted} // Redirect to onboarding if not completed
+      />
+
+      {/* Onboarding Screen */}
+      <Stack.Screen
+        name="onboarding"
         options={{ headerShown: false }}
       />
 

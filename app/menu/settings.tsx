@@ -4,7 +4,6 @@ import { useAppTheme } from "@/themes/providers/AppThemeProviders";
 import { ScreenWrapper } from "@/components/main/ScreenWrapper";
 import useSettings from "@/hooks/settings/useSettings";
 import { Language } from "@/lib/types";
-import usePersistentAppStore from "@/stores/usePersistentAppStore";
 import SettingSwitchListItem from "@/components/main/SettingSwitchListItem";
 import SettingOptionListItem from "@/components/main/SettingOptionListItem";
 import { LANGUAGE_OPTIONS } from "@/lib/constants";
@@ -12,9 +11,9 @@ import SettingButton from "@/components/main/SettingButton";
 import SettingSecureLoginToggle from "@/components/main/SettingSecureLoginToggle";
 import { Icon } from "react-native-paper";
 import SettingSection from "@/components/main/SettingSection";
-
-
-
+import { useNavigation, useRouter } from "expo-router";
+import { uiLog as log } from '@/lib/logger';
+import { useEffect } from "react";
 
 function SecureLoginSection() {
   const { colors } = useAppTheme();
@@ -163,7 +162,8 @@ const ComingSoonSection = () => {
 
 // Main Component
 export default function SettingsScreen() {
-  const updateUIFlag = usePersistentAppStore(state => state.updateUIFlag);
+  const router = useRouter();
+  const navigation = useNavigation();
   const {
     language,
     haptics,
@@ -177,6 +177,10 @@ export default function SettingsScreen() {
       padding: 18,
     },
   });
+
+  useEffect(() => {
+    navigation.setOptions({ headerTitle: 'Settings' });
+  }, [navigation])
 
   return (
     <ScreenWrapper background="card" withScrollView>
@@ -193,7 +197,10 @@ export default function SettingsScreen() {
         >
           <SettingButton
             title="Revisit Onboarding"
-            onPress={() => updateUIFlag('onboardingCompleted', false)}
+            onPress={() => {
+              router.push('/onboarding');
+              log.info("Navigating to Onboarding screens");
+            }}
           />
         </SettingSection>
         <LanguageSection
