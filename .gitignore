@@ -38,3 +38,10 @@ yarn-error.*
 
 app-example
 .env
+
+#native folders
+android
+ios
+
+#apk files
+*.apk

@@ -35,6 +35,11 @@ type AppSettings = {
         enabled: boolean;
         intensity: "light" | "medium" | "heavy";
     };
+    dailyReminderNotificationId?: string | null; // Store the notification ID for cancelling if needed
+    dailyReminderTime: {
+        hour: number,
+        minute: number
+    }
 };
 
 type PersistentAppStore = {
@@ -68,6 +73,11 @@ const defaultSettings: AppSettings = {
     haptics: {
         enabled: true,
         intensity: "medium",
+    },
+    dailyReminderNotificationId: null,
+    dailyReminderTime: {
+        hour: 21,
+        minute: 0
     }
 };
 

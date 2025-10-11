@@ -12,8 +12,9 @@ import SettingSecureLoginToggle from "@/components/main/SettingSecureLoginToggle
 import { Icon } from "react-native-paper";
 import SettingSection from "@/components/main/SettingSection";
 import { useNavigation, useRouter } from "expo-router";
-import { uiLog as log } from '@/lib/logger';
+import { uiLog as log } from "@/lib/logger";
 import { useEffect } from "react";
+import SettingDailyReminderSection from "@/components/main/SettingDailyReminderSection";
 
 function SecureLoginSection() {
   const { colors } = useAppTheme();
@@ -54,30 +55,27 @@ function SecureLoginSection() {
   return (
     <View style={styles.sectionContainer}>
       <View style={styles.sectionHeader}>
-        <Icon
-          source="fingerprint"
-          size={24}
-          color={colors.primary}
-        />
-        <ThemedText style={styles.sectionTitle}>
-          Secure Login
-        </ThemedText>
+        <Icon source="fingerprint" size={24} color={colors.primary} />
+        <ThemedText style={styles.sectionTitle}>Secure Login</ThemedText>
       </View>
       <ThemedText style={styles.descriptionText}>
-        Use fingerprint, face recognition, or device passcode to secure your app login.
+        Use fingerprint, face recognition, or device passcode to secure your app
+        login.
       </ThemedText>
       <SettingSecureLoginToggle />
     </View>
   );
 }
 
-
 interface LanguageSectionProps {
   language: Language;
   handleLanguageChange: (languageKey: Language) => void;
 }
 
-const LanguageSection = ({ language, handleLanguageChange }: LanguageSectionProps) => {
+const LanguageSection = ({
+  language,
+  handleLanguageChange,
+}: LanguageSectionProps) => {
   const { colors } = useAppTheme();
 
   return (
@@ -99,13 +97,15 @@ const LanguageSection = ({ language, handleLanguageChange }: LanguageSectionProp
   );
 };
 
-
 interface HapticsSectionProps {
   haptics: any;
   handleHapticsToggle: (enabled: boolean) => void;
 }
 
-export const HapticsSection = ({ haptics, handleHapticsToggle }: HapticsSectionProps) => {
+export const HapticsSection = ({
+  haptics,
+  handleHapticsToggle,
+}: HapticsSectionProps) => {
   return (
     <SettingSection
       icon="vibrate"
@@ -122,7 +122,6 @@ export const HapticsSection = ({ haptics, handleHapticsToggle }: HapticsSectionP
     </SettingSection>
   );
 };
-
 
 const ComingSoonSection = () => {
   const { colors } = useAppTheme();
@@ -158,18 +157,12 @@ const ComingSoonSection = () => {
   );
 };
 
-
-
 // Main Component
 export default function SettingsScreen() {
   const router = useRouter();
   const navigation = useNavigation();
-  const {
-    language,
-    haptics,
-    handleLanguageChange,
-    handleHapticsToggle,
-  } = useSettings();
+  const { language, haptics, handleLanguageChange, handleHapticsToggle } =
+    useSettings();
 
   const styles = StyleSheet.create({
     container: {
@@ -179,8 +172,8 @@ export default function SettingsScreen() {
   });
 
   useEffect(() => {
-    navigation.setOptions({ headerTitle: 'Settings' });
-  }, [navigation])
+    navigation.setOptions({ headerTitle: "Settings" });
+  }, [navigation]);
 
   return (
     <ScreenWrapper background="card" withScrollView>
@@ -189,6 +182,7 @@ export default function SettingsScreen() {
           haptics={haptics}
           handleHapticsToggle={handleHapticsToggle}
         />
+        <SettingDailyReminderSection />
         <SecureLoginSection />
         <SettingSection
           icon="account-cog-outline"
@@ -198,7 +192,7 @@ export default function SettingsScreen() {
           <SettingButton
             title="Revisit Onboarding"
             onPress={() => {
-              router.push('/onboarding');
+              router.push("/onboarding");
               log.info("Navigating to Onboarding screens");
             }}
           />

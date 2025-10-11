@@ -5,8 +5,8 @@
   "scripts": {
     "dev": "expo start",
     "start": "expo start",
-    "android": "expo start --android",
-    "ios": "expo start --ios",
+    "android": "expo run:android",
+    "ios": "expo run:ios",
     "lint": "expo lint",
     "db:migrate": "drizzle-kit generate",
     "doctor": "npx expo-doctor",
@@ -38,6 +38,7 @@
     "expo-linking": "~7.1.7",
     "expo-local-authentication": "~16.0.5",
     "expo-localization": "~16.1.6",
+    "expo-notifications": "~0.31.4",
     "expo-router": "~5.1.7",
     "expo-splash-screen": "~0.30.10",
     "expo-sqlite": "~15.2.14",
