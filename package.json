@@ -10,6 +10,7 @@
     "lint": "expo lint",
     "db:migrate": "drizzle-kit generate",
     "doctor": "npx expo-doctor",
+    "prebuild":"npx expo prebuild",
     "build:preview": "eas build -p android --profile preview",
     "build:development": "eas build -p android --profile development"
   },
@@ -50,7 +51,7 @@
     "lottie-react-native": "7.2.2",
     "react": "19.0.0",
     "react-dom": "19.0.0",
-    "react-native": "0.79.5",
+    "react-native": "0.79.6",
     "react-native-animated-numbers": "^0.6.3",
     "react-native-gesture-handler": "~2.24.0",
     "react-native-gifted-charts": "^1.4.62",

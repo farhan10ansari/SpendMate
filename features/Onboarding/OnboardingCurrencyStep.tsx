@@ -36,7 +36,7 @@ const OnboardingCurrencyStep = () => {
                 onPress={() => router.push("/menu/currency-settings")}
                 icon="cog"
             >
-                Manage Currencies
+                Manage Currency
             </Button>
         </View>
     );

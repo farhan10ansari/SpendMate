@@ -3,7 +3,6 @@ import {
   StyleSheet,
   Pressable,
   Platform,
-  ToastAndroid,
 } from "react-native";
 import * as Notifications from "expo-notifications";
 import usePersistentAppStore from "@/stores/usePersistentAppStore";
@@ -16,8 +15,11 @@ import { useHaptics } from "@/contexts/HapticsProvider";
 import { TimePickerModal } from "react-native-paper-dates";
 import SettingSwitchListItem from "@/components/main/SettingSwitchListItem";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
+import { useSnackbar } from "@/contexts/GlobalSnackbarProvider";
+
 
 const ANDROID_CHANNEL_ID = "daily-reminder-channel";
+
 
 async function createAndroidChannel() {
   if (Platform.OS === "android") {
@@ -31,11 +33,6 @@ async function createAndroidChannel() {
   }
 }
 
-function showToast(message: string) {
-  if (Platform.OS === "android") {
-    ToastAndroid.show(message, ToastAndroid.SHORT);
-  }
-}
 
 function DailyReminderSection() {
   const { colors } = useAppTheme();
@@ -48,6 +45,7 @@ function DailyReminderSection() {
   const updateSettings = usePersistentAppStore((state) => state.updateSettings);
   const { uses24HourClock } = useLocalization();
   const { hapticImpact } = useHaptics();
+  const { showSnackbar, dismissSnackbar } = useSnackbar();
 
   const [showPicker, setShowPicker] = useState(false);
   const [time, setTime] = useState<Date>(() => {
@@ -74,6 +72,13 @@ function DailyReminderSection() {
     }
   }, [dailyReminderTime]);
 
+  const showSnackbarWithDismiss = useCallback((message: string, type?: "error" | "success" | "info", delay = 200) => {
+    dismissSnackbar();
+    setTimeout(() => {
+      showSnackbar({ message, duration: 2000, type });
+    }, delay);
+  }, [showSnackbar, dismissSnackbar]);
+
   async function ensurePermissions(): Promise<boolean> {
     let { status } = await Notifications.getPermissionsAsync();
     if (status !== "granted") {
@@ -82,7 +87,7 @@ function DailyReminderSection() {
       status = requestStatus;
     }
     if (status !== "granted") {
-      showToast("Notification permission is required for daily reminders.");
+      showSnackbarWithDismiss("Notification permission is required for daily reminders.", "error");
       return false;
     }
     return true;
@@ -121,49 +126,55 @@ function DailyReminderSection() {
     [dailyReminderNotificationId],
   );
 
-  const cancelDailyReminder = useCallback(async () => {
+  const cancelDailyReminder = useCallback(async (quiet = false) => {
     if (!dailyReminderNotificationId) return;
     try {
       await Notifications.cancelScheduledNotificationAsync(
         dailyReminderNotificationId,
       );
+      // Temporary doing this to ensure the no notifications remain after cancelling
       await Notifications.cancelAllScheduledNotificationsAsync();
+
       updateSettings("dailyReminderNotificationId", null);
-      // updateSettings('dailyReminderTime', null);
-      showToast("Daily reminder cancelled.");
+      if (!quiet) {
+        showSnackbarWithDismiss("Daily reminder cancelled.");
+      }
     } catch (error) {
       console.error("Failed to cancel notification:", error);
-      showToast("Failed to cancel daily reminder.");
-    }
-  }, [dailyReminderNotificationId, updateSettings]);
-
-  const setDailyReminder = useCallback(
-    async (selectedTime: Date) => {
-      if (schedulingRef.current) return;
-      schedulingRef.current = true;
-
-      try {
-        const permissionGranted = await ensurePermissions();
-        if (!permissionGranted) return;
-
-        const notificationId = await scheduleNotificationAt(selectedTime);
-        updateSettings("dailyReminderNotificationId", notificationId);
-        updateSettings("dailyReminderTime", {
-          hour: selectedTime.getHours(),
-          minute: selectedTime.getMinutes(),
-        });
-
-        setTime(selectedTime);
-        showToast("Daily reminder set!");
-      } catch (error) {
-        console.error("Error scheduling notification:", error);
-        showToast("Failed to schedule daily reminder.");
-      } finally {
-        schedulingRef.current = false;
+      if (!quiet) {
+        showSnackbarWithDismiss("Failed to cancel daily reminder.", "error");
       }
-    },
-    [updateSettings, scheduleNotificationAt],
-  );
+    }
+  }, [dailyReminderNotificationId, updateSettings, showSnackbarWithDismiss]);
+
+  const setDailyReminder = useCallback(async (selectedTime: Date, quiet = false) => {
+    if (schedulingRef.current) return;
+    schedulingRef.current = true;
+
+    try {
+      const permissionGranted = await ensurePermissions();
+      if (!permissionGranted) return;
+
+      const notificationId = await scheduleNotificationAt(selectedTime);
+      updateSettings("dailyReminderNotificationId", notificationId);
+      updateSettings("dailyReminderTime", {
+        hour: selectedTime.getHours(),
+        minute: selectedTime.getMinutes(),
+      });
+
+      setTime(selectedTime);
+      if (!quiet) {
+        showSnackbarWithDismiss("Daily reminder set!");
+      }
+    } catch (error) {
+      console.error("Error scheduling notification:", error);
+      if (!quiet) {
+        showSnackbarWithDismiss("Failed to schedule daily reminder.", "error");
+      }
+    } finally {
+      schedulingRef.current = false;
+    }
+  }, [updateSettings, scheduleNotificationAt, showSnackbarWithDismiss]);
 
   const onConfirmTime = useCallback(
     async (params: { hours: number; minutes: number }) => {
@@ -172,10 +183,12 @@ function DailyReminderSection() {
       setShowPicker(false);
       hapticImpact();
 
-      await cancelDailyReminder();
-      await setDailyReminder(newDate);
+      await cancelDailyReminder(true);
+      await setDailyReminder(newDate, true);
+
+      showSnackbarWithDismiss("Reminder time changed");
     },
-    [hapticImpact, setDailyReminder, cancelDailyReminder],
+    [hapticImpact, setDailyReminder, cancelDailyReminder, showSnackbarWithDismiss],
   );
 
   const onDismissTime = useCallback(() => setShowPicker(false), []);
