@@ -22,6 +22,13 @@ export const validateExpenseData = (expense: ExpenseData): ValidationResult => {
     if (!datetime) missingFields.push('datetime');
 
     if (!amount || !category || !datetime) {
+        if(!category) {
+            return {
+                isValid: false,
+                errorMessage: 'Please select a category'
+            };
+        }
+
         return {
             isValid: false,
             errorMessage: `Please fill the missing fields i.e. ${missingFields.join(', ')}`
@@ -48,6 +55,13 @@ export const validateIncomeData = (income: IncomeData): ValidationResult => {
     if (!dateTime) missingFields.push('date');
 
     if (!amount || !source || !dateTime) {
+        if(!source) {
+            return {
+                isValid: false,
+                errorMessage: 'Please select a source'
+            };
+        }
+
         return {
             isValid: false,
             errorMessage: `Please fill the missing fields i.e. ${missingFields.join(', ')}`
