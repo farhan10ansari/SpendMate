@@ -20,7 +20,6 @@ function FinancialSummaryStatsBase({ expenseStats, incomeStats, isLoading }: Pro
     const showNegativeStats = usePersistentAppStore((state) => state.uiFlags.showNegativeStats);
     const { formatCurrency } = useCurrency()
     const dimensions = useWindowDimensions()
-    console.log('Dimensions:', dimensions);
 
     const financialSummary = useMemo(() => {
         if (!expenseStats || !incomeStats) return {
