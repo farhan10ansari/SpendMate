@@ -23,6 +23,8 @@ import { CategoryDataProvider } from '@/contexts/CategoryDataProvider';
 import { LocalAuthProvider } from '@/contexts/LocalAuthProvider';
 import { uiLog as log } from '@/lib/logger';
 import { CurrencyProvider } from '@/contexts/CurrencyProvider';
+import { KeyboardProvider } from 'react-native-keyboard-controller';
+
 
 const queryClient = new QueryClient({
   defaultOptions: {
@@ -96,25 +98,27 @@ export default function RootLayout() {
 
   return (
     <GestureHandlerRootView style={{ flex: 1 }}>
-      <QueryClientProvider client={queryClient}>
-        <AppThemeProvider>
-          <HapticsProvider>
-            <CurrencyProvider>
-              <GlobalSnackbarProvider>
-                <ConfirmationProvider>
-                  <LocalAuthProvider>
-                    <CategoryDataProvider>
-                      <MainLayout />
-                      <GlobalLevelComponents />
-                      <StatusBar style={theme === "system" ? "auto" : (theme === "light" ? "dark" : "light")} />
-                    </CategoryDataProvider>
-                  </LocalAuthProvider>
-                </ConfirmationProvider>
-              </GlobalSnackbarProvider>
-            </CurrencyProvider>
-          </HapticsProvider>
-        </AppThemeProvider>
-      </QueryClientProvider>
+      <KeyboardProvider>
+        <QueryClientProvider client={queryClient}>
+          <AppThemeProvider>
+            <HapticsProvider>
+              <CurrencyProvider>
+                <GlobalSnackbarProvider>
+                  <ConfirmationProvider>
+                    <LocalAuthProvider>
+                      <CategoryDataProvider>
+                        <MainLayout />
+                        <GlobalLevelComponents />
+                        <StatusBar style={theme === "system" ? "auto" : (theme === "light" ? "dark" : "light")} />
+                      </CategoryDataProvider>
+                    </LocalAuthProvider>
+                  </ConfirmationProvider>
+                </GlobalSnackbarProvider>
+              </CurrencyProvider>
+            </HapticsProvider>
+          </AppThemeProvider>
+        </QueryClientProvider>
+      </KeyboardProvider>
     </GestureHandlerRootView>
   );
 }

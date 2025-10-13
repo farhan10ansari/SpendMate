@@ -10,7 +10,7 @@
     "lint": "expo lint",
     "db:migrate": "drizzle-kit generate",
     "doctor": "npx expo-doctor",
-    "prebuild":"npx expo prebuild",
+    "prebuild": "npx expo prebuild",
     "build:preview": "eas build -p android --profile preview",
     "build:development": "eas build -p android --profile development"
   },
@@ -55,6 +55,7 @@
     "react-native-animated-numbers": "^0.6.3",
     "react-native-gesture-handler": "~2.24.0",
     "react-native-gifted-charts": "^1.4.62",
+    "react-native-keyboard-controller": "^1.19.0",
     "react-native-logs": "^5.5.0",
     "react-native-pager-view": "6.7.1",
     "react-native-paper": "^5.14.4",

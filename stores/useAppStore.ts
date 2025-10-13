@@ -1,9 +1,6 @@
 import { create } from 'zustand';
 
 type AppStore = {
-    keyboardHeight: number;
-    setKeyboardHeight: (height: number) => void;
-
     // UI Flags for toggling features in the app. resets on app restart
     uiFlags: {
         showManageCategoryInfoBanner: boolean;
@@ -12,9 +9,6 @@ type AppStore = {
 }
 
 const useAppStore = create<AppStore>()((set) => ({
-    keyboardHeight: 0,
-    setKeyboardHeight: (height) => set({ keyboardHeight: height }),
-
     // UI Flags for toggling features in the app. resets on app restart
     uiFlags: {
         showManageCategoryInfoBanner: true,

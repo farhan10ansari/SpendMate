@@ -1,8 +1,7 @@
 import { ThemedText } from '@/components/base/ThemedText';
-import useKeyboardHeight from '@/hooks/useKeyboardHeight';
 import { useAppTheme } from '@/themes/providers/AppThemeProviders';
 import React, { useEffect } from 'react';
-import { Keyboard, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { IncomeData, useIncomeStore } from './IncomeStoreProvider';
 import AmountInput from '@/components/input/AmountInput';
 import CategoriesInput from '@/components/input/CategoriesInput';
@@ -21,7 +20,6 @@ type IncomeFormProps = {
 
 export default function IncomeForm({ onSubmit, type = "create" }: IncomeFormProps) {
     const { colors } = useAppTheme();
-    const { keyboardHeight } = useKeyboardHeight();
     const isFocused = useIsFocused()
     const globalSnackbar = useSnackbarState()
 
@@ -40,7 +38,11 @@ export default function IncomeForm({ onSubmit, type = "create" }: IncomeFormProp
 
     return (
         <View style={styles.container}>
-            <View style={{ flex: 1 }} onTouchStart={() => Keyboard.dismiss()}>
+            <View
+                style={{ flex: 1 }}
+            // onTouchStart={() => Keyboard.dismiss()}
+            >
+
                 {/* Amount */}
                 <View style={styles.amountContainer}>
                     <ThemedText type='defaultSemiBold' style={[styles.sectionTitle, { color: colors.muted }]}>
@@ -108,7 +110,6 @@ export default function IncomeForm({ onSubmit, type = "create" }: IncomeFormProp
             {isFocused && !globalSnackbar && (
                 <ConfirmButton
                     onPress={handleSubmit}
-                    keyboardHeight={keyboardHeight}
                     type={type}
                 />
             )}

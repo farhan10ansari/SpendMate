@@ -1,7 +1,6 @@
 import { useNavigation } from "expo-router";
 import { useQueryClient } from "@tanstack/react-query";
 import { useAppTheme } from "@/themes/providers/AppThemeProviders";
-import useKeyboardHeight from "@/hooks/useKeyboardHeight";
 import { tryCatch } from "@/lib/try-catch";
 import { addExpense, updateExpenseById } from "@/repositories/ExpenseRepo";
 import { addIncome, updateIncomeById } from "@/repositories/IncomeRepo";
@@ -13,14 +12,16 @@ import { useSnackbar } from "@/contexts/GlobalSnackbarProvider";
 import { validateExpenseData, validateIncomeData } from "@/lib/validations";
 import { Expense, Income } from "@/lib/types";
 import { CustomSnackbarProps } from "@/components/ui/CustomSnackbar";
+import { useKeyboardState } from "react-native-keyboard-controller";
 
 export function useTransactionForm() {
     const navigation = useNavigation();
     const queryClient = useQueryClient();
     const { colors } = useAppTheme();
     const { hapticNotify } = useHaptics();
-    const { keyboardHeight, setKeyboardHeight } = useKeyboardHeight();
     const { showSnackbar } = useSnackbar();
+    const keyboard = useKeyboardState();
+
 
     const showErrorSnackbar = (message: string, position: CustomSnackbarProps["position"] = "bottom") => {
         showSnackbar({
@@ -28,13 +29,12 @@ export function useTransactionForm() {
             duration: 3000,
             type: 'error',
             position,
-            offset: keyboardHeight,
+            offset: keyboard.height,
         });
     };
 
     const showSuccessAndNavigate = (message: string, position: CustomSnackbarProps["position"] = "bottom", delay = 300) => {
         hapticNotify('success');
-        setKeyboardHeight(0);
         navigation.goBack();
         showSnackbar({
             message,
@@ -219,7 +219,6 @@ export function useTransactionForm() {
     };
 
     return {
-        keyboardHeight,
         colors,
         handleAddExpense,
         handleAddIncome,

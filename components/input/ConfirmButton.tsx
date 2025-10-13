@@ -1,16 +1,17 @@
 import { useEffect, useRef, useState } from "react";
 import { StyleSheet } from "react-native";
+import { useKeyboardState } from "react-native-keyboard-controller";
 import { FAB, Portal } from "react-native-paper";
 
 type ConfirmButtonProps = {
     onPress?: () => void;
-    keyboardHeight?: number;
     type: 'create' | 'edit';
 }
 
-export default function ConfirmButton({ onPress, keyboardHeight = 0, type }: ConfirmButtonProps) {
+export default function ConfirmButton({ onPress, type }: ConfirmButtonProps) {
     const [show, setShow] = useState(false);
     const timeout = useRef<number | null>(null);
+    const keyboard = useKeyboardState();
 
     useEffect(() => {
         // Add a timeout to delay the showing of the FAB
@@ -32,7 +33,7 @@ export default function ConfirmButton({ onPress, keyboardHeight = 0, type }: Con
             position: 'absolute',
             margin: 16,
             right: 0,
-            bottom: keyboardHeight
+            bottom: keyboard.height
         },
     })
 

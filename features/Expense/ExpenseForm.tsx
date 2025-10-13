@@ -1,5 +1,4 @@
 import { ThemedText } from '@/components/base/ThemedText';
-import useKeyboardHeight from '@/hooks/useKeyboardHeight';
 import { useAppTheme } from '@/themes/providers/AppThemeProviders';
 import React, { useEffect } from 'react';
 import { Keyboard, StyleSheet, View } from 'react-native';
@@ -22,7 +21,6 @@ type ExpenseFormProps = {
 
 export default function ExpenseForm({ onSubmit, type = "create" }: ExpenseFormProps) {
   const { colors } = useAppTheme();
-  const { keyboardHeight } = useKeyboardHeight();
   const isFocused = useIsFocused()
   const globalSnackbar = useSnackbarState()
 
@@ -44,7 +42,10 @@ export default function ExpenseForm({ onSubmit, type = "create" }: ExpenseFormPr
 
   return (
     <View style={styles.container}>
-      <View style={{ flex: 1 }} onTouchStart={() => Keyboard.dismiss()}>
+      <View
+        style={{ flex: 1 }}
+      // onTouchStart={() => Keyboard.dismiss()}
+      >
         {/* Amount */}
         <View style={styles.amountContainer}>
           <ThemedText type='defaultSemiBold' style={[styles.sectionTitle, { color: colors.muted }]}>
@@ -98,7 +99,12 @@ export default function ExpenseForm({ onSubmit, type = "create" }: ExpenseFormPr
 
 
       {/* Confirm Button */}
-      {isFocused && !globalSnackbar && <ConfirmButton onPress={handleSubmit} keyboardHeight={keyboardHeight} type={type} />}
+      {isFocused && !globalSnackbar && (
+        <ConfirmButton
+          onPress={handleSubmit}
+          type={type}
+        />
+      )}
 
     </View>
   );
@@ -109,6 +115,7 @@ const styles = StyleSheet.create({
     paddingVertical: 10,
     paddingHorizontal: 20,
     flex: 1,
+    position: 'relative',
   },
   sectionTitle: {
     width: '100%',
