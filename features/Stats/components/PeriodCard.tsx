@@ -24,7 +24,8 @@ const PeriodCard = () => {
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
-            padding: 16,
+            paddingVertical: 14,
+            paddingHorizontal: 16,
         },
     });
 

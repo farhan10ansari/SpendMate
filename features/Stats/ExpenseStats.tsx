@@ -3,7 +3,7 @@ import { PeriodExpenseStats } from "@/lib/types";
 import styles from "./styles";
 import { useAppTheme } from "@/themes/providers/AppThemeProviders";
 import StatsCard from "./components/StatsCard";
-import { View } from "react-native";
+import { useWindowDimensions, View } from "react-native";
 import { useExpenseCategoryMapping } from "@/contexts/CategoryDataProvider";
 import { Icon } from "react-native-paper";
 import { useCurrency } from "@/contexts/CurrencyProvider";
@@ -19,6 +19,7 @@ export default function ExpenseStats({ expenseStats, showTitle = false, isLoadin
     const { colors } = useAppTheme();
     const categoryMapping = useExpenseCategoryMapping()
     const { formatCurrency, currencyData } = useCurrency()
+    const dimensions = useWindowDimensions()
 
     const topCategory = expenseStats?.topCategory
         ? categoryMapping.get(expenseStats?.topCategory) : null
@@ -30,7 +31,7 @@ export default function ExpenseStats({ expenseStats, showTitle = false, isLoadin
                     Expense Statistics
                 </ThemedText>
             )}
-            <View style={styles.row}>
+            <View style={(dimensions.width > 400 && dimensions.fontScale <= 1) ? styles.row : styles.column}>
                 <StatsCard
                     title="Total Expenses"
                     value={formatCurrency(expenseStats?.total ?? 0)}
@@ -47,7 +48,7 @@ export default function ExpenseStats({ expenseStats, showTitle = false, isLoadin
                     isLoading={isLoading}
                 />
             </View>
-            <View style={styles.row}>
+            <View style={dimensions.width > 400 ? styles.row : styles.column}>
                 <StatsCard
                     title="Daily Avg"
                     value={formatCurrency(expenseStats?.avgPerDay ?? 0)}

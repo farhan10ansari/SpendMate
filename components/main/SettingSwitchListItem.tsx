@@ -46,7 +46,9 @@ const SettingSwitchListItem = ({
     return (
         <List.Item
             title={title}
+            titleNumberOfLines={2}
             description={description}
+            descriptionNumberOfLines={5}
             titleStyle={[
                 styles.listItemTitle,
                 disabled && { opacity: 0.6 }

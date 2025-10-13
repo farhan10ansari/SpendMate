@@ -161,3 +161,5 @@ export const customDarkTheme = {
     rippleTertiary: Color(myDarkTheme.colors.tertiary).alpha(0.12).rgb().string(),
   },
 };
+
+export type ThemeType = typeof customLightTheme | typeof customDarkTheme;

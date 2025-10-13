@@ -14,14 +14,14 @@ export default function MonthTab({ month, count, isSelected, onPress }: MonthTab
 
     const styles = StyleSheet.create({
         tabWrapper: {
-            borderRadius: 18,
+            borderRadius: 16,
             overflow: 'hidden',
             marginRight: 8,
         },
         tabContainer: {
-            paddingHorizontal: 14,
-            paddingVertical: 8,
-            borderRadius: 18, // Add borderRadius here too
+            paddingHorizontal: 12,
+            paddingVertical: 6,
+            borderRadius: 16, // Add borderRadius here too
             backgroundColor: isSelected ? colors.primary : colors.surface,
             borderWidth: 1,
             borderColor: isSelected ? colors.primary : colors.outline,
@@ -34,16 +34,16 @@ export default function MonthTab({ month, count, isSelected, onPress }: MonthTab
             shadowRadius: isSelected ? 3 : 2,
         },
         tabText: {
-            fontSize: 13,
+            fontSize: 12,
             fontWeight: isSelected ? '600' : '500',
             color: isSelected ? colors.onPrimary : colors.onSurface,
-            lineHeight: 16,
+            lineHeight: 14,
         },
         countText: {
-            fontSize: 11,
+            fontSize: 10,
             color: isSelected ? colors.onPrimary : colors.onSurfaceVariant,
             marginTop: 2,
-            lineHeight: 13,
+            lineHeight: 12,
             opacity: isSelected ? 0.9 : 0.7,
         },
     });

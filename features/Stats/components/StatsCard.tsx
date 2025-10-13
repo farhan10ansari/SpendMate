@@ -68,6 +68,28 @@ const StatsCard = ({
 
     return (
         <Card style={[styles.card, backgroundColor && { backgroundColor }]}>
+            <View style={styles.cardHeader}>
+                {icon}
+                <ThemedText
+                    type="defaultSemiBold"
+                    style={[styles.cardTitle, { color: resolvedTextColor }, titleStyle]}
+                >
+                    {title}
+                </ThemedText>
+            </View>
+
+            {/* Show skeleton when loading, otherwise show actual content */}
+            {isLoading ? renderSkeleton() : (
+                <View style={styles.cardValueContainer}>
+                    {prefix && renderTextOrNode(prefix)}
+                    <ThemedText style={[styles.cardValue, { color: resolvedTextColor }]}>
+                        {value}
+                    </ThemedText>
+                    {suffix && renderTextOrNode(suffix)}
+                </View>
+            )}
+
+
             {/* Info Icon (top right, only if description is provided) */}
             {description && (
                 <View style={styles.infoIconContainer}>
@@ -87,26 +109,6 @@ const StatsCard = ({
                             style={{ margin: 0 }}
                         />
                     )}
-                </View>
-            )}
-            <View style={styles.cardHeader}>
-                {icon}
-                <ThemedText
-                    type="defaultSemiBold"
-                    style={[styles.cardTitle, { color: resolvedTextColor }, titleStyle]}
-                >
-                    {title}
-                </ThemedText>
-            </View>
-            
-            {/* Show skeleton when loading, otherwise show actual content */}
-            {isLoading ? renderSkeleton() : (
-                <View style={styles.cardValueContainer}>
-                    {prefix && renderTextOrNode(prefix)}
-                    <ThemedText style={[styles.cardValue, { color: resolvedTextColor }]}>
-                        {value}
-                    </ThemedText>
-                    {suffix && renderTextOrNode(suffix)}
                 </View>
             )}
 
@@ -141,15 +143,15 @@ const styles = StyleSheet.create({
     card: {
         flex: 1,
         overflow: "hidden",
-        padding: 12,
+        padding: 10,
         position: "relative",
     },
     cardHeader: {
         flexDirection: "row",
         alignItems: "center",
         marginBottom: 4,
-        gap: 8,
-        paddingHorizontal: 4,
+        gap: 6,
+        paddingHorizontal: 2,
     },
     cardTitle: {
         fontSize: 14,

@@ -1,27 +1,24 @@
 import { Income, Category } from "@/lib/types";
-import { useAppTheme } from "@/themes/providers/AppThemeProviders";
 import { Pressable, StyleSheet, View } from "react-native";
 import { ThemedText } from "@/components/base/ThemedText";
 import CustomChip from "@/components/ui/CustomChip";
 import { memo } from "react";
 import { extractDateLabel, extractTimeString } from "@/lib/functions";
-import { useLocalization } from "@/hooks/useLocalization";
 import Color from 'color';
 import { useIncomeSourceMapping } from "@/contexts/CategoryDataProvider";
-import { Icon } from "react-native-paper";
-import { useCurrency } from "@/contexts/CurrencyProvider";
+import { ThemeType } from "@/themes/theme";
 
 type IncomeCardProps = {
     income: Income;
     onPress?: (id: number) => void;
+    theme: ThemeType;
+    uses24HourClock: boolean;
+    formatCurrency: (amount: number) => string;
 };
 
 
-function IncomeCard({ income, onPress }: IncomeCardProps) {
-    const { dark, colors } = useAppTheme();
-    const { uses24HourClock } = useLocalization();
-    const { formatCurrency } = useCurrency()
-
+function IncomeCard({ income, onPress, theme, uses24HourClock, formatCurrency }: IncomeCardProps) {
+    const { dark, colors } = theme;
 
     // Get the source mapping
     const sourceMapping = useIncomeSourceMapping()
@@ -45,14 +42,14 @@ function IncomeCard({ income, onPress }: IncomeCardProps) {
             overflow: "hidden",
         },
         card: {
-            height: 72, // Reduced from 100 to 80
-            paddingVertical: 12, // More balanced vertical padding
-            paddingHorizontal: 16, // More balanced horizontal padding
+            height: 68,
+            paddingVertical: 12,
+            paddingHorizontal: 16,
             borderWidth: 1,
             borderRadius: 12,
             borderColor: colors.border,
             backgroundColor: Color(colors.card).alpha(0.6).rgb().string(),
-            justifyContent: "space-between", // Better space distribution
+            justifyContent: "space-between",
         },
         topRow: {
             flexDirection: "row",
@@ -61,22 +58,22 @@ function IncomeCard({ income, onPress }: IncomeCardProps) {
         },
         amountContainer: {
             flexDirection: "row",
-            alignItems: "center", // Changed from "center" to "baseline" for better alignment
+            alignItems: "center",
         },
         amountText: {
             fontWeight: "bold",
-            fontSize: 16, // Reduced from 24 to 20
+            fontSize: 16,
             color: colors.tertiary,
-            lineHeight: 20, // Explicit line height for consistent alignment
+            lineHeight: 20,
         },
         chipsContainer: {
             flexDirection: "row",
-            gap: 6, // Reduced from 8 to 6
+            gap: 6,
         },
         dateText: {
-            fontSize: 12, // Reduced from 12 to 11
+            fontSize: 12,
             color: "#666",
-            lineHeight: 14, // Tight line height for compact date text
+            lineHeight: 14,
         },
     });
 

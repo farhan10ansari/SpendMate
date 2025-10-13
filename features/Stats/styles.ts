@@ -8,6 +8,10 @@ const styles = StyleSheet.create({
         alignItems: 'center',
         gap: 12,
     },
+    column: {
+        flexDirection: 'column',
+        gap: 12,
+    },
     section: {
         gap: 10
     },

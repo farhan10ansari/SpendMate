@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useEffect, useState } from "react";
-import { View, StyleSheet, RefreshControl } from "react-native";
+import { View, StyleSheet, RefreshControl, useWindowDimensions } from "react-native";
 import { FlashList, FlashListRef } from "@shopify/flash-list";
 import { useRouter } from "expo-router";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
@@ -12,6 +12,8 @@ import { getExpenseById, getExpensesByMonthPaginated } from "@/repositories/Expe
 import { useAppTheme } from "@/themes/providers/AppThemeProviders";
 import { useHaptics } from "@/contexts/HapticsProvider";
 import ErrorState from "@/components/main/ErrorState";
+import { useLocalization } from "@/hooks/useLocalization";
+import { useCurrency } from "@/contexts/CurrencyProvider";
 
 type HeaderItem = {
     type: 'header';
@@ -39,9 +41,13 @@ export default function ExpensesList({
 }: ExpensesListProps) {
     const router = useRouter();
     const queryClient = useQueryClient();
-    const { colors } = useAppTheme();
     const [isRefreshing, setIsRefreshing] = useState(false);
     const { hapticImpact } = useHaptics();
+    const theme = useAppTheme();
+    const { uses24HourClock } = useLocalization()
+    const { formatCurrency } = useCurrency()
+    const dimensions = useWindowDimensions()
+    const { colors } = theme;
 
     const queryKey = selectedOffsetMonth === null
         ? ["expenses", "all"]
@@ -137,9 +143,13 @@ export default function ExpensesList({
             <ExpenseCard
                 expense={item}
                 onPress={() => handleExpensePress(item.id!)}
+                theme={theme}
+                uses24HourClock={uses24HourClock}
+                formatCurrency={formatCurrency}
+                dimensions={dimensions}
             />
         );
-    }, [colors.text, handleExpensePress]);
+    }, [colors.text, handleExpensePress, theme, uses24HourClock, formatCurrency, dimensions]);
 
     // Get item type for FlashList optimization
     const getItemType = useCallback((item: ExpenseListItem) => {
@@ -244,7 +254,7 @@ const styles = StyleSheet.create({
     },
     itemSeparator: {
         height: 1,
-        marginVertical: 10,
+        marginVertical: 8,
     },
     emptyContainer: {
         flex: 1,

@@ -1,26 +1,26 @@
 
 import { paymentMethodsMapping } from "@/lib/constants";
-import { useAppTheme } from "@/themes/providers/AppThemeProviders";
-import { Pressable, StyleSheet, View } from "react-native";
+import { Pressable, ScaledSize, StyleSheet, View } from "react-native";
 import { ThemedText } from "@/components/base/ThemedText";
 import CustomChip from "@/components/ui/CustomChip";
 import { memo } from "react";
 import { extractDateLabel, extractTimeString } from "@/lib/functions";
-import { useLocalization } from "@/hooks/useLocalization";
 import Color from "color";
 import { useExpenseCategoryMapping } from "@/contexts/CategoryDataProvider";
 import { Category, Expense } from "@/lib/types";
-import { useCurrency } from "@/contexts/CurrencyProvider";
+import { ThemeType } from "@/themes/theme";
 
 type ExpenseCardProps = {
     expense: Expense;
     onPress?: (id: number) => void;
+    theme: ThemeType;
+    uses24HourClock: boolean;
+    formatCurrency: (amount: number) => string;
+    dimensions: ScaledSize;
 };
 
-function ExpenseCard({ expense, onPress }: ExpenseCardProps) {
-    const { dark, colors } = useAppTheme();
-    const { uses24HourClock } = useLocalization()
-    const { formatCurrency } = useCurrency()
+function ExpenseCard({ expense, onPress, theme, uses24HourClock, formatCurrency, dimensions }: ExpenseCardProps) {
+    const { dark, colors } = theme;
 
     // Get the category mapping from the categories store
     const categoryMapping = useExpenseCategoryMapping()
@@ -45,7 +45,7 @@ function ExpenseCard({ expense, onPress }: ExpenseCardProps) {
             overflow: "hidden",
         },
         card: {
-            height: 72,
+            height: 68,
             paddingVertical: 12,
             paddingHorizontal: 16,
             borderWidth: 1,
@@ -105,7 +105,7 @@ function ExpenseCard({ expense, onPress }: ExpenseCardProps) {
                             label={categoryDef?.label}
                             showBorder={!dark}
                         />
-                        {expense.paymentMethod && (
+                        {(expense.paymentMethod && dimensions.width > 400 && dimensions.fontScale <= 1) && (
                             <CustomChip
                                 size="small"
                                 variant="tertiary"

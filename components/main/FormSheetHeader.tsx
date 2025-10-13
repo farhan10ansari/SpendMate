@@ -1,4 +1,3 @@
-// components/main/FormSheetHeader.tsx
 import { useAppTheme } from "@/themes/providers/AppThemeProviders";
 import { StyleProp, StyleSheet, Text, View, ViewStyle } from "react-native";
 import { Divider, IconButton } from "react-native-paper";
@@ -18,11 +17,10 @@ export default function FormSheetHeader({ title, onClose, headerStyle }: FormShe
     const styles = StyleSheet.create({
         row: {
             paddingHorizontal: 24,
-            paddingBottom: 8, // Slightly increased for better spacing
+            paddingBottom: 8,
             flexDirection: 'row',
             alignItems: 'center',
             justifyContent: 'space-between',
-            // minHeight: 40, // Ensure minimum height for tabs
         },
         headerText: {
             fontSize: 22,

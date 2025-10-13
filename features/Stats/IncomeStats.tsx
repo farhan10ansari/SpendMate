@@ -2,7 +2,7 @@ import { ThemedText } from "@/components/base/ThemedText";
 import styles from "./styles";
 import { useAppTheme } from "@/themes/providers/AppThemeProviders";
 import StatsCard from "./components/StatsCard";
-import { View } from "react-native";
+import { useWindowDimensions, View } from "react-native";
 import { PeriodIncomeStats } from "@/lib/types";
 import { useIncomeSourceMapping } from "@/contexts/CategoryDataProvider";
 import { Icon } from "react-native-paper";
@@ -18,6 +18,8 @@ export default function IncomeStats({ incomeStats, showTitle = false, isLoading 
     const { colors } = useAppTheme();
     const { formatCurrency } = useCurrency();
     const sourceMapping = useIncomeSourceMapping();
+    const dimensions = useWindowDimensions()
+
 
     const topSource = incomeStats?.topSource
         ? sourceMapping.get(incomeStats?.topSource) : null;
@@ -31,7 +33,7 @@ export default function IncomeStats({ incomeStats, showTitle = false, isLoading 
             )
 
             }
-            <View style={styles.row}>
+            <View style={(dimensions.width > 400 && dimensions.fontScale <= 1) ? styles.row : styles.column}>
                 <StatsCard
                     title="Total Income"
                     value={formatCurrency(incomeStats?.total ?? 0)}
@@ -48,7 +50,7 @@ export default function IncomeStats({ incomeStats, showTitle = false, isLoading 
                     isLoading={isLoading}
                 />
             </View>
-            <View style={styles.row}>
+            <View style={dimensions.width > 400 ? styles.row : styles.column}>
                 <StatsCard
                     title="Daily Avg Income"
                     titleStyle={{

@@ -1,5 +1,5 @@
 import React, { useCallback, useMemo, useEffect, useRef, useState } from "react";
-import { View, StyleSheet, RefreshControl } from "react-native";
+import { View, StyleSheet, RefreshControl, useWindowDimensions } from "react-native";
 import { FlashList, FlashListRef } from "@shopify/flash-list";
 import { useRouter } from "expo-router";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
@@ -17,6 +17,8 @@ import { ScreenWrapper } from "@/components/main/ScreenWrapper";
 import ErrorState from "@/components/main/ErrorState";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { useSnackbarState } from "@/contexts/GlobalSnackbarProvider";
+import { useLocalization } from "@/hooks/useLocalization";
+import { useCurrency } from "@/contexts/CurrencyProvider";
 
 type HeaderItem = {
   type: 'header';
@@ -35,12 +37,16 @@ export default function IncomesScreen() {
   const router = useRouter();
   const isFocused = useIsFocused();
   const queryClient = useQueryClient();
-  const { colors } = useAppTheme();
   const { hapticImpact } = useHaptics();
   const flashListRef = useRef<FlashListRef<ListItem>>(null);
   const { handleScroll, scrollToTop, showScrollToTop } = useScrollToTop(flashListRef);
   const globalSnackbar = useSnackbarState()
   const insets = useSafeAreaInsets();
+  const theme = useAppTheme();
+  const { uses24HourClock } = useLocalization()
+  const { formatCurrency } = useCurrency()
+  const { colors } = theme;
+
 
   const [isRefreshing, setIsRefreshing] = useState(false);
 
@@ -118,9 +124,12 @@ export default function IncomesScreen() {
       <IncomeCard
         income={item}
         onPress={() => handleIncomeCardPress(item.id!)}
+        theme={theme}
+        uses24HourClock={uses24HourClock}
+        formatCurrency={formatCurrency}
       />
     );
-  }, [colors.text, handleIncomeCardPress]);
+  }, [colors.text, handleIncomeCardPress, theme, uses24HourClock, formatCurrency]);
 
   // Get item type for FlashList optimization
   const getItemType = useCallback((item: ListItem) => {
@@ -242,7 +251,7 @@ const styles = StyleSheet.create({
   },
   itemSeparator: {
     height: 1,
-    marginVertical: 10,
+    marginVertical: 8,
   },
   emptyContainer: {
     flex: 1,

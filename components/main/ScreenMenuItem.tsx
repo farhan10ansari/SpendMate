@@ -32,6 +32,7 @@ export default function MenuItemComponent({
         <View>
             <List.Item
                 title={item.title}
+                titleNumberOfLines={2}
                 description={item.description}
                 titleStyle={[menuItemStyles.listItemTitle, { color: colors.text }]}
                 descriptionStyle={[menuItemStyles.listItemDescription, { color: colors.muted }]}

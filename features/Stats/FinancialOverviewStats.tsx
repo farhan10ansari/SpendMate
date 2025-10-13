@@ -1,5 +1,5 @@
 import React, { useMemo } from "react";
-import { View, StyleSheet } from "react-native";
+import { View, StyleSheet, useWindowDimensions } from "react-native";
 import { Icon, IconButton } from "react-native-paper";
 import { ThemedText } from "@/components/base/ThemedText";
 import { useAppTheme } from "@/themes/providers/AppThemeProviders";
@@ -19,6 +19,7 @@ function FinancialSummaryStatsBase({ expenseStats, incomeStats, isLoading }: Pro
     const { colors } = useAppTheme();
     const showNegativeStats = usePersistentAppStore((state) => state.uiFlags.showNegativeStats);
     const { formatCurrency } = useCurrency()
+    const dimensions = useWindowDimensions()
 
     const financialSummary = useMemo(() => {
         if (!expenseStats || !incomeStats) return {
@@ -39,7 +40,7 @@ function FinancialSummaryStatsBase({ expenseStats, incomeStats, isLoading }: Pro
             <ThemedText style={[styles.title, { color: colors.text }]}>
                 Financial Overview
             </ThemedText>
-            <View style={styles.row}>
+            <View style={(dimensions.width > 400 && dimensions.fontScale <= 1) ? styles.row : styles.column}>
                 <StatsCard
                     title="Net Income"
                     value={formatCurrency(financialSummary.netIncome)}
@@ -134,6 +135,10 @@ const styles = StyleSheet.create({
     },
     row: {
         flexDirection: 'row',
+        gap: 16,
+    },
+    column: {
+        flexDirection: 'column',
         gap: 16,
     },
     infoIcon: {

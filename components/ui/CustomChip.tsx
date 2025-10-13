@@ -8,15 +8,15 @@ import { IconSource } from 'react-native-paper/lib/typescript/components/Icon';
 const PADDING = {
     default: {
         vertical: 2,
-        horizontal: 12,
-        iconMarginRight: 8,
-        textOnlyHorizontal: 16,
+        horizontal: 10,
+        iconMarginRight: 6,
+        textOnlyHorizontal: 14,
     },
     small: {
         vertical: 1,
-        horizontal: 8,
+        horizontal: 6,
         iconMarginRight: 4,
-        textOnlyHorizontal: 12,
+        textOnlyHorizontal: 10,
     },
 };
 
@@ -25,13 +25,13 @@ const SIZES = {
         height: 32,
         iconSize: 18,
         fontSize: 14,
-        borderRadius: 16,
+        borderRadius: 14,
     },
     small: {
         height: 24,
         iconSize: 12,
-        fontSize: 12,
-        borderRadius: 12,
+        fontSize: 10,
+        borderRadius: 10,
     },
 };
 
