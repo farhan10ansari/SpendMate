@@ -33,7 +33,7 @@ export default function IncomeStats({ incomeStats, showTitle = false, isLoading 
             )
 
             }
-            <View style={(dimensions.width > 400 && dimensions.fontScale <= 1) ? styles.row : styles.column}>
+            <View style={((dimensions.width > 400 && dimensions.fontScale <= 1) || (dimensions.width > 600 && dimensions.fontScale <= 1.5)) ? styles.row : styles.column}>
                 <StatsCard
                     title="Total Income"
                     value={formatCurrency(incomeStats?.total ?? 0)}

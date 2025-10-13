@@ -31,7 +31,7 @@ export default function ExpenseStats({ expenseStats, showTitle = false, isLoadin
                     Expense Statistics
                 </ThemedText>
             )}
-            <View style={(dimensions.width > 400 && dimensions.fontScale <= 1) ? styles.row : styles.column}>
+            <View style={((dimensions.width > 400 && dimensions.fontScale <= 1) || (dimensions.width > 600 && dimensions.fontScale <= 1.5)) ? styles.row : styles.column}>
                 <StatsCard
                     title="Total Expenses"
                     value={formatCurrency(expenseStats?.total ?? 0)}

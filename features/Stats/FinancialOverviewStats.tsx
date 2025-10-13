@@ -20,6 +20,7 @@ function FinancialSummaryStatsBase({ expenseStats, incomeStats, isLoading }: Pro
     const showNegativeStats = usePersistentAppStore((state) => state.uiFlags.showNegativeStats);
     const { formatCurrency } = useCurrency()
     const dimensions = useWindowDimensions()
+    console.log('Dimensions:', dimensions);
 
     const financialSummary = useMemo(() => {
         if (!expenseStats || !incomeStats) return {
@@ -40,7 +41,7 @@ function FinancialSummaryStatsBase({ expenseStats, incomeStats, isLoading }: Pro
             <ThemedText style={[styles.title, { color: colors.text }]}>
                 Financial Overview
             </ThemedText>
-            <View style={(dimensions.width > 400 && dimensions.fontScale <= 1) ? styles.row : styles.column}>
+            <View style={((dimensions.width > 400 && dimensions.fontScale <= 1) || (dimensions.width > 600 && dimensions.fontScale <= 1.5)) ? styles.row : styles.column}>
                 <StatsCard
                     title="Net Income"
                     value={formatCurrency(financialSummary.netIncome)}

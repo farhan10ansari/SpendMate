@@ -114,7 +114,7 @@ const styles = StyleSheet.create({
   },
   content: {
     alignItems: 'center',
-    paddingBottom: 100,
+    paddingBottom: 20,
   },
   iconContainer: {
     width: 120,
