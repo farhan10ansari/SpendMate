@@ -98,7 +98,6 @@ export type Expense = {
   description: string | null;
   paymentMethod: string | null;
   category: string;
-  recurring: boolean;
   receipt: string | null;
   currency: string;
   isTrashed: boolean;
@@ -109,7 +108,6 @@ export type Income = {
   amount: number;
   dateTime: Date;
   description: string | null;
-  recurring: boolean;
   receipt: string | null;
   currency: string;
   isTrashed: boolean;

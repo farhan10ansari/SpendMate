@@ -27,7 +27,6 @@ export const addExpense = async (expense: CreateExpenseData) => {
         description: expense.description ?? null,
         paymentMethod: expense.paymentMethod,
         category: expense.category,
-        recurring: expense.recurring ?? false,
         receipt: expense.receipt ?? null,
         currency: expense.currency || 'INR', // default to INR if not provided
       })
@@ -271,7 +270,6 @@ export const updateExpenseById = async (id: string | number, expense: UpdateExpe
         description: expense.description ?? null,
         paymentMethod: expense.paymentMethod,
         category: expense.category,
-        recurring: expense.recurring ?? false,
         receipt: expense.receipt ?? null,
         currency: expense.currency ?? 'INR',
       })

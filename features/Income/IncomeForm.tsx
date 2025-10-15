@@ -12,7 +12,7 @@ import TimeInput from '@/components/input/TimeInput';
 import { useEnabledIncomeSources } from '@/contexts/CategoryDataProvider';
 import { useIsFocused } from '@react-navigation/native';
 import { useSnackbarState } from '@/contexts/GlobalSnackbarProvider';
-// import RecurringInput from '@/components/input/RecurringInput';
+
 type IncomeFormProps = {
     onSubmit?: (income: IncomeData) => void;
     type?: 'create' | 'edit';
@@ -78,14 +78,6 @@ export default function IncomeForm({ onSubmit, type = "create" }: IncomeFormProp
                         colorType='tertiary'
                     />
                 </View>
-                {/* Recurring (add a switch or checkbox if desired) */}
-                {/* <View style={styles.inputSection}>
-                    <RecurringInput
-                        value={!!income.recurring}
-                        onValueChange={(val) => updateIncome({ recurring: val })}
-                        label="Recurring Income"
-                    />
-                </View> */}
 
                 {/* Date & Time */}
                 <View style={styles.inputSection}>

@@ -8,7 +8,6 @@ export type IncomeData = {
     source: string | null;
     description: string;
     dateTime: Date | undefined | null;
-    recurring?: boolean;            // Optional, include if needed in your UI
     receipt?: string | null;        // Optional, include if needed
     currency?: string;              // Optional, include if you allow multiple currencies
 }
@@ -33,7 +32,6 @@ export function IncomeStoreProvider({ initialIncome, children }: IncomeStoreProv
                 source: initialIncome ? initialIncome.source : null,
                 description: initialIncome ? (initialIncome.description ?? "") : "",
                 dateTime: initialIncome ? new Date(initialIncome.dateTime) : undefined,
-                recurring: initialIncome ? initialIncome.recurring : false,
                 receipt: initialIncome ? initialIncome.receipt ?? null : null,
                 currency: initialIncome ? initialIncome.currency : 'INR',
             },

@@ -102,14 +102,6 @@ function IncomeCard({ income, onPress, theme, uses24HourClock, formatCurrency }:
                             label={sourceDef.label}
                             showBorder={!dark}
                         />
-                        {income.recurring && (
-                            <CustomChip
-                                size="small"
-                                variant="secondary"
-                                icon="repeat"
-                                label="Recurring"
-                            />
-                        )}
                     </View>
                 </View>
                 <View>

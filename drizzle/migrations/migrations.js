@@ -11,6 +11,7 @@ import m0006 from './0006_fuzzy_layla_miller.sql';
 import m0007 from './0007_melted_beast.sql';
 import m0008 from './0008_nervous_runaways.sql';
 import m0009 from './0009_rare_pet_avengers.sql';
+import m0010 from './0010_gorgeous_union_jack.sql';
 
   export default {
     journal,
@@ -24,7 +25,8 @@ m0005,
 m0006,
 m0007,
 m0008,
-m0009
+m0009,
+m0010
     }
   }
   

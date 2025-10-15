@@ -10,7 +10,6 @@ export interface NewIncome {
   amount: number;
   dateTime: Date | string;      // Accept Date or ms-timestamp
   description?: string | null;
-  recurring?: boolean;
   receipt?: string | null;
   currency?: string;            // e.g., 'INR', 'USD'
   source: string;               // Should match your list of sources
@@ -32,7 +31,6 @@ export const addIncome = async (income: NewIncome) => {
         dateTime: dt,
         description: income.description ?? null,
         source: income.source,
-        recurring: income.recurring ?? false,
         receipt: income.receipt ?? null,
         currency: income.currency ?? 'INR', // Default to INR if not provided
       })
@@ -202,7 +200,6 @@ export const updateIncomeById = async (
         amount: income.amount,
         dateTime: dt,
         description: income.description,
-        recurring: income.recurring,
         receipt: income.receipt,
         currency: income.currency,
         source: income.source,

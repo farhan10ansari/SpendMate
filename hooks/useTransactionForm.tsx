@@ -67,7 +67,6 @@ export function useTransactionForm() {
             existing.source !== updated.source ||
             existing.description !== updated.description ||
             new Date(existing.dateTime).getTime() !== new Date(updated.dateTime!).getTime() ||
-            (existing.recurring ?? false) !== (updated.recurring ?? false) ||
             (existing.receipt ?? null) !== (updated.receipt ?? null) ||
             (existing.currency ?? "INR") !== (updated.currency ?? "INR")
         );
@@ -113,7 +112,7 @@ export function useTransactionForm() {
             return;
         }
 
-        const { amount, source, description, dateTime, recurring, receipt, currency } = income;
+        const { amount, source, description, dateTime, receipt, currency } = income;
         const actualAmount = parseFloat(amount!);
 
         const { data, error } = await tryCatch(addIncome({
@@ -121,7 +120,6 @@ export function useTransactionForm() {
             dateTime: dateTime!,
             source: source!,
             description: description ?? "",
-            recurring: !!recurring,
             receipt: receipt ?? null,
             currency: currency ?? 'INR',
         }));
@@ -192,7 +190,7 @@ export function useTransactionForm() {
             return;
         }
 
-        const { amount, source, description, dateTime, recurring, receipt, currency } = updatedIncome;
+        const { amount, source, description, dateTime, receipt, currency } = updatedIncome;
         const actualAmount = parseFloat(amount!);
 
         const { error } = await tryCatch(updateIncomeById(id, {
@@ -200,7 +198,6 @@ export function useTransactionForm() {
             dateTime: dateTime!,
             source: source!,
             description: description ?? null,
-            recurring: !!recurring,
             receipt: receipt ?? null,
             currency: currency ?? "INR",
         }));

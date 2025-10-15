@@ -188,13 +188,6 @@ export default function IncomeInfoScreen() {
                                 scrollable
                                 height={100}
                             />
-                            {/* Recurring */}
-                            {/* <InfoRow
-                                label="Recurring"
-                                content={income?.recurring ? (
-                                    <CustomChip size="default" variant="secondary" icon="repeat" label="Recurring" />
-                                ) : "No"}
-                            /> */}
                             {/* Currency */}
                             <InfoRow
                                 label="Currency"

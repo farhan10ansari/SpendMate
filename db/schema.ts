@@ -19,8 +19,6 @@ export const expensesSchema = sqliteTable('expenses', {
   paymentMethod: text('payment_method').$type<string | null>(),
   // Category of the expense (e.g., Food, Travel, etc.)
   category: text('category').notNull(),
-  // Recurring expense flag
-  recurring: integer('recurring', { mode: 'boolean' }).notNull().default(false),
   // Optional receipt or invoice path/URL
   receipt: text('receipt').$type<string | null>(),
   // Currency code (e.g., INR, USD)
@@ -57,8 +55,6 @@ export const incomesSchema = sqliteTable('incomes', {
   description: text('description').$type<string | null>(),
   // Source of income (e.g., Salary, Business, etc.)
   source: text('source').notNull(),
-  // Payment method (e.g., Cash, Bank Transfer, etc.)
-  recurring: integer('recurring', { mode: 'boolean' }).notNull().default(false),
   // Receipt or invoice path/URL
   receipt: text('receipt').$type<string | null>(),
   // Currency code (e.g., INR, USD)

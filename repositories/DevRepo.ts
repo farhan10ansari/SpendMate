@@ -33,7 +33,6 @@ export const seedDummyExpenses = async (categories: Category[], count: number): 
         // Use the exact `name` string for category and paymentMethod
         category: categoryNames[Math.floor(Math.random() * categoryNames.length)],
         paymentMethod: paymentMethodNames[Math.floor(Math.random() * paymentMethodNames.length)],
-        recurring: Math.random() < 0.2, // ~20% recurring
         receipt: null,
         currency: currencies[Math.floor(Math.random() * currencies.length)],
         isTrashed: false,
@@ -76,7 +75,6 @@ export const seedDummyIncome = async (sources: Category[], count: number): Promi
         amount: parseFloat((Math.random() * 10000 + 100).toFixed(2)), // 100 to 10,100 INR
         dateTime: date,
         description: null,
-        recurring: false,
         receipt: null,
         currency: "INR",
         isTrashed: false,
