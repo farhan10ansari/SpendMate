@@ -6,6 +6,7 @@ import { AppState, BackHandler, ToastAndroid } from 'react-native';
 import AuthOverlay from '@/components/main/AuthOverlay';
 import { useSnackbar } from './GlobalSnackbarProvider';
 import { authLog as log } from '@/lib/logger';
+import { useHaptics } from './HapticsProvider';
 
 interface LocalAuthContextType {
   biometricLogin: boolean;
@@ -30,6 +31,7 @@ export const LocalAuthProvider = ({ children }: { children: React.ReactNode }) =
   const [isAuthenticated, setIsAuthenticated] = useState(biometricLogin ? false : true);
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const { showSnackbar } = useSnackbar()
+  const { hapticImpact, hapticNotify } = useHaptics()
 
   const appState = useRef(AppState.currentState);
   const lastBackgroundAtRef = useRef<number | null>(null);
@@ -142,6 +144,7 @@ export const LocalAuthProvider = ({ children }: { children: React.ReactNode }) =
     } else {
       // Disable secure login
       updateSettings('biometricLogin', false);
+      hapticImpact()
       if (showSuccessSnackbar) {
         handleShowSnackbar('Secure login disabled', 'info');
       }
