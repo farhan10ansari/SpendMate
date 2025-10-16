@@ -12,7 +12,8 @@
     "doctor": "npx expo-doctor",
     "prebuild": "npx expo prebuild",
     "build:preview": "eas build -p android --profile preview",
-    "build:development": "eas build -p android --profile development"
+    "build:development": "eas build -p android --profile development",
+    "build:production": "eas build -p android --profile production"
   },
   "dependencies": {
     "@fastify/deepmerge": "^3.1.0",

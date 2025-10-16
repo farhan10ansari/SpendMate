@@ -32,9 +32,6 @@
     },
     "production": {
       "autoIncrement": true,
-      "android": {
-        "buildType": "apk"
-      },
       "env": {
         "EXPO_PUBLIC_APP_NAME": "ExpenseMate",
         "EXPO_PUBLIC_APP_VERSION": "1.0.0",
