@@ -38,6 +38,8 @@ export default function MonthTab({ month, count, isSelected, onPress }: MonthTab
             fontWeight: isSelected ? '600' : '500',
             color: isSelected ? colors.onPrimary : colors.onSurface,
             lineHeight: 14,
+            width: '100%',
+            textAlign: 'center',
         },
         countText: {
             fontSize: 10,
