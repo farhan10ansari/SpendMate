@@ -106,28 +106,6 @@ const menuSections: MenuSection[] = [
     ]
   },
   {
-    title: "Information",
-    items: [
-      {
-        title: "About",
-        description: "App info and version details",
-        icon: "information-outline",
-        route: "/menu/about",
-      },
-    ]
-  },
-  {
-    title: "Developer",
-    items: [
-      {
-        title: "Dev Options",
-        description: "Seed data and debug tools",
-        icon: "tools",
-        route: "/menu/dev-options",
-      },
-    ]
-  },
-  {
     title: "Management",
     items: [
       {
@@ -149,7 +127,29 @@ const menuSections: MenuSection[] = [
         route: "/menu/backup-restore-screen",
       }
     ]
-  }
+  },
+  {
+    title: "Information",
+    items: [
+      {
+        title: "About",
+        description: "App info and version details",
+        icon: "information-outline",
+        route: "/menu/about",
+      },
+    ]
+  },
+  {
+    title: "Developer",
+    items: [
+      {
+        title: "Dev Options",
+        description: "Seed data and debug tools",
+        icon: "tools",
+        route: "/menu/dev-options",
+      },
+    ]
+  },
 ]
 
 const styles = StyleSheet.create({
