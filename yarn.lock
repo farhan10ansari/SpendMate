@@ -3907,6 +3907,11 @@ expo-dev-menu@6.1.14:
   dependencies:
     expo-dev-menu-interface "1.10.0"
 
+expo-document-picker@~13.1.6:
+  version "13.1.6"
+  resolved "https://registry.yarnpkg.com/expo-document-picker/-/expo-document-picker-13.1.6.tgz#d31a14eac7f0d44f6d1eee8d41403499ce07924d"
+  integrity sha512-8FTQPDOkyCvFN/i4xyqzH7ELW4AsB6B3XBZQjn1FEdqpozo6rpNJRr7sWFU/93WrLgA9FJEKpKbyr6XxczK6BA==
+
 expo-drizzle-studio-plugin@^0.2.0:
   version "0.2.0"
   resolved "https://registry.yarnpkg.com/expo-drizzle-studio-plugin/-/expo-drizzle-studio-plugin-0.2.0.tgz#e44604c145841db5d450e49252f934281700317f"
@@ -4033,6 +4038,11 @@ expo-router@~5.1.7:
     semver "~7.6.3"
     server-only "^0.0.1"
     shallowequal "^1.1.0"
+
+expo-sharing@~13.1.5:
+  version "13.1.5"
+  resolved "https://registry.yarnpkg.com/expo-sharing/-/expo-sharing-13.1.5.tgz#73d86cdcc037b46ddc82be224dfd3d6bceec497c"
+  integrity sha512-X/5sAEiWXL2kdoGE3NO5KmbfcmaCWuWVZXHu8OQef7Yig4ZgHFkGD11HKJ5KqDrDg+SRZe4ISd6MxE7vGUgm4w==
 
 expo-splash-screen@~0.30.10:
   version "0.30.10"

@@ -51,7 +51,7 @@ export function ScreenWrapper({
         },
         nonScroll: {
             flex: 1,
-            paddingBottom: insets.bottom,
+            // paddingBottom: insets.bottom,
         },
     }), [colors, insets, background]);
 

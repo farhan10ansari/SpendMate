@@ -7,8 +7,10 @@ import { useRouter } from "expo-router";
 import { useMemo, useState } from "react";
 import { StyleSheet, View, Text, ScrollView } from "react-native";
 import { Banner, Icon, List } from "react-native-paper";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const CurrencySettingsScreen = () => {
+  const insets = useSafeAreaInsets();
   const router = useRouter();
   const { colors } = useAppTheme();
   const [bannerVisible, setBannerVisible] = useState(true);
@@ -57,7 +59,7 @@ const CurrencySettingsScreen = () => {
       >
         Changing the currency only updates the formatting style. The actual amount remains unchanged.
       </Banner>
-      <ScrollView style={styles.container} contentContainerStyle={styles.contentContainer}>
+      <ScrollView style={styles.container} contentContainerStyle={[styles.contentContainer, { paddingBottom: insets.bottom + 12 }]}>
         {/* Amount Formatting Preview */}
         <SettingSection
           icon="cash"

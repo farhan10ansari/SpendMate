@@ -141,6 +141,12 @@ const menuSections: MenuSection[] = [
         description: "Change currency and formatting",
         icon: "currency-usd",
         route: "/menu/currency-settings",
+      },
+      {
+        title: "Manage Backup & Restore",
+        description: "Backup and restore your data",
+        icon: "backup-restore",
+        route: "/menu/backup-restore-screen",
       }
     ]
   }

@@ -1,5 +1,6 @@
 import { IconSource } from "react-native-paper/lib/typescript/components/Icon";
-import { CurrencyCode } from "./currencies";
+import { ExpenseRes, IncomeRes, CategoryRes } from '@/db/schema';
+
 
 export type Category = {
   isCustom: boolean;
@@ -125,4 +126,32 @@ export interface SettingOption {
 }
 export interface LanguageOption extends SettingOption {
   key: Language;
+}
+
+
+export interface BackupData {
+  date: string;
+  name: string;
+  version: string;
+  db: {
+    expenses: ExpenseRes[];
+    incomes: IncomeRes[];
+    categories: CategoryRes[];
+  };
+  // data: {
+  //   settings: Record<string, string>;
+  // };
+}
+
+export interface BackupMetadata {
+  name: string;
+  date: string;
+  filePath: string;
+  fileName: string;
+  size: number | null; // Changed to allow null
+  recordCount: {
+    expenses: number;
+    incomes: number;
+    categories: number;
+  };
 }

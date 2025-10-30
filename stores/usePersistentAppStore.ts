@@ -39,7 +39,8 @@ type AppSettings = {
     dailyReminderTime: {
         hour: number,
         minute: number
-    }
+    },
+    backupFolderUri: string | null; // URI of the folder where backups are stored
 };
 
 type PersistentAppStore = {
@@ -78,7 +79,8 @@ const defaultSettings: AppSettings = {
     dailyReminderTime: {
         hour: 21,
         minute: 0
-    }
+    },
+    backupFolderUri: null,
 };
 
 const usePersistentAppStore = create<PersistentAppStore>()(persist(
