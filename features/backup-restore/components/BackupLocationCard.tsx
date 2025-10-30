@@ -3,6 +3,7 @@ import { View, StyleSheet } from 'react-native';
 import { Card, Text, Button, Icon } from 'react-native-paper';
 import { useAppTheme } from '@/themes/providers/AppThemeProviders';
 import { useConfirmation } from '@/components/main/ConfirmationDialog';
+import { useHaptics } from '@/contexts/HapticsProvider';
 
 interface BackupLocationCardProps {
   backupFolderUri: string | null;
@@ -67,6 +68,7 @@ export const BackupLocationCard = React.memo<BackupLocationCardProps>(({
 }) => {
   const theme = useAppTheme();
   const { showConfirmationDialog } = useConfirmation();
+  const { hapticNotify } = useHaptics();
 
   const { shortName, fullPath } = useMemo(
     () => parseBackupFolderPath(backupFolderUri),
@@ -76,6 +78,7 @@ export const BackupLocationCard = React.memo<BackupLocationCardProps>(({
   const hasFolder = !!backupFolderUri;
 
   const handleChangeFolder = useCallback(() => {
+    hapticNotify('warning');
     showConfirmationDialog({
       title: "Change Backup Folder?",
       message: (

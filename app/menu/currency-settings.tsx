@@ -1,6 +1,7 @@
 import { ScreenWrapper } from "@/components/main/ScreenWrapper";
 import SettingSection from "@/components/main/SettingSection";
 import { useCurrency } from "@/contexts/CurrencyProvider";
+import { useHaptics } from "@/contexts/HapticsProvider";
 import { getCurrencyData } from "@/lib/currencies";
 import { useAppTheme } from "@/themes/providers/AppThemeProviders";
 import { useRouter } from "expo-router";
@@ -14,6 +15,8 @@ const CurrencySettingsScreen = () => {
   const router = useRouter();
   const { colors } = useAppTheme();
   const [bannerVisible, setBannerVisible] = useState(true);
+  const { hapticImpact } = useHaptics();
+
 
   const {
     currencyCode,
@@ -104,7 +107,10 @@ const CurrencySettingsScreen = () => {
                   </View>
                 ) : null
               }
-              onPress={() => updateCurrency(option.code)}
+              onPress={() => {
+                hapticImpact();
+                updateCurrency(option.code)
+              }}
             />
           ))}
           <List.Item

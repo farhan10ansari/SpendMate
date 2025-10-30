@@ -7,6 +7,7 @@ import { useRouter } from "expo-router";
 import { useCurrency } from "@/contexts/CurrencyProvider";
 import { locales, LocaleValue } from "@/lib/currencies";
 import { FlashList } from "@shopify/flash-list";
+import { useHaptics } from "@/contexts/HapticsProvider";
 
 // Reuse baseStyles or augment if needed
 const baseStyles = StyleSheet.create({
@@ -32,10 +33,11 @@ export default function AllLocalesScreen() {
     const router = useRouter();
     const { currencyLocale, updateCurrencyLocale } = useCurrency();
     const { colors } = useAppTheme();
-
+    const { hapticImpact } = useHaptics();
 
     const onSelect = useCallback(
         (selectedLocale: LocaleValue) => {
+            hapticImpact();
             updateCurrencyLocale(selectedLocale);
             // setTimeout(() => {
             //     router.back();

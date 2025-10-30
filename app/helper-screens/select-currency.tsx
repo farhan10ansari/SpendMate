@@ -1,4 +1,4 @@
-import React, { useCallback } from "react";
+import React, { use, useCallback } from "react";
 import { View, StyleSheet, Text } from "react-native";
 import { List, Icon } from "react-native-paper";
 import { ScreenWrapper } from "@/components/main/ScreenWrapper";
@@ -6,6 +6,7 @@ import { useAppTheme } from "@/themes/providers/AppThemeProviders";
 import { currenciesData, CurrencyData } from "@/lib/currencies";
 import { FlashList } from "@shopify/flash-list";
 import { useCurrency } from "@/contexts/CurrencyProvider";
+import { useHaptics } from "@/contexts/HapticsProvider";
 
 const baseStyles = StyleSheet.create({
     container: { flex: 1 },
@@ -36,6 +37,15 @@ const baseStyles = StyleSheet.create({
 export default function AllCurrenciesScreen() {
     const { colors } = useAppTheme();
     const { currencyCode, updateCurrency } = useCurrency();
+    const { hapticImpact } = useHaptics();
+
+    const handleUpdateCurrency = useCallback(
+        (code: string) => {
+            hapticImpact();
+            updateCurrency(code);
+        },
+        [hapticImpact, updateCurrency]
+    );
 
 
     const renderItem = useCallback(
@@ -46,11 +56,11 @@ export default function AllCurrenciesScreen() {
                     item={item}
                     isSelected={isSelected}
                     colors={colors}
-                    onPress={updateCurrency}
+                    onPress={handleUpdateCurrency}
                 />
             );
         },
-        [currencyCode, colors, updateCurrency]
+        [currencyCode, colors, handleUpdateCurrency]
     );
 
     return (

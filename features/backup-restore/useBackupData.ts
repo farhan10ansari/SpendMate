@@ -4,15 +4,18 @@ import { categoriesSchema, expensesSchema, incomesSchema } from '@/db/schema';
 import { BackupData } from "@/lib/types";
 import { getErrorMessage } from "@/lib/utils";
 import { log } from "@/lib/logger";
+import { useQueryClient } from '@tanstack/react-query';
 
 export function useBackupData() {
+    const queryClient = useQueryClient();
+
     const getBackupData = useCallback(async (customName: string): Promise<{ fileName: string; backupData: BackupData }> => {
         try {
             log.debug('Fetching backup data from database');
 
             const [expenses, incomes, categories] = await Promise.all([
-                db.select().from(expensesSchema),
-                db.select().from(incomesSchema),
+                (await db.select().from(expensesSchema)).filter(expense => !expense.isTrashed),
+                (await db.select().from(incomesSchema)).filter(income => !income.isTrashed),
                 db.select().from(categoriesSchema),
             ]);
 
@@ -142,6 +145,7 @@ export function useBackupData() {
             });
 
             log.info('Backup restoration completed successfully');
+
         } catch (error) {
             const errorMsg = getErrorMessage(error);
             log.error('Backup restoration failed:', errorMsg);
@@ -151,6 +155,8 @@ export function useBackupData() {
             }
 
             throw new Error(`Failed to restore backup: ${errorMsg}`);
+        } finally {
+            queryClient.invalidateQueries();
         }
     }, []);
 

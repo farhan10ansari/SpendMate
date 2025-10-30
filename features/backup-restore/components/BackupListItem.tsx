@@ -61,7 +61,7 @@ export function BackupListItem({
           {backup.recordCount.incomes} incomes
         </Chip>
         <Chip icon="tag" compact>
-          {backup.recordCount.categories} categories
+          {backup.recordCount.categories} (categories + sources)
         </Chip>
         <Chip icon="file" compact>
           {formatFileSize(backup.size)}

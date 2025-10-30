@@ -8,12 +8,14 @@ import { useSnackbar } from '@/contexts/GlobalSnackbarProvider';
 import { getErrorMessage } from '@/lib/utils';
 import { BackupMetadata } from '@/lib/types';
 import { log } from '@/lib/logger';
+import { useHaptics } from '@/contexts/HapticsProvider';
 
 export function useBackupManager() {
   const { showSnackbar } = useSnackbar();
   const { getBackupData, restoreBackupData } = useBackupData();
   const updatesettings = usePersistentAppStore((state) => state.updateSettings);
   const backupFolderUri = usePersistentAppStore((state) => state.settings.backupFolderUri);
+  const { hapticImpact, hapticNotify } = useHaptics()
 
   const [processing, setProcessing] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
@@ -23,12 +25,13 @@ export function useBackupManager() {
   // Memoize backupService to prevent recreation on every render
   const backupService = useMemo(() => new BackupService(db), []);
 
-  const handleRefreshBackups = useCallback(async () => {
+  const handleRefreshBackups = useCallback(async (initialRefresh?: boolean) => {
     if (!backupFolderUri || Platform.OS !== 'android') {
       log.debug('Clearing backups list - no folder URI or not Android');
       setBackups([]);
       return;
     }
+    if (!initialRefresh) hapticImpact();
 
     try {
       log.info('Loading backups from folder:', backupFolderUri);
@@ -48,7 +51,7 @@ export function useBackupManager() {
     } finally {
       setRefreshingBackups(false);
     }
-  }, [backupFolderUri, backupService, showSnackbar]);
+  }, [backupFolderUri, backupService, showSnackbar, hapticImpact]);
 
   const handleSelectBackupFolder = useCallback(async () => {
     if (Platform.OS !== 'android') {
@@ -69,6 +72,7 @@ export function useBackupManager() {
         updatesettings("backupFolderUri", folderUri);
         log.info('Backup folder selected and saved:', folderUri);
         await handleRefreshBackups();
+        hapticNotify('success');
         showSnackbar({
           message: 'Backup folder selected successfully',
           duration: 2000,
@@ -93,7 +97,7 @@ export function useBackupManager() {
 
       return null;
     }
-  }, [backupService, handleRefreshBackups, showSnackbar, updatesettings]);
+  }, [backupService, handleRefreshBackups, showSnackbar, updatesettings, hapticNotify]);
 
   const handleCreateBackup = useCallback(async (customName: string) => {
     if (!backupFolderUri || Platform.OS !== 'android') {
@@ -127,6 +131,7 @@ export function useBackupManager() {
       await handleRefreshBackups();
       log.info('Backup created successfully:', fileName);
 
+      hapticNotify('success');
       showSnackbar({
         message: 'Backup created successfully!',
         duration: 2000,
@@ -136,6 +141,7 @@ export function useBackupManager() {
       const errorMsg = getErrorMessage(error);
       log.error('Failed to create backup:', errorMsg);
 
+      hapticNotify('error');
       showSnackbar({
         message: 'Failed to create backup. Please try again.',
         duration: 2000,
@@ -144,7 +150,7 @@ export function useBackupManager() {
     } finally {
       setProcessing(false);
     }
-  }, [backupFolderUri, backupService, getBackupData, handleRefreshBackups, showSnackbar]);
+  }, [backupFolderUri, backupService, getBackupData, handleRefreshBackups, showSnackbar, hapticNotify]);
 
   const handleDeleteBackup = useCallback(async (backup: BackupMetadata) => {
     try {
@@ -155,6 +161,8 @@ export function useBackupManager() {
       await handleRefreshBackups();
 
       log.info('Backup deleted successfully:', backup.fileName);
+
+      hapticNotify("success");
       showSnackbar({
         message: 'Backup deleted successfully',
         duration: 2000,
@@ -164,6 +172,7 @@ export function useBackupManager() {
       const errorMsg = getErrorMessage(error);
       log.error('Failed to delete backup:', errorMsg);
 
+      hapticNotify('error');
       showSnackbar({
         message: 'Failed to delete backup. Please try again.',
         duration: 2000,
@@ -172,25 +181,21 @@ export function useBackupManager() {
     } finally {
       setProcessing(false);
     }
-  }, [backupService, handleRefreshBackups, showSnackbar]);
+  }, [backupService, handleRefreshBackups, showSnackbar, hapticNotify]);
 
   const handleShareBackup = useCallback(async (backup: BackupMetadata) => {
     try {
       setProcessing(true);
       log.info('Sharing backup:', backup.fileName);
+      hapticImpact();
 
       await backupService.shareBackup(backup.filePath, backup.fileName);
 
       log.info('Backup shared successfully:', backup.fileName);
-      // showSnackbar({
-      //   message: 'Backup shared successfully',
-      //   duration: 2000,
-      //   type: 'success',
-      // });
     } catch (error) {
       const errorMsg = getErrorMessage(error);
       log.error('Failed to share backup:', errorMsg);
-
+      hapticNotify('error');
       showSnackbar({
         message: 'Failed to share backup. Please try again.',
         duration: 2000,
@@ -199,7 +204,7 @@ export function useBackupManager() {
     } finally {
       setProcessing(false);
     }
-  }, [backupService, showSnackbar]);
+  }, [backupService, showSnackbar, hapticImpact, hapticNotify]);
 
   const handleRestoreBackup = useCallback(async (backup: BackupMetadata) => {
     try {
@@ -212,6 +217,7 @@ export function useBackupManager() {
       await restoreBackupData(backupData);
 
       log.info('Backup restored successfully:', backup.fileName);
+      hapticNotify('success');
       showSnackbar({
         message: 'Backup restored successfully!',
         duration: 2000,
@@ -221,6 +227,7 @@ export function useBackupManager() {
       const errorMsg = getErrorMessage(error);
       log.error('Failed to restore backup:', errorMsg);
 
+      hapticNotify('error');
       showSnackbar({
         message: errorMsg.includes('corrupted')
           ? 'Backup file is corrupted or invalid'
@@ -231,7 +238,7 @@ export function useBackupManager() {
     } finally {
       setProcessing(false);
     }
-  }, [backupService, restoreBackupData, showSnackbar]);
+  }, [backupService, restoreBackupData, showSnackbar, hapticNotify]);
 
   const handleImportBackup = useCallback(async () => {
     if (!backupFolderUri || Platform.OS !== 'android') {
@@ -246,12 +253,14 @@ export function useBackupManager() {
 
     try {
       setProcessing(true);
+      hapticImpact();
       log.info('Importing backup from external source');
 
       await backupService.importBackup(backupFolderUri);
       await handleRefreshBackups();
 
       log.info('Backup imported successfully');
+      hapticNotify('success');
       showSnackbar({
         message: 'Backup imported successfully!',
         duration: 2000,
@@ -266,6 +275,7 @@ export function useBackupManager() {
       }
 
       log.error('Failed to import backup:', errorMsg);
+      hapticNotify('error');
       showSnackbar({
         message: errorMsg.includes('already exists')
           ? 'This backup already exists in your backup folder'
@@ -276,7 +286,7 @@ export function useBackupManager() {
     } finally {
       setProcessing(false);
     }
-  }, [backupFolderUri, backupService, handleRefreshBackups, showSnackbar]);
+  }, [backupFolderUri, backupService, handleRefreshBackups, showSnackbar, hapticImpact, hapticNotify]);
 
   const handleRefresh = useCallback(async () => {
     try {
@@ -291,7 +301,7 @@ export function useBackupManager() {
   }, [handleRefreshBackups]);
 
   useEffect(() => {
-    handleRefreshBackups();
+    handleRefreshBackups(true);
   }, [backupFolderUri, handleRefreshBackups]);
 
   // Memoize the return object to prevent unnecessary re-renders

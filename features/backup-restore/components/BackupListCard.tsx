@@ -5,6 +5,7 @@ import { useAppTheme } from '@/themes/providers/AppThemeProviders';
 import { BackupMetadata } from '@/lib/types';
 import { BackupListItem } from './BackupListItem';
 import { useConfirmation } from '@/components/main/ConfirmationDialog';
+import { useHaptics } from '@/contexts/HapticsProvider';
 
 interface BackupListCardProps {
   backups: BackupMetadata[];
@@ -33,6 +34,8 @@ export const BackupListCard = React.memo<BackupListCardProps>(({
 }) => {
   const theme = useAppTheme();
   const { showConfirmationDialog } = useConfirmation();
+  const { hapticImpact, hapticNotify } = useHaptics();
+
 
   const subtitle = useMemo(
     () => `${backups.length} backup${backups.length !== 1 ? 's' : ''} available`,
@@ -41,6 +44,7 @@ export const BackupListCard = React.memo<BackupListCardProps>(({
 
   const handleDelete = useCallback((backup: BackupMetadata) => {
     onMenuToggle(null);
+    hapticNotify('warning');
     showConfirmationDialog({
       title: 'Delete Backup',
       message: (
@@ -62,6 +66,7 @@ export const BackupListCard = React.memo<BackupListCardProps>(({
 
   const handleRestore = useCallback((backup: BackupMetadata) => {
     onMenuToggle(null);
+    hapticNotify('warning');
     showConfirmationDialog({
       title: 'Restore Backup',
       message: (
@@ -89,6 +94,10 @@ export const BackupListCard = React.memo<BackupListCardProps>(({
   const handleMenuClose = useCallback(() => {
     onMenuToggle(null);
   }, [onMenuToggle]);
+
+  const handleRefresh = useCallback(() => {
+    onRefresh();
+  }, [onRefresh]);
 
   const renderEmptyState = useCallback(() => {
     if (!hasBackupFolder && Platform.OS === 'android') {
@@ -144,7 +153,7 @@ export const BackupListCard = React.memo<BackupListCardProps>(({
           <IconButton
             {...props}
             icon="refresh"
-            onPress={onRefresh}
+            onPress={handleRefresh}
             disabled={refreshing}
             loading={refreshing}
           />
