@@ -64,6 +64,7 @@ type PersistentAppStore = {
     seededKeys: string[];
     markDataSeeded: (key: string) => void;
     isDataSeeded: (key: string) => boolean;
+    resetPersistentStore: () => void;
 };
 
 const defaultSettings: AppSettings = {
@@ -83,6 +84,12 @@ const defaultSettings: AppSettings = {
     backupFolderUri: null,
 };
 
+const defaultUIFlags: PersistentAppStore['uiFlags'] = {
+    showDevOptions: false,
+    showNegativeStats: true,
+    onboardingCompleted: false,
+};
+
 const usePersistentAppStore = create<PersistentAppStore>()(persist(
     (set, get) => ({
         // Theme management
@@ -99,11 +106,7 @@ const usePersistentAppStore = create<PersistentAppStore>()(persist(
         })),
 
         // UI flags
-        uiFlags: {
-            showDevOptions: false,
-            showNegativeStats: true,
-            onboardingCompleted: false,
-        },
+        uiFlags: defaultUIFlags,
         updateUIFlag: (flag, value) => set((state) => ({
             uiFlags: {
                 ...state.uiFlags,
@@ -119,6 +122,12 @@ const usePersistentAppStore = create<PersistentAppStore>()(persist(
                 : [...state.seededKeys, key]
         })),
         isDataSeeded: (key) => get().seededKeys.includes(key),
+        resetPersistentStore: () => set({
+            theme: "system",
+            settings: defaultSettings,
+            uiFlags: defaultUIFlags,
+            seededKeys: [],
+        }),
     }), {
     name: 'app-storage',
     storage: createJSONStorage(() => sqliteSyncStorage),

@@ -167,6 +167,11 @@ export default function MainLayout() {
         options={{ title: 'Backup & Restore' }}
       />
 
+      <Stack.Screen
+        name="menu/reset-app"
+        options={{ title: 'Reset App Data' }}
+      />
+
       {/* Stats Screens */}
       <Stack.Screen
         name="stats/expenses"

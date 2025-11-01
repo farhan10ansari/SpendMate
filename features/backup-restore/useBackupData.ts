@@ -158,6 +158,7 @@ export function useBackupData() {
             throw new Error(`Failed to restore backup: ${errorMsg}`);
         } finally {
             queryClient.invalidateQueries();
+            queryClient.clear();
         }
     }, [queryClient]);
 

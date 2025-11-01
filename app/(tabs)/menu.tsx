@@ -140,6 +140,17 @@ const menuSections: MenuSection[] = [
     ]
   },
   {
+    title: "Danger Zone",
+    items: [
+      {
+        title: "Reset App",
+        description: "Clear all data and reset",
+        icon: "alert-circle-outline",
+        route: "/menu/reset-app",
+      },
+    ]
+  },
+  {
     title: "Developer",
     items: [
       {
@@ -149,7 +160,7 @@ const menuSections: MenuSection[] = [
         route: "/menu/dev-options",
       },
     ]
-  },
+  }
 ]
 
 const styles = StyleSheet.create({
