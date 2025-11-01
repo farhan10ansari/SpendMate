@@ -5,6 +5,7 @@ import { BackupData } from "@/lib/types";
 import { getErrorMessage } from "@/lib/utils";
 import { log } from "@/lib/logger";
 import { useQueryClient } from '@tanstack/react-query';
+import { EMBAK_EXTENSION } from '@/features/backup-restore/constants';
 
 export function useBackupData() {
     const queryClient = useQueryClient();
@@ -28,7 +29,7 @@ export function useBackupData() {
             const timestamp = new Date();
             const defaultName = customName?.trim() || `Backup_${timestamp.toISOString().split('T')[0]}`;
             const sanitizedName = defaultName.replace(/[^a-zA-Z0-9_-]/g, '_');
-            const fileName = `${sanitizedName}_${timestamp.getTime()}.json`;
+            const fileName = `${sanitizedName}_${timestamp.getTime()}${EMBAK_EXTENSION}`;
 
             const backupData: BackupData = {
                 date: timestamp.toISOString(),
@@ -158,7 +159,7 @@ export function useBackupData() {
         } finally {
             queryClient.invalidateQueries();
         }
-    }, []);
+    }, [queryClient]);
 
     // Memoize the return object to prevent unnecessary re-renders
     return useMemo(() => ({

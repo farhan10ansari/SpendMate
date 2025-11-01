@@ -1,7 +1,9 @@
 import React, { useState, useCallback } from 'react';
-import { StyleSheet } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Card, Text, TextInput, Button, Icon } from 'react-native-paper';
 import { useAppTheme } from '@/themes/providers/AppThemeProviders';
+import { useConfirmation } from '@/components/main/ConfirmationDialog';
+import { useHaptics } from '@/contexts/HapticsProvider';
 
 interface CreateBackupCardProps {
   onCreateBackup: (name: string) => void;
@@ -18,13 +20,32 @@ export const CreateBackupCard = React.memo<CreateBackupCardProps>(({
 }) => {
   const theme = useAppTheme();
   const [customName, setCustomName] = useState('');
-
+  const { showConfirmationDialog } = useConfirmation()
+  const { hapticImpact } = useHaptics()
   const isDisabled = disabled || !hasBackupFolder;
 
   const handleCreateBackup = useCallback(() => {
-    onCreateBackup(customName);
-    setCustomName('');
-  }, [customName, onCreateBackup]);
+    hapticImpact()
+    showConfirmationDialog({
+      title: 'Create Backup',
+      message: (
+        <View style={styles.dialogContent}>
+          <Icon source="backup-restore" size={40} color={theme.colors.primary} />
+          <Text variant="bodyLarge" style={styles.dialogTitle}>
+            Create New Backup?
+          </Text>
+          <Text variant="bodyMedium" style={[styles.dialogMessage, { color: theme.colors.onSurfaceVariant }]}>
+            This will create a new backup & save it to your backup folder.
+          </Text>
+        </View>
+      ),
+      onConfirm: () => {
+        onCreateBackup(customName);
+        setCustomName('');
+      },
+      confirmText: "Create",
+    })
+  }, [customName, onCreateBackup, hapticImpact, showConfirmationDialog, theme.colors]);
 
   const handleClearName = useCallback(() => {
     setCustomName('');
@@ -110,4 +131,14 @@ const styles = StyleSheet.create({
   createButton: {
     marginRight: 0,
   },
+  dialogContent: {
+    alignItems: 'center',
+    gap: 12,
+  },
+  dialogTitle: {
+    textAlign: 'center',
+  },
+  dialogMessage: {
+    textAlign: 'center',
+  }
 });
