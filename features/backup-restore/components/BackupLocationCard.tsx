@@ -66,7 +66,7 @@ export const BackupLocationCard = React.memo<BackupLocationCardProps>(({
   onSelectFolder,
   disabled = false,
 }) => {
-  const theme = useAppTheme();
+  const { colors } = useAppTheme();
   const { showConfirmationDialog } = useConfirmation();
   const { hapticNotify } = useHaptics();
 
@@ -93,25 +93,25 @@ export const BackupLocationCard = React.memo<BackupLocationCardProps>(({
       ),
       onConfirm: onSelectFolder
     });
-  }, [showConfirmationDialog, onSelectFolder]);
+  }, [showConfirmationDialog, onSelectFolder, hapticNotify]);
 
   const backgroundColor = hasFolder
-    ? theme.colors.surfaceVariant
-    : theme.colors.errorContainer;
+    ? colors.surfaceVariant
+    : colors.errorContainer;
 
-  const iconColor = hasFolder ? theme.colors.primary : theme.colors.error;
+  const iconColor = hasFolder ? colors.primary : colors.error;
   const iconName = hasFolder ? 'folder-open' : 'folder-alert';
 
   const textColor = hasFolder
-    ? theme.colors.onSurfaceVariant
-    : theme.colors.onErrorContainer;
+    ? colors.onSurfaceVariant
+    : colors.onErrorContainer;
 
   return (
     <Card mode="elevated" style={styles.card}>
       <Card.Title
         title="Backup Location"
         titleVariant="titleMedium"
-        left={(props) => <Icon {...props} source="folder-cog" />}
+        left={(props) => <Icon {...props} source="folder-cog" color={colors.onSurfaceVariant} />}
       />
       <Card.Content style={styles.content}>
         <View style={[styles.locationContainer, { backgroundColor }]}>

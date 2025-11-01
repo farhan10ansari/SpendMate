@@ -6,7 +6,7 @@ import { InfoCard } from "@/features/backup-restore/components/InfoCard";
 import { useBackupManager } from "@/features/backup-restore/useBackupManager";
 import { useAppTheme } from "@/themes/providers/AppThemeProviders";
 import { useState } from "react";
-import { RefreshControl, ScrollView, StyleSheet, View } from "react-native";
+import { RefreshControl, ScrollView, StyleSheet } from "react-native";
 import { Banner } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 

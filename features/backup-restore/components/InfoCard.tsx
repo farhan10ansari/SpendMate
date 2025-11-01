@@ -1,5 +1,5 @@
 import React, { useMemo } from 'react';
-import { Platform, StyleSheet, View } from 'react-native';
+import { StyleSheet, View } from 'react-native';
 import { Card, Divider, Icon, Text } from 'react-native-paper';
 import { useAppTheme } from '@/themes/providers/AppThemeProviders';
 
@@ -21,44 +21,41 @@ const InfoItem = React.memo<InfoItemProps>(({ icon, text, color }) => (
 InfoItem.displayName = 'InfoItem';
 
 export const InfoCard = React.memo(() => {
-    const theme = useAppTheme();
+    const { colors } = useAppTheme();
 
     const infoItems = useMemo(() => {
         const items: InfoItemProps[] = [
             {
+                icon: 'folder-cog',
+                text: 'Backups are saved to your selected folder',
+                color: colors.primary,
+            },
+            {
                 icon: 'shield-check',
                 text: 'All backups are stored locally on your device',
-                color: theme.colors.primary,
+                color: colors.primary,
             },
             {
                 icon: 'alert-circle',
                 text: 'Restoring will replace all current data',
-                color: theme.colors.tertiary,
+                color: colors.error,
             },
             {
                 icon: 'cloud-upload',
                 text: 'Use "Share" to save backups to cloud storage',
-                color: theme.colors.secondary,
+                color: colors.primary,
             },
         ];
 
-        if (Platform.OS === 'android') {
-            items.unshift({
-                icon: 'folder-cog',
-                text: 'Backups are saved to your selected folder',
-                color: theme.colors.primary,
-            });
-        }
-
         return items;
-    }, [theme.colors.primary, theme.colors.secondary, theme.colors.tertiary]);
+    }, [colors]);
 
     return (
         <Card mode="outlined" style={styles.card}>
             <Card.Title
                 title="Important Information"
                 titleVariant="titleMedium"
-                left={(props) => <Icon {...props} source="information" />}
+                left={(props) => <Icon {...props} source="information" color={colors.onSurfaceVariant} />}
             />
             <Card.Content style={styles.content}>
                 {infoItems.map((item, index) => (

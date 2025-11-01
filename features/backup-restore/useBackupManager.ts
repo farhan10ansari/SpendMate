@@ -1,7 +1,7 @@
 import { useCallback, useEffect, useMemo, useState } from 'react';
 import usePersistentAppStore from '@/stores/usePersistentAppStore';
 import db from '@/db/client';
-import { BackupService } from './backup-restore';
+import { BackupService } from './backup-service';
 import { Platform } from 'react-native';
 import { useBackupData } from './useBackupData';
 import { useSnackbar } from '@/contexts/GlobalSnackbarProvider';

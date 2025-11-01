@@ -163,7 +163,7 @@ export default function MainLayout() {
         options={{ title: 'Currency Settings' }}
       />
       <Stack.Screen
-        name="menu/backup-restore-screen"
+        name="menu/backup-restore"
         options={{ title: 'Backup & Restore' }}
       />
 

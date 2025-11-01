@@ -32,9 +32,9 @@ export const BackupListCard = React.memo<BackupListCardProps>(({
   onDelete,
   refreshing,
 }) => {
-  const theme = useAppTheme();
+  const { colors } = useAppTheme();
   const { showConfirmationDialog } = useConfirmation();
-  const { hapticImpact, hapticNotify } = useHaptics();
+  const { hapticNotify } = useHaptics();
 
 
   const subtitle = useMemo(
@@ -49,11 +49,11 @@ export const BackupListCard = React.memo<BackupListCardProps>(({
       title: 'Delete Backup',
       message: (
         <View style={styles.dialogContent}>
-          <Icon source="delete-alert" size={40} color={theme.colors.error} />
+          <Icon source="delete-alert" size={40} color={colors.error} />
           <Text variant="bodyLarge" style={styles.dialogTitle}>
             Delete this backup?
           </Text>
-          <Text variant="bodyMedium" style={[styles.dialogMessage, { color: theme.colors.onSurfaceVariant }]}>
+          <Text variant="bodyMedium" style={[styles.dialogMessage, { color: colors.onSurfaceVariant }]}>
             This will permanently delete the backup{' '}
             <Text style={styles.boldText}>{backup.name}</Text>
           </Text>
@@ -62,7 +62,7 @@ export const BackupListCard = React.memo<BackupListCardProps>(({
       onConfirm: () => onDelete(backup),
       type: "warning"
     });
-  }, [onMenuToggle, showConfirmationDialog, theme.colors.error, theme.colors.onSurfaceVariant, onDelete]);
+  }, [onMenuToggle, showConfirmationDialog, colors.error, colors.onSurfaceVariant, onDelete, hapticNotify]);
 
   const handleRestore = useCallback((backup: BackupMetadata) => {
     onMenuToggle(null);
@@ -71,11 +71,11 @@ export const BackupListCard = React.memo<BackupListCardProps>(({
       title: 'Restore Backup',
       message: (
         <View style={styles.dialogContent}>
-          <Icon source="restore-alert" size={40} color={theme.colors.primary} />
+          <Icon source="restore-alert" size={40} color={colors.primary} />
           <Text variant="bodyLarge" style={styles.dialogTitle}>
             Restore this backup?
           </Text>
-          <Text variant="bodyMedium" style={[styles.dialogMessage, { color: theme.colors.onSurfaceVariant }]}>
+          <Text variant="bodyMedium" style={[styles.dialogMessage, { color: colors.onSurfaceVariant }]}>
             This will overwrite your current data with the backup from{' '}
             <Text style={styles.boldText}>{backup.name}</Text>
           </Text>
@@ -84,7 +84,7 @@ export const BackupListCard = React.memo<BackupListCardProps>(({
       onConfirm: () => onRestore(backup),
       type: "warning"
     });
-  }, [onMenuToggle, showConfirmationDialog, theme.colors.primary, theme.colors.onSurfaceVariant, onRestore]);
+  }, [onMenuToggle, showConfirmationDialog, colors.primary, colors.onSurfaceVariant, onRestore]);
 
   const handleShare = useCallback((backup: BackupMetadata) => {
     onMenuToggle(null);
@@ -103,11 +103,11 @@ export const BackupListCard = React.memo<BackupListCardProps>(({
     if (!hasBackupFolder && Platform.OS === 'android') {
       return (
         <View style={styles.emptyContainer}>
-          <Icon source="folder-alert" size={48} color={theme.colors.onSurfaceVariant} />
+          <Icon source="folder-alert" size={48} color={colors.onSurfaceVariant} />
           <Text variant="titleMedium" style={styles.emptyTitle}>
             No backup folder selected
           </Text>
-          <Text variant="bodySmall" style={[styles.emptySubtitle, { color: theme.colors.onSurfaceVariant }]}>
+          <Text variant="bodySmall" style={[styles.emptySubtitle, { color: colors.onSurfaceVariant }]}>
             Please select a folder to view and manage your backups
           </Text>
           <Button
@@ -126,11 +126,11 @@ export const BackupListCard = React.memo<BackupListCardProps>(({
     if (backups.length === 0) {
       return (
         <View style={styles.emptyContainer}>
-          <Icon source="folder-open" size={48} color={theme.colors.onSurfaceVariant} />
+          <Icon source="folder-open" size={48} color={colors.onSurfaceVariant} />
           <Text variant="titleMedium" style={styles.emptyTitle}>
             No backups yet
           </Text>
-          <Text variant="bodySmall" style={{ color: theme.colors.onSurfaceVariant }}>
+          <Text variant="bodySmall" style={{ color: colors.onSurfaceVariant }}>
             Create your first backup above
           </Text>
         </View>
@@ -138,7 +138,7 @@ export const BackupListCard = React.memo<BackupListCardProps>(({
     }
 
     return null;
-  }, [hasBackupFolder, backups.length, theme.colors.onSurfaceVariant, onSelectFolder]);
+  }, [hasBackupFolder, backups.length, colors.onSurfaceVariant, onSelectFolder]);
 
   const emptyState = renderEmptyState();
 
@@ -148,7 +148,7 @@ export const BackupListCard = React.memo<BackupListCardProps>(({
         title="Saved Backups"
         titleVariant="titleMedium"
         subtitle={subtitle}
-        left={(props) => <Icon {...props} source="folder-multiple" />}
+        left={(props) => <Icon {...props} source="folder-multiple" color={colors.onSurfaceVariant} />}
         right={(props) => (
           <IconButton
             {...props}

@@ -18,7 +18,7 @@ export const CreateBackupCard = React.memo<CreateBackupCardProps>(({
   disabled = false,
   hasBackupFolder,
 }) => {
-  const theme = useAppTheme();
+  const { colors } = useAppTheme();
   const [customName, setCustomName] = useState('');
   const { showConfirmationDialog } = useConfirmation()
   const { hapticImpact } = useHaptics()
@@ -30,11 +30,11 @@ export const CreateBackupCard = React.memo<CreateBackupCardProps>(({
       title: 'Create Backup',
       message: (
         <View style={styles.dialogContent}>
-          <Icon source="backup-restore" size={40} color={theme.colors.primary} />
+          <Icon source="backup-restore" size={40} color={colors.primary} />
           <Text variant="bodyLarge" style={styles.dialogTitle}>
             Create New Backup?
           </Text>
-          <Text variant="bodyMedium" style={[styles.dialogMessage, { color: theme.colors.onSurfaceVariant }]}>
+          <Text variant="bodyMedium" style={[styles.dialogMessage, { color: colors.onSurfaceVariant }]}>
             This will create a new backup & save it to your backup folder.
           </Text>
         </View>
@@ -45,7 +45,7 @@ export const CreateBackupCard = React.memo<CreateBackupCardProps>(({
       },
       confirmText: "Create",
     })
-  }, [customName, onCreateBackup, hapticImpact, showConfirmationDialog, theme.colors]);
+  }, [customName, onCreateBackup, hapticImpact, showConfirmationDialog, colors]);
 
   const handleClearName = useCallback(() => {
     setCustomName('');
@@ -57,7 +57,7 @@ export const CreateBackupCard = React.memo<CreateBackupCardProps>(({
         title="Create New Backup"
         titleVariant="titleMedium"
         subtitle="Export all your data"
-        left={(props) => <Icon {...props} source="backup-restore" />}
+        left={(props) => <Icon {...props} source="backup-restore" color={colors.onSurfaceVariant} />}
       />
       <Card.Content style={styles.content}>
         <TextInput
@@ -77,7 +77,7 @@ export const CreateBackupCard = React.memo<CreateBackupCardProps>(({
         />
         <Text
           variant="bodySmall"
-          style={[styles.helperText, { color: theme.colors.onSurfaceVariant }]}
+          style={[styles.helperText, { color: colors.onSurfaceVariant }]}
         >
           Leave blank to auto-generate name with date
         </Text>

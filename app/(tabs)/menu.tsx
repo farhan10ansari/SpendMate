@@ -124,7 +124,7 @@ const menuSections: MenuSection[] = [
         title: "Manage Backup & Restore",
         description: "Backup and restore your data",
         icon: "backup-restore",
-        route: "/menu/backup-restore-screen",
+        route: "/menu/backup-restore",
       }
     ]
   },
