@@ -11,23 +11,23 @@ import {
     IconButton,
     ProgressBar
 } from 'react-native-paper';
+import RNRestart from 'react-native-restart';
 import { useAppTheme } from '@/themes/providers/AppThemeProviders';
-import * as Updates from 'expo-updates';
 import { removeAllNotificationSchedules, resetDatabase } from '@/lib/reset';
 import { useSnackbar } from '@/contexts/GlobalSnackbarProvider';
 import usePersistentAppStore from '@/stores/usePersistentAppStore';
 import { useQueryClient } from '@tanstack/react-query';
-import { useRouter } from 'expo-router';
+import { useHaptics } from '@/contexts/HapticsProvider';
 
-export default function ResetScreen() {
+export default function ResetAppScreen() {
     const queryClient = useQueryClient()
     const { colors } = useAppTheme();
+    const { hapticNotify } = useHaptics();
     const [dialogVisible, setDialogVisible] = useState(false);
     const [countdown, setCountdown] = useState(10);
     const [isResetting, setIsResetting] = useState(false);
     const { showSnackbar } = useSnackbar();
     const resetPersistentStore = usePersistentAppStore((state) => state.resetPersistentStore);
-    const router = useRouter();
     const styles = createStyles(colors);
 
     useEffect(() => {
@@ -45,6 +45,7 @@ export default function ResetScreen() {
     }, [dialogVisible, countdown]);
 
     const showDialog = () => {
+        hapticNotify('warning');
         setCountdown(10);
         setDialogVisible(true);
     };
@@ -58,28 +59,24 @@ export default function ResetScreen() {
         setIsResetting(true);
 
         try {
-            // Step 1: Reset database (delete all rows)
+            // Reset database (delete all rows)
             await resetDatabase();
 
-            // Step 2: Reset Zustand store to default values
-            resetPersistentStore()
+            // Reset Zustand store to default values
+            resetPersistentStore();
 
-            // Step 3: Remove all scheduled notifications
+            // Remove all scheduled notifications
             await removeAllNotificationSchedules()
 
-            // Step 4: Invalidate all React Query caches
+            // Invalidate all React Query caches
             queryClient.invalidateQueries();
             queryClient.clear();
 
-            hideDialog();
+            // Haptic feedback for success
+            hapticNotify('success');
 
-            // showSnackbar({
-            //     message: 'App data has been reset successfully.',
-            //     duration: 5000,
-            //     type: 'success',
-            // });
-            // Full app reload
-            await Updates.reloadAsync();
+            // Restart the app to apply changes
+            RNRestart.restart();
         } catch (error) {
             console.error('Reset error:', error);
             showSnackbar({
@@ -225,7 +222,6 @@ export default function ResetScreen() {
                             onPress={hideDialog}
                             textColor={colors.onSurface}
                             disabled={isResetting}
-                            loading={isResetting}
                         >
                             Cancel
                         </Button>
