@@ -1,1 +1,0 @@
-ALTER TABLE `expenses` ADD `is_trashed` integer DEFAULT false NOT NULL;

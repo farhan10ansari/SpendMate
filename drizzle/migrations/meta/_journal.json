@@ -5,78 +5,8 @@
     {
       "idx": 0,
       "version": "6",
-      "when": 1747678966214,
-      "tag": "0000_melted_medusa",
-      "breakpoints": true
-    },
-    {
-      "idx": 1,
-      "version": "6",
-      "when": 1751647331938,
-      "tag": "0001_silent_nemesis",
-      "breakpoints": true
-    },
-    {
-      "idx": 2,
-      "version": "6",
-      "when": 1754157141280,
-      "tag": "0002_handy_killmonger",
-      "breakpoints": true
-    },
-    {
-      "idx": 3,
-      "version": "6",
-      "when": 1756295262715,
-      "tag": "0003_groovy_nocturne",
-      "breakpoints": true
-    },
-    {
-      "idx": 4,
-      "version": "6",
-      "when": 1756548737151,
-      "tag": "0004_condemned_captain_britain",
-      "breakpoints": true
-    },
-    {
-      "idx": 5,
-      "version": "6",
-      "when": 1757436585635,
-      "tag": "0005_wakeful_maddog",
-      "breakpoints": true
-    },
-    {
-      "idx": 6,
-      "version": "6",
-      "when": 1757509603948,
-      "tag": "0006_fuzzy_layla_miller",
-      "breakpoints": true
-    },
-    {
-      "idx": 7,
-      "version": "6",
-      "when": 1757511911930,
-      "tag": "0007_melted_beast",
-      "breakpoints": true
-    },
-    {
-      "idx": 8,
-      "version": "6",
-      "when": 1757511935454,
-      "tag": "0008_nervous_runaways",
-      "breakpoints": true
-    },
-    {
-      "idx": 9,
-      "version": "6",
-      "when": 1757702675555,
-      "tag": "0009_rare_pet_avengers",
-      "breakpoints": true
-    },
-    {
-      "idx": 10,
-      "version": "6",
-      "when": 1760529714725,
-      "tag": "0010_gorgeous_union_jack",
+      "when": 1762196564829,
+      "tag": "0000_minor_titanium_man",
       "breakpoints": true
     }
   ]
