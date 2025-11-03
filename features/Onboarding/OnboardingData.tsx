@@ -32,7 +32,6 @@ export interface Settings {
   haptics: boolean;
 }
 
-const APP_NAME = process.env.EXPO_PUBLIC_APP_NAME ?? 'Expense Manager';
 
 export const useOnboardingData = () => {
   const { colors } = useAppTheme();
@@ -45,7 +44,7 @@ export const useOnboardingData = () => {
     {
       id: '1',
       type: 'intro',
-      title: `Welcome to ${APP_NAME}`,
+      title: `Welcome to SpendMate`,
       description: 'Your smart companion for tracking expenses, managing budgets, and gaining insights into your spending habits. Take control of your finances with ease.',
       lottie: <LottieView source={require('../../assets/lottie/onboarding.json')} autoPlay loop style={{ height: "100%", width: "100%" }} />
     },

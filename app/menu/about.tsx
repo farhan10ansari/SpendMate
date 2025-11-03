@@ -9,7 +9,6 @@ import { useHaptics } from "@/contexts/HapticsProvider";
 import { useSnackbar } from "@/contexts/GlobalSnackbarProvider";
 import { Icon } from "react-native-paper";
 
-const APP_NAME = process.env.EXPO_PUBLIC_APP_NAME;
 const APP_VERSION = process.env.EXPO_PUBLIC_APP_VERSION;
 const APP_AUTHOR = process.env.EXPO_PUBLIC_APP_AUTHOR;
 const TELEGRAM_URL = process.env.EXPO_PUBLIC_TELEGRAM_URL;
@@ -170,14 +169,13 @@ export default function AboutScreen() {
                             size={48}
                             color={colors.primary}
                         />
-                        <ThemedText style={styles.appName}>{APP_NAME}</ThemedText>
+                        <ThemedText style={styles.appName}>SpendMate</ThemedText>
                         <ThemedText style={styles.appAuthor}>by {APP_AUTHOR}</ThemedText>
                         <ThemedText style={styles.appVersion}>Version {APP_VERSION}</ThemedText>
-                        {APP_DESCRIPTION && (
-                            <ThemedText style={styles.appDescription}>
-                                {`Expense management made simple, powerful, and intelligent.`}
-                            </ThemedText>
-                        )}
+                        <ThemedText style={styles.appDescription}>
+                            {`Expense management made simple, powerful, and intelligent.`}
+                        </ThemedText>
+
                     </View>
                 </View>
 
