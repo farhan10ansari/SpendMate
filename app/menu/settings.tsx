@@ -68,13 +68,13 @@ function SecureLoginSection() {
 }
 
 interface LanguageSectionProps {
-  language: Language;
-  handleLanguageChange: (languageKey: Language) => void;
+  // language: Language;
+  // handleLanguageChange: (languageKey: Language) => void;
 }
 
 const LanguageSection = ({
-  language,
-  handleLanguageChange,
+  // language,
+  // handleLanguageChange,
 }: LanguageSectionProps) => {
   const { colors } = useAppTheme();
 
@@ -88,8 +88,8 @@ const LanguageSection = ({
         <SettingOptionListItem
           key={option.key}
           option={option}
-          isSelected={language === option.key}
-          onPress={() => option.available && handleLanguageChange(option.key)}
+          isSelected={"english" === option.key}
+          // onPress={() => option.available && handleLanguageChange(option.key)}
           colors={colors}
         />
       ))}
@@ -161,7 +161,7 @@ const ComingSoonSection = () => {
 export default function SettingsScreen() {
   const router = useRouter();
   const navigation = useNavigation();
-  const { language, haptics, handleLanguageChange, handleHapticsToggle } =
+  const { haptics, handleHapticsToggle } =
     useSettings();
 
   const styles = StyleSheet.create({
@@ -198,8 +198,8 @@ export default function SettingsScreen() {
           />
         </SettingSection>
         <LanguageSection
-          language={language}
-          handleLanguageChange={handleLanguageChange}
+        // language={language}
+        // handleLanguageChange={handleLanguageChange}
         />
         <ComingSoonSection />
       </View>

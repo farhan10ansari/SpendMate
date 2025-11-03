@@ -6,7 +6,7 @@ import { ThemedText } from "@/components/base/ThemedText";
 interface SettingOptionListItemProps {
   option: LanguageOption;
   isSelected: boolean;
-  onPress: () => void;
+  onPress?: () => void;
   colors: any;
   leftIcon?: string;
 }

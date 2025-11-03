@@ -1,5 +1,4 @@
 import { CurrencyCode, getCurrencyLocale, LocaleValue } from '@/lib/currencies';
-import { Language } from '@/lib/types';
 import Storage from 'expo-sqlite/kv-store';
 import { create } from 'zustand';
 import { createJSONStorage, persist, StateStorage } from "zustand/middleware";
@@ -27,7 +26,6 @@ const sqliteSyncStorage: StateStorage = {
 };
 
 type AppSettings = {
-    language: Language;
     currencyCode: CurrencyCode; // e.g., "USD"
     currencyLocale: LocaleValue; // e.g., "en-US". Used only for formatting amounts
     biometricLogin: boolean;
@@ -44,7 +42,6 @@ type AppSettings = {
 };
 
 type PersistentAppStore = {
-    // Theme management
     theme: "light" | "dark" | "system";
     setTheme: (theme: "light" | "dark" | "system") => void;
 
@@ -68,7 +65,7 @@ type PersistentAppStore = {
 };
 
 const defaultSettings: AppSettings = {
-    language: "english",
+    // language: "english",
     currencyCode: defaultCurrency,
     currencyLocale: defaultLocale,
     biometricLogin: false,
