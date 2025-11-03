@@ -15,6 +15,7 @@ const APP_AUTHOR = process.env.EXPO_PUBLIC_APP_AUTHOR;
 const TELEGRAM_URL = process.env.EXPO_PUBLIC_TELEGRAM_URL;
 const CONTACT_EMAIL = process.env.EXPO_PUBLIC_CONTACT_EMAIL;
 const FEEDBACK_FORM = process.env.EXPO_PUBLIC_FEEDBACK_FORM;
+const PRIVACY_POLICY = process.env.EXPO_PUBLIC_PRIVACY_POLICY;
 
 
 export default function AboutScreen() {
@@ -53,6 +54,12 @@ export default function AboutScreen() {
             Linking.openURL(FEEDBACK_FORM);
         }
     };
+
+    const handlePrivacyPolicyPress = () => {
+        if (PRIVACY_POLICY) {
+            Linking.openURL(PRIVACY_POLICY);
+        }
+    }
 
 
     const handleVersionTap = () => {
@@ -305,6 +312,33 @@ export default function AboutScreen() {
                             onPress={handleFeedbackPress}
                         />
                     )}
+                </View>
+
+                {/* Privacy Policy Section */}
+                <View style={styles.sectionContainer}>
+                    <View style={styles.sectionHeader}>
+                        <Icon
+                            source="shield-outline"
+                            size={24}
+                            color={colors.primary}
+                        />
+                        <ThemedText style={styles.sectionTitle}>
+                            Privacy Policy
+                        </ThemedText>
+                    </View>
+
+
+                    <ThemedText style={styles.descriptionText}>
+                        {"Your privacy is important to us. Please review our policy to understand how we handle your data."}
+                    </ThemedText>
+
+
+                    <AboutItem
+                        icon="file-document-outline"
+                        title="View Privacy Policy"
+                        description="Read our full privacy policy"
+                        onPress={handlePrivacyPolicyPress}
+                    />
                 </View>
             </View>
         </ScreenWrapper>
