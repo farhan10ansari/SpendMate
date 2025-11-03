@@ -1,17 +1,17 @@
 {
   "expo": {
-    "name": "ExpenseMate",
-    "slug": "ExpenseMate",
+    "name": "SpendMate",
+    "slug": "SpendMate",
     "version": "1.0.0",
     "orientation": "default",
     "icon": "./assets/images/icon.png",
-    "scheme": "expensemate",
+    "scheme": "spendmate",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
     "platforms": ["ios", "android"],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.farhan10ansari.ExpenseMate"
+      "bundleIdentifier": "com.farhan10ansari.SpendMate"
     },
     "android": {
       "adaptiveIcon": {
@@ -19,7 +19,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.farhan10ansari.ExpenseMate",
+      "package": "com.farhan10ansari.SpendMate",
       "permissions": [
         "android.permission.USE_BIOMETRIC",
         "android.permission.USE_FINGERPRINT",

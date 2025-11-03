@@ -27,7 +27,7 @@ export default function AboutScreen() {
     const lastTapTimeRef = useRef(0);
 
     const handleRepoPress = () => {
-        Linking.openURL("https://github.com/farhan10ansari/ExpenseMate");
+        Linking.openURL("https://github.com/farhan10ansari/SpendMate");
     };
 
     const handleTelegramPress = () => {
