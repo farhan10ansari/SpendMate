@@ -38,7 +38,7 @@ Your locally-stored financial data is protected with:
 
 ## Policy Changes
 
-We may update this Privacy Policy at any time. Please check this page regularly for any updates.
+We reserve the right to change this Policy at any time. If we decide to change this Policy, we will post those changes on this page and update the date at the top of the page. The changes will be effective when posted. We may update this Privacy Policy at any time. Please check this page regularly for any updates.
 
 ---
 
