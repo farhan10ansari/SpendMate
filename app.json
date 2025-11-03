@@ -8,10 +8,13 @@
     "scheme": "spendmate",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "platforms": ["ios", "android"],
+    "platforms": [
+      "ios",
+      "android"
+    ],
     "ios": {
       "supportsTablet": true,
-      "bundleIdentifier": "com.farhan10ansari.SpendMate"
+      "bundleIdentifier": "com.farhan10ansari.spendmate"
     },
     "android": {
       "adaptiveIcon": {
@@ -19,7 +22,7 @@
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
-      "package": "com.farhan10ansari.SpendMate",
+      "package": "com.farhan10ansari.spendmate",
       "permissions": [
         "android.permission.USE_BIOMETRIC",
         "android.permission.USE_FINGERPRINT",
@@ -63,7 +66,7 @@
     "extra": {
       "router": {},
       "eas": {
-        "projectId": "c90b4130-1211-4ddd-bf2f-e45eaf4a4628"
+        "projectId": "1614bfe2-b5db-440c-9581-e23b3e0c431a"
       }
     },
     "owner": "farhan10ansari"

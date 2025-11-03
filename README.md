@@ -175,7 +175,7 @@ Add the following environment variables to your `.env` file:
 EXPO_PUBLIC_APP_VERSION="1.0.0"
 EXPO_PUBLIC_APP_AUTHOR="farhan10ansari"
 EXPO_PUBLIC_TELEGRAM_URL="https://t.me/farhan10ansari_spend_mate_disc"
-EXPO_PUBLIC_CONTACT_EMAIL="farhan10ansari@gmail.com"
+EXPO_PUBLIC_CONTACT_EMAIL="spendmate.assist@gmail.com"
 EXPO_PUBLIC_LOG_LEVEL="error"
 
 
@@ -363,7 +363,7 @@ Have questions, suggestions, or encountered a bug? We'd love to hear from you!
 
 **Get in Touch:**
 
-- **Email:** [farhan10ansari@gmail.com](mailto:farhan10ansari@gmail.com)
+- **Email:** [spendmate.assist@gmail.com](mailto:spendmate.assist@gmail.com)
 - **GitHub Issues:** [Report a Bug](https://github.com/farhan10ansari/spendmate/issues)
 - **GitHub Discussions:** [Join the Discussion](https://github.com/farhan10ansari/spendmate/discussions)
 - **Telegram Community:** [Join our Community](https://t.me/farhan10ansari_spend_mate_disc)
@@ -382,7 +382,7 @@ A passionate developer building modern financial tools to help people take contr
 
 - [GitHub](https://github.com/farhan10ansari) - Check out my other projects
 - [LinkedIn](https://www.linkedin.com/in/farhan10ansari/) - Professional profile
-- [Email](mailto:farhan10ansari@gmail.com) - Direct contact
+- [Email](mailto:spendmate.assist@gmail.com) - Support Mail
 
 ---
 

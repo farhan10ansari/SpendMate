@@ -9,10 +9,13 @@ import { useHaptics } from "@/contexts/HapticsProvider";
 import { useSnackbar } from "@/contexts/GlobalSnackbarProvider";
 import { Icon } from "react-native-paper";
 
+
 const APP_VERSION = process.env.EXPO_PUBLIC_APP_VERSION;
 const APP_AUTHOR = process.env.EXPO_PUBLIC_APP_AUTHOR;
 const TELEGRAM_URL = process.env.EXPO_PUBLIC_TELEGRAM_URL;
 const CONTACT_EMAIL = process.env.EXPO_PUBLIC_CONTACT_EMAIL;
+const FEEDBACK_FORM = process.env.EXPO_PUBLIC_FEEDBACK_FORM;
+
 
 export default function AboutScreen() {
     const { colors } = useAppTheme();
@@ -21,12 +24,15 @@ export default function AboutScreen() {
     const { hapticNotify } = useHaptics();
     const { showSnackbar } = useSnackbar();
 
+
     const tapCountRef = useRef(0);
     const lastTapTimeRef = useRef(0);
+
 
     const handleRepoPress = () => {
         Linking.openURL("https://github.com/farhan10ansari/SpendMate");
     };
+
 
     const handleTelegramPress = () => {
         if (TELEGRAM_URL) {
@@ -34,17 +40,27 @@ export default function AboutScreen() {
         }
     };
 
+
     const handleEmailPress = () => {
         if (CONTACT_EMAIL) {
             Linking.openURL(`mailto:${CONTACT_EMAIL}`);
         }
     };
 
+
+    const handleFeedbackPress = () => {
+        if (FEEDBACK_FORM) {
+            Linking.openURL(FEEDBACK_FORM);
+        }
+    };
+
+
     const handleVersionTap = () => {
         const now = Date.now();
         if (now - lastTapTimeRef.current > 2000) tapCountRef.current = 0;
         tapCountRef.current += 1;
         lastTapTimeRef.current = now;
+
 
         if (showDevOptions) {
             showSnackbar({
@@ -56,6 +72,7 @@ export default function AboutScreen() {
             tapCountRef.current = 0;
             return;
         }
+
 
         if (tapCountRef.current >= 5) {
             updateUiFlag("showDevOptions", true);
@@ -70,6 +87,7 @@ export default function AboutScreen() {
             tapCountRef.current = 0;
         }
     };
+
 
     const styles = StyleSheet.create({
         container: {
@@ -142,6 +160,7 @@ export default function AboutScreen() {
         },
     });
 
+
     return (
         <ScreenWrapper
             background="card"
@@ -163,6 +182,7 @@ export default function AboutScreen() {
                         </ThemedText>
                     </View>
 
+
                     <View style={styles.appInfoContainer}>
                         <Icon
                             source="wallet"
@@ -176,8 +196,10 @@ export default function AboutScreen() {
                             {`Expense management made simple, powerful, and intelligent.`}
                         </ThemedText>
 
+
                     </View>
                 </View>
+
 
                 {/* Version Section */}
                 <View style={styles.sectionContainer}>
@@ -192,9 +214,11 @@ export default function AboutScreen() {
                         </ThemedText>
                     </View>
 
+
                     <ThemedText style={styles.descriptionText}>
                         Tap the version number 5 times quickly to enable developer options for testing and debugging.
                     </ThemedText>
+
 
                     <AboutItem
                         icon="information-outline"
@@ -207,6 +231,7 @@ export default function AboutScreen() {
                         </ThemedText>
                     </AboutItem>
                 </View>
+
 
                 {/* Social Section */}
                 <View style={styles.sectionContainer}>
@@ -221,9 +246,11 @@ export default function AboutScreen() {
                         </ThemedText>
                     </View>
 
+
                     <ThemedText style={styles.descriptionText}>
                         Connect with us on various platforms for updates, support, and community discussions.
                     </ThemedText>
+
 
                     <AboutItem
                         icon="github"
@@ -241,6 +268,7 @@ export default function AboutScreen() {
                     )}
                 </View>
 
+
                 {/* Contact Section */}
                 <View style={styles.sectionContainer}>
                     <View style={styles.sectionHeader}>
@@ -254,9 +282,11 @@ export default function AboutScreen() {
                         </ThemedText>
                     </View>
 
+
                     <ThemedText style={styles.descriptionText}>
                         {"Have questions, feedback, or need support? We're here to help."}
                     </ThemedText>
+
 
                     {CONTACT_EMAIL && (
                         <AboutItem
@@ -266,11 +296,21 @@ export default function AboutScreen() {
                             onPress={handleEmailPress}
                         />
                     )}
+
+                    {FEEDBACK_FORM && (
+                        <AboutItem
+                            icon="comment-outline"
+                            title="Feedback"
+                            description="Share your feedback, suggestions, or report issues"
+                            onPress={handleFeedbackPress}
+                        />
+                    )}
                 </View>
             </View>
         </ScreenWrapper>
     );
 }
+
 
 // AboutItem component with consistent styling
 interface AboutItemProps {
@@ -281,8 +321,10 @@ interface AboutItemProps {
     children?: React.ReactNode;
 }
 
+
 function AboutItem({ icon, title, description, onPress, children }: AboutItemProps) {
     const { colors } = useAppTheme();
+
 
     const styles = StyleSheet.create({
         itemContainer: {
@@ -316,6 +358,7 @@ function AboutItem({ icon, title, description, onPress, children }: AboutItemPro
             marginBottom: children ? 4 : 0,
         },
     });
+
 
     return (
         <View style={styles.itemContainer}>
