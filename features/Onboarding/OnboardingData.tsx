@@ -127,7 +127,7 @@ export const useOnboardingData = () => {
       id: '9',
       type: 'intro',
       title: 'All Set!',
-      description: `You're all set to take control of your finances with ${APP_NAME}. Let's get started!`,
+      description: `You're all set to take control of your finances with SpendMate. Let's get started!`,
       lottie: <LottieView source={require('../../assets/lottie/success.json')} autoPlay loop style={{ height: "100%", width: "100%" }} />
     }
   ]), [colors, haptics, handleHapticsToggle])
