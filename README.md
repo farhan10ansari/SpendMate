@@ -402,7 +402,7 @@ If you find SpendMate helpful and it saves you time or money, please consider:
   <strong>Made with ❤️ by Mohd Farhan Ansari</strong>
 </p>
 <p align="center">
-  <strong>SpendMate v1.0.0</strong> | <a href="https://github.com/farhan10ansari/spendmate">GitHub</a> | <a href="https://t.me/farhan10ansari_expense_mate_disc">Community</a>
+  <strong>SpendMate v1.0.0</strong> | <a href="https://github.com/farhan10ansari/spendmate">GitHub</a> | <a href="https://t.me/farhan10ansari_spend_mate_disc">Community</a>
 </p>
 
 ---
