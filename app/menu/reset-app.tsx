@@ -9,7 +9,8 @@ import {
     List,
     Surface,
     IconButton,
-    ProgressBar
+    ProgressBar,
+    Icon
 } from 'react-native-paper';
 import RNRestart from 'react-native-restart';
 import { useAppTheme } from '@/themes/providers/AppThemeProviders';
@@ -18,6 +19,8 @@ import { useSnackbar } from '@/contexts/GlobalSnackbarProvider';
 import usePersistentAppStore from '@/stores/usePersistentAppStore';
 import { useQueryClient } from '@tanstack/react-query';
 import { useHaptics } from '@/contexts/HapticsProvider';
+import { ThemeType } from '@/themes/theme';
+
 
 export default function ResetAppScreen() {
     const queryClient = useQueryClient()
@@ -30,8 +33,10 @@ export default function ResetAppScreen() {
     const resetPersistentStore = usePersistentAppStore((state) => state.resetPersistentStore);
     const styles = createStyles(colors);
 
+
     useEffect(() => {
         let timer: number;
+
 
         if (dialogVisible && countdown > 0) {
             timer = setTimeout(() => {
@@ -39,10 +44,12 @@ export default function ResetAppScreen() {
             }, 1000) as unknown as number;
         }
 
+
         return () => {
             if (timer) clearTimeout(timer);
         };
     }, [dialogVisible, countdown]);
+
 
     const showDialog = () => {
         hapticNotify('warning');
@@ -50,30 +57,38 @@ export default function ResetAppScreen() {
         setDialogVisible(true);
     };
 
+
     const hideDialog = () => {
         setDialogVisible(false);
         setCountdown(10);
     };
 
+
     const handleReset = async () => {
         setIsResetting(true);
+
 
         try {
             // Reset database (delete all rows)
             await resetDatabase();
 
+
             // Reset Zustand store to default values
             resetPersistentStore();
 
+
             // Remove all scheduled notifications
             await removeAllNotificationSchedules()
+
 
             // Invalidate all React Query caches
             queryClient.invalidateQueries();
             queryClient.clear();
 
+
             // Haptic feedback for success
             hapticNotify('success');
+
 
             // Restart the app to apply changes
             RNRestart.restart();
@@ -89,7 +104,9 @@ export default function ResetAppScreen() {
         }
     };
 
+
     const progressValue = (10 - countdown) / 10;
+
 
     return (
         <View style={styles.container}>
@@ -114,43 +131,82 @@ export default function ResetAppScreen() {
                     </Text>
                 </Surface>
 
-                {/* Warning Section */}
-                <Surface style={styles.warningSurface} elevation={1}>
-                    <Text variant="titleMedium" style={styles.warningTitle}>
-                        ⚠️ Warning
-                    </Text>
-                    <Text variant="bodyMedium" style={styles.warningText}>
-                        This will permanently delete:
-                    </Text>
 
-                    <List.Item
-                        title="All expense records"
-                        titleStyle={styles.listItemTitle}
-                        left={props => <List.Icon {...props} icon="delete-forever" color={colors.error} />}
-                        style={styles.listItem}
-                    />
-                    <Divider />
-                    <List.Item
-                        title="All income records"
-                        titleStyle={styles.listItemTitle}
-                        left={props => <List.Icon {...props} icon="delete-forever" color={colors.error} />}
-                        style={styles.listItem}
-                    />
-                    <Divider />
-                    <List.Item
-                        title="All categories"
-                        titleStyle={styles.listItemTitle}
-                        left={props => <List.Icon {...props} icon="delete-forever" color={colors.error} />}
-                        style={styles.listItem}
-                    />
-                    <Divider />
-                    <List.Item
-                        title="App settings and preferences"
-                        titleStyle={styles.listItemTitle}
-                        left={props => <List.Icon {...props} icon="delete-forever" color={colors.error} />}
-                        style={styles.listItem}
-                    />
+                {/* Warning Section */}
+                <Surface style={styles.warningSurface} elevation={0}>
+                    <View style={styles.warningHeader}>
+                        <View style={styles.warningIconCircle}>
+                            <Icon size={24} source="alert" color={colors.error} />
+                        </View>
+                        <View style={styles.warningHeaderText}>
+                            <Text variant="titleMedium" style={styles.warningTitle}>
+                                What will be deleted
+                            </Text>
+                            <Text variant="bodySmall" style={styles.warningSubtitle}>
+                                This action cannot be undone
+                            </Text>
+                        </View>
+                    </View>
+
+                    <View style={styles.warningList}>
+                        <View style={styles.warningItem}>
+                            <View style={styles.warningItemIcon}>
+                                <Icon size={18} source="database-remove" color={colors.error} />
+                            </View>
+                            <View style={styles.warningItemContent}>
+                                <Text variant="bodyMedium" style={styles.warningItemTitle}>
+                                    All expense records
+                                </Text>
+                                <Text variant="bodySmall" style={styles.warningItemDescription}>
+                                    Your complete transaction history
+                                </Text>
+                            </View>
+                        </View>
+
+                        <View style={styles.warningItem}>
+                            <View style={styles.warningItemIcon}>
+                                <Icon size={18} source="cash-remove" color={colors.error} />
+                            </View>
+                            <View style={styles.warningItemContent}>
+                                <Text variant="bodyMedium" style={styles.warningItemTitle}>
+                                    All income records
+                                </Text>
+                                <Text variant="bodySmall" style={styles.warningItemDescription}>
+                                    Your complete income history
+                                </Text>
+                            </View>
+                        </View>
+
+                        <View style={styles.warningItem}>
+                            <View style={styles.warningItemIcon}>
+                                <Icon size={18} source="tag-remove" color={colors.error} />
+                            </View>
+                            <View style={styles.warningItemContent}>
+                                <Text variant="bodyMedium" style={styles.warningItemTitle}>
+                                    All categories
+                                </Text>
+                                <Text variant="bodySmall" style={styles.warningItemDescription}>
+                                    Custom and default categories
+                                </Text>
+                            </View>
+                        </View>
+
+                        <View style={styles.warningItem}>
+                            <View style={styles.warningItemIcon}>
+                                <Icon size={18} source="cog-off" color={colors.error} />
+                            </View>
+                            <View style={styles.warningItemContent}>
+                                <Text variant="bodyMedium" style={styles.warningItemTitle}>
+                                    App settings
+                                </Text>
+                                <Text variant="bodySmall" style={styles.warningItemDescription}>
+                                    All preferences and configurations
+                                </Text>
+                            </View>
+                        </View>
+                    </View>
                 </Surface>
+
 
                 {/* Info Section */}
                 <Surface style={styles.infoSurface} elevation={1}>
@@ -162,6 +218,7 @@ export default function ResetAppScreen() {
                         left={props => <List.Icon {...props} icon="information" color={colors.primary} />}
                     />
                 </Surface>
+
 
                 {/* Reset Button */}
                 <Button
@@ -176,29 +233,35 @@ export default function ResetAppScreen() {
                     Reset All Data
                 </Button>
 
+
                 <Text variant="bodySmall" style={styles.footerText}>
                     Make sure you have backed up any important data before proceeding
                 </Text>
             </ScrollView>
+
 
             {/* Confirmation Dialog */}
             <Portal>
                 <Dialog visible={dialogVisible} onDismiss={hideDialog} style={styles.dialog}>
                     <Dialog.Icon icon="alert-circle" color={colors.error} size={48} />
 
+
                     <Dialog.Title style={styles.dialogTitle}>
                         Confirm Reset
                     </Dialog.Title>
+
 
                     <Dialog.Content>
                         <Text variant="bodyMedium" style={styles.dialogText}>
                             Are you absolutely sure you want to reset all app data?
                         </Text>
 
+
                         <Text variant="bodyMedium" style={[styles.dialogText, { marginTop: 12 }]}>
                             This action is <Text style={styles.boldText}>permanent</Text> and{' '}
                             <Text style={styles.boldText}>cannot be undone</Text>.
                         </Text>
+
 
                         {countdown > 0 && (
                             <View style={styles.countdownContainer}>
@@ -216,6 +279,7 @@ export default function ResetAppScreen() {
                             </View>
                         )}
                     </Dialog.Content>
+
 
                     <Dialog.Actions>
                         <Button
@@ -240,7 +304,8 @@ export default function ResetAppScreen() {
     );
 }
 
-const createStyles = (colors: any) => StyleSheet.create({
+
+const createStyles = (colors: ThemeType["colors"]) => StyleSheet.create({
     container: {
         flex: 1,
         backgroundColor: colors.background,
@@ -270,26 +335,67 @@ const createStyles = (colors: any) => StyleSheet.create({
         color: colors.onSurfaceVariant,
     },
     warningSurface: {
-        padding: 16,
-        borderRadius: 12,
+        padding: 20,
+        borderRadius: 16,
         marginBottom: 16,
+        backgroundColor: colors.surface,
+        borderWidth: 1,
+        borderColor: colors.error + '20',
+    },
+    warningHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        marginBottom: 24,
+        gap: 16,
+    },
+    warningIconCircle: {
+        width: 48,
+        height: 48,
+        borderRadius: 24,
         backgroundColor: colors.errorContainer,
+        alignItems: 'center',
+        justifyContent: 'center',
+    },
+    warningHeaderText: {
+        flex: 1,
     },
     warningTitle: {
-        fontWeight: 'bold',
-        color: colors.onErrorContainer,
-        marginBottom: 8,
+        fontWeight: '600',
+        color: colors.onSurface,
+        marginBottom: 4,
     },
-    warningText: {
-        color: colors.onErrorContainer,
-        marginBottom: 12,
+    warningSubtitle: {
+        color: colors.error,
+        fontWeight: '500',
     },
-    listItem: {
-        paddingVertical: 4,
+    warningList: {
+        gap: 20,
     },
-    listItemTitle: {
-        color: colors.onErrorContainer,
-        fontSize: 14,
+    warningItem: {
+        flexDirection: 'row',
+        alignItems: 'flex-start',
+        gap: 16,
+    },
+    warningItemIcon: {
+        width: 36,
+        height: 36,
+        borderRadius: 8,
+        backgroundColor: colors.errorContainer,
+        alignItems: 'center',
+        justifyContent: 'center',
+        marginTop: 2,
+    },
+    warningItemContent: {
+        flex: 1,
+    },
+    warningItemTitle: {
+        color: colors.onSurface,
+        fontWeight: '500',
+        marginBottom: 4,
+    },
+    warningItemDescription: {
+        color: colors.onSurfaceVariant,
+        lineHeight: 18,
     },
     infoSurface: {
         borderRadius: 12,
