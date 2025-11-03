@@ -1,9 +1,9 @@
-import React, { useCallback, useMemo, useEffect, useRef, useState } from "react";
-import { View, StyleSheet, RefreshControl, useWindowDimensions } from "react-native";
+import React, { useCallback, useMemo, useRef, useState, useLayoutEffect } from "react";
+import { View, StyleSheet, RefreshControl } from "react-native";
 import { FlashList, FlashListRef } from "@shopify/flash-list";
 import { useRouter } from "expo-router";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
-import { Button, FAB, Portal } from "react-native-paper";
+import { ActivityIndicator, Button, FAB, Portal } from "react-native-paper";
 import { useIsFocused } from "@react-navigation/native";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -19,6 +19,7 @@ import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { useSnackbarState } from "@/contexts/GlobalSnackbarProvider";
 import { useLocalization } from "@/hooks/useLocalization";
 import { useCurrency } from "@/contexts/CurrencyProvider";
+import { MinimumItemsToLoadForScroll } from "@/lib/constants";
 
 type HeaderItem = {
   type: 'header';
@@ -148,8 +149,8 @@ export default function IncomesScreen() {
   ), [data]);
 
   // Auto-load more data if needed
-  useEffect(() => {
-    if (data?.pages && hasNextPage && totalIncomes < 20) {
+  useLayoutEffect(() => { //Using useLayoutEffect so that the isFetchingNextPage state is set as true to avoid rendering empty list component until atleast MinimumItemsToLoadForScroll items are loaded
+    if (data?.pages && hasNextPage && totalIncomes < MinimumItemsToLoadForScroll) {
       fetchNextPage();
     }
   }, [data, hasNextPage, totalIncomes, fetchNextPage]);
@@ -191,13 +192,13 @@ export default function IncomesScreen() {
         }
         ListFooterComponent={
           isFetchingNextPage ? (
-            <ThemedText style={styles.loadingMore}>
-              Loading more months data…
-            </ThemedText>
+            <View style={styles.loadingMore}>
+              <ActivityIndicator size="small" color={colors.primary} />
+            </View>
           ) : null
         }
         ListEmptyComponent={
-          <View style={styles.emptyContainer}>
+          isFetchingNextPage ? null : <View style={styles.emptyContainer}>
             <ThemedText type="subtitle">No income records found...</ThemedText>
             <Button
               onPress={() => router.navigate({
@@ -246,7 +247,9 @@ const styles = StyleSheet.create({
     paddingVertical: 8,
   },
   loadingMore: {
-    textAlign: "center",
+    flexDirection: "row",
+    alignItems: "center",
+    justifyContent: "center",
     marginVertical: 16,
   },
   itemSeparator: {

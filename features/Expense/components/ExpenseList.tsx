@@ -1,4 +1,4 @@
-import React, { useCallback, useMemo, useEffect, useState } from "react";
+import React, { useCallback, useMemo, useState, useLayoutEffect } from "react";
 import { View, StyleSheet, RefreshControl, useWindowDimensions } from "react-native";
 import { FlashList, FlashListRef } from "@shopify/flash-list";
 import { useRouter } from "expo-router";
@@ -14,6 +14,7 @@ import { useHaptics } from "@/contexts/HapticsProvider";
 import ErrorState from "@/components/main/ErrorState";
 import { useLocalization } from "@/hooks/useLocalization";
 import { useCurrency } from "@/contexts/CurrencyProvider";
+import { MinimumItemsToLoadForScroll } from "@/lib/constants";
 
 type HeaderItem = {
     type: 'header';
@@ -170,8 +171,8 @@ export default function ExpensesList({
     ), [data]);
 
     // Auto-load more data for "All" view if needed
-    useEffect(() => {
-        if (data?.pages && hasNextPage && totalExpenses < 20) {
+    useLayoutEffect(() => { //Using useLayoutEffect so that the isFetchingNextPage state is set as true to avoid rendering empty list component until atleast MinimumItemsToLoadForScroll items are loaded
+        if (data?.pages && hasNextPage && totalExpenses < MinimumItemsToLoadForScroll) {
             fetchNextPage();
         }
     }, [data, totalExpenses, fetchNextPage, hasNextPage]);
@@ -220,7 +221,7 @@ export default function ExpensesList({
                 ) : null
             }
             ListEmptyComponent={
-                <View style={styles.emptyContainer}>
+                isFetchingNextPage ? null : <View style={styles.emptyContainer}>
                     <ThemedText type="subtitle">No expenses records found...</ThemedText>
                     <Button
                         onPress={() => router.push("/transaction/new")}

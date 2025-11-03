@@ -294,3 +294,5 @@ export const LANGUAGE_OPTIONS: LanguageOption[] = [
         available: false,
     },
 ];
+
+export const MinimumItemsToLoadForScroll = 20;

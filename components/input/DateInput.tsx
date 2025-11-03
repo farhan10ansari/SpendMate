@@ -4,7 +4,6 @@ import { StyleProp, StyleSheet, View, ViewStyle } from 'react-native';
 import { Button } from 'react-native-paper';
 import { DatePickerModal } from 'react-native-paper-dates';
 import { SingleChange } from 'react-native-paper-dates/lib/typescript/Date/Calendar';
-import { SafeAreaProvider } from 'react-native-safe-area-context';
 import { useHaptics } from '@/contexts/HapticsProvider';
 
 type DateInputProps = {
@@ -41,7 +40,7 @@ export default function DateInput({ datetime, setDatetime, style }: DateInputPro
             setDatePickerVisibility(false);
             hapticImpact()
             setDatetime(date);
-        }, [datetime, setDatetime]);
+        }, [datetime, setDatetime, hapticImpact]);
 
     const onDismissDate = useCallback(() => {
         setDatePickerVisibility(false);
@@ -59,22 +58,19 @@ export default function DateInput({ datetime, setDatetime, style }: DateInputPro
             >
                 {datetime ? dateLabel : "Set date"}
             </Button>
-            <SafeAreaProvider>
-                <View style={styles.dateModalContainer}>
-                    <DatePickerModal
-                        locale="en"
-                        mode="single"
-                        visible={isDatePickerVisible}
-                        onConfirm={onConfirmDate}
-                        onDismiss={onDismissDate}
-                        date={datetime}
-                        animationType='slide'
-                        saveLabel="Select"
-                        placeholder='Select date'
-                        label="Select date"
-                    />
-                </View>
-            </SafeAreaProvider>
+            <DatePickerModal
+                locale="en"
+                mode="single"
+                visible={isDatePickerVisible}
+                onConfirm={onConfirmDate}
+                onDismiss={onDismissDate}
+                date={datetime}
+                animationType='slide'
+                saveLabel="Select"
+                placeholder='Select date'
+                label="Select date"
+                disableStatusBar
+            />
         </View>
     );
 }
