@@ -6265,10 +6265,10 @@ react-native-reanimated@~3.17.4:
     invariant "^2.2.4"
     react-native-is-edge-to-edge "1.1.7"
 
-react-native-restart@^0.0.27:
-  version "0.0.27"
-  resolved "https://registry.yarnpkg.com/react-native-restart/-/react-native-restart-0.0.27.tgz#43aa8210312c9dfa5ec7bd4b2f35238ad7972b19"
-  integrity sha512-8KScVICrXwcTSJ1rjWkqVTHyEKQIttm5AIMGSK1QG1+RS5owYlE4z/1DykOTdWfVl9l16FIk0w9Xzk9ZO6jxlA==
+react-native-restart-newarch@^1.0.85:
+  version "1.0.85"
+  resolved "https://registry.yarnpkg.com/react-native-restart-newarch/-/react-native-restart-newarch-1.0.85.tgz#cc3143203832b58cc425d0d6d6c9ab1d61d25a39"
+  integrity sha512-oanl4m0aI9wI91F0Lc1xEK3zM+hs8NK1PBQPnf4XZjrYWsVahdWX6gYdTNhDpR8ekpBHSXkBPr7meGHwfHfNKQ==
 
 react-native-safe-area-context@5.4.0:
   version "5.4.0"

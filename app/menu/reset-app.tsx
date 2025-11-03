@@ -5,14 +5,13 @@ import {
     Button,
     Portal,
     Dialog,
-    Divider,
     List,
     Surface,
     IconButton,
     ProgressBar,
     Icon
 } from 'react-native-paper';
-import RNRestart from 'react-native-restart';
+import RNRestart from "react-native-restart-newarch";
 import { useAppTheme } from '@/themes/providers/AppThemeProviders';
 import { removeAllNotificationSchedules, resetDatabase } from '@/lib/reset';
 import { useSnackbar } from '@/contexts/GlobalSnackbarProvider';
@@ -83,7 +82,6 @@ export default function ResetAppScreen() {
 
             // Invalidate all React Query caches
             queryClient.invalidateQueries();
-            queryClient.clear();
 
 
             // Haptic feedback for success
