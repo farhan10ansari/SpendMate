@@ -5,7 +5,7 @@ We welcome contributions! Here's how you can help:
 ## Quick Start
 
 1. Fork the repository
-2. Clone your fork: `git clone https://github.com/your-username/SpendMate.git`
+2. Clone it: `git clone https://github.com/farhan10ansari/SpendMate.git`
 3. Create a branch: `git checkout -b feature/your-feature`
 4. Make changes and test them
 5. Commit: `git commit -m 'Add feature'`
@@ -17,7 +17,7 @@ We welcome contributions! Here's how you can help:
 - Keep PRs focused and reasonably sized
 - Reference related issues in your PR
 - We review PRs within 24-48 hours
-- Follow the [Code of Conduct](CODE_OF_CONDUCT.md)
+- Follow the Code of Conduct below
 
 ## Have Questions?
 
@@ -26,14 +26,8 @@ We welcome contributions! Here's how you can help:
 - **Telegram:** [Join community](https://t.me/farhan10ansari_spend_mate_disc)
 
 Thank you for contributing! 🚀
-```
 
 
-***
-
-## **CODE_OF_CONDUCT.md**
-
-```markdown
 # Code of Conduct
 
 ## Our Pledge
