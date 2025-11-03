@@ -1,6 +1,6 @@
 # Privacy Policy
 
-**Last Updated:** November 2025
+**Last Updated:** November 4, 2025
 
 When you use SpendMate, we want you to know about the information we collect and how we use it. Please read this Privacy Policy carefully.
 
