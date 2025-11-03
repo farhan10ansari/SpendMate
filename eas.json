@@ -12,7 +12,8 @@
         "EXPO_PUBLIC_APP_AUTHOR": "farhan10ansari",
         "EXPO_PUBLIC_TELEGRAM_URL": "https://t.me/farhan10ansari_spend_mate_disc",
         "EXPO_PUBLIC_CONTACT_EMAIL": "spendmate.assist@gmail.com",
-        "EXPO_PUBLIC_FEEDBACK_FORM": "https://docs.google.com/forms/d/e/1FAIpQLSf7GlwOl6N6e8XWAOlLJiOzxY4gFnghFXg4yrtGHEoVV1UfAg/viewform?usp=header"
+        "EXPO_PUBLIC_FEEDBACK_FORM": "https://docs.google.com/forms/d/e/1FAIpQLSf7GlwOl6N6e8XWAOlLJiOzxY4gFnghFXg4yrtGHEoVV1UfAg/viewform?usp=header",
+        "EXPO_PUBLIC_PRIVACY_POLICY": "https://farhan10ansari.github.io/SpendMate/privacy-policy"
       }
     },
     "preview": {
@@ -25,7 +26,8 @@
         "EXPO_PUBLIC_APP_AUTHOR": "farhan10ansari",
         "EXPO_PUBLIC_TELEGRAM_URL": "https://t.me/farhan10ansari_spend_mate_disc",
         "EXPO_PUBLIC_CONTACT_EMAIL": "spendmate.assist@gmail.com",
-        "EXPO_PUBLIC_FEEDBACK_FORM": "https://docs.google.com/forms/d/e/1FAIpQLSf7GlwOl6N6e8XWAOlLJiOzxY4gFnghFXg4yrtGHEoVV1UfAg/viewform?usp=header"
+        "EXPO_PUBLIC_FEEDBACK_FORM": "https://docs.google.com/forms/d/e/1FAIpQLSf7GlwOl6N6e8XWAOlLJiOzxY4gFnghFXg4yrtGHEoVV1UfAg/viewform?usp=header",
+        "EXPO_PUBLIC_PRIVACY_POLICY": "https://farhan10ansari.github.io/SpendMate/privacy-policy"
       }
     },
     "production": {
@@ -35,7 +37,8 @@
         "EXPO_PUBLIC_APP_AUTHOR": "farhan10ansari",
         "EXPO_PUBLIC_TELEGRAM_URL": "https://t.me/farhan10ansari_spend_mate_disc",
         "EXPO_PUBLIC_CONTACT_EMAIL": "spendmate.assist@gmail.com",
-        "EXPO_PUBLIC_FEEDBACK_FORM": "https://docs.google.com/forms/d/e/1FAIpQLSf7GlwOl6N6e8XWAOlLJiOzxY4gFnghFXg4yrtGHEoVV1UfAg/viewform?usp=header"
+        "EXPO_PUBLIC_FEEDBACK_FORM": "https://docs.google.com/forms/d/e/1FAIpQLSf7GlwOl6N6e8XWAOlLJiOzxY4gFnghFXg4yrtGHEoVV1UfAg/viewform?usp=header",
+        "EXPO_PUBLIC_PRIVACY_POLICY": "https://farhan10ansari.github.io/SpendMate/privacy-policy"
       }
     }
   },
