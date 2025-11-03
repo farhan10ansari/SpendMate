@@ -32,9 +32,7 @@ The app may show ads to support development. Ad networks may collect general dev
 
 Your locally-stored financial data is protected with:
 - Biometric authentication (fingerprint/face recognition)
-- PIN protection option
-- Encrypted local storage
-- Session timeout for added security
+- Local encryption on your device
 
 ---
 
