@@ -12,7 +12,6 @@ import { Icon } from "react-native-paper";
 const APP_NAME = process.env.EXPO_PUBLIC_APP_NAME;
 const APP_VERSION = process.env.EXPO_PUBLIC_APP_VERSION;
 const APP_AUTHOR = process.env.EXPO_PUBLIC_APP_AUTHOR;
-const APP_DESCRIPTION = process.env.EXPO_PUBLIC_APP_DESCRIPTION;
 const TELEGRAM_URL = process.env.EXPO_PUBLIC_TELEGRAM_URL;
 const CONTACT_EMAIL = process.env.EXPO_PUBLIC_CONTACT_EMAIL;
 
@@ -176,7 +175,7 @@ export default function AboutScreen() {
                         <ThemedText style={styles.appVersion}>Version {APP_VERSION}</ThemedText>
                         {APP_DESCRIPTION && (
                             <ThemedText style={styles.appDescription}>
-                                {APP_DESCRIPTION}
+                                {`Expense management made simple, powerful, and intelligent.`}
                             </ThemedText>
                         )}
                     </View>
