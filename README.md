@@ -8,7 +8,7 @@ SpendMate is a modern, feature-rich personal finance app designed to help you tr
 
 <div align="center">
 
-[![GitHub Stars](https://img.shields.io/github/stars/farhan10ansari/spendmate?style=social)](https://github.com/farhan10ansari/spendmate)
+[![GitHub](https://img.shields.io/github/stars/farhan10ansari/spendmate?style=social)](https://github.com/farhan10ansari/spendmate)
 [![License: BSL](https://img.shields.io/badge/License-MIT-yellow.svg)](https://github.com/farhan10ansari/SpendMate/blob/main/LICENSE)
 [![Version](https://img.shields.io/badge/version-1.0.0-blue)](https://github.com/farhan10ansari/spendmate/releases)
 [![Status](https://img.shields.io/badge/Status-Active%20Development-brightgreen)](https://github.com/farhan10ansari/spendmate)
