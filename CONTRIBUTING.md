@@ -32,7 +32,7 @@ Thank you for contributing! 🚀
 
 ## Our Pledge
 
-We are committed to providing a welcoming and inclusive environment for all contributors and community members, regardless of age, body size, disability, ethnicity, gender identity, level of experience, education, socioeconomic status, nationality, personal appearance, race, religion, or sexual identity and orientation.
+We are committed to providing a welcoming and inclusive environment for all contributors and community members, regardless of age, body size, disability, ethnicity, gender identity, level of experience, education, socioeconomic status, nationality, personal appearance, race or religion.
 
 ## Our Standards
 
