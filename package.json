@@ -12,6 +12,7 @@
     "doctor": "npx expo-doctor",
     "prebuild": "npx expo prebuild",
     "build:preview": "eas build -p android --profile preview",
+    "build:preview:local": "export TMPDIR=~/tmp && eas build -p android --profile preview --local",
     "build:development": "eas build -p android --profile development",
     "build:production": "eas build -p android --profile production"
   },
