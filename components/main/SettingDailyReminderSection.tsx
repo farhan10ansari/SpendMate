@@ -16,6 +16,7 @@ import { TimePickerModal } from "react-native-paper-dates";
 import SettingSwitchListItem from "@/components/main/SettingSwitchListItem";
 import { MaterialCommunityIcons } from "@expo/vector-icons";
 import { useSnackbar } from "@/contexts/GlobalSnackbarProvider";
+import { uiLog } from "@/lib/logger";
 
 
 
@@ -219,6 +220,29 @@ function DailyReminderSection() {
     },
     [setDailyReminder, cancelDailyReminder, time],
   );
+
+  useEffect(() => {
+    try {
+      Notifications.getAllScheduledNotificationsAsync().then((scheduledNotifications) => {
+        console.log("Scheduled notifications:", scheduledNotifications);
+        if (scheduledNotifications.length === 0 && dailyReminderNotificationId !== null) {
+          // Notification was deleted externally, update state
+          updateSettings("dailyReminderNotificationId", null);
+        } else if (scheduledNotifications.length > 0 && (dailyReminderNotificationId === null || dailyReminderNotificationId !== scheduledNotifications[0].identifier)) {
+          // Notification was added externally, update state
+          const trigger = scheduledNotifications[0].trigger as Notifications.DailyTriggerInput;
+
+          if (trigger && trigger.type === "daily" && trigger.hour !== undefined && trigger.minute !== undefined) {
+            updateSettings("dailyReminderNotificationId", scheduledNotifications[0].identifier);
+            updateSettings("dailyReminderTime", { hour: trigger.hour, minute: trigger.minute });
+
+          }
+        }
+      });
+    } catch (error) {
+      uiLog.error("Error syncing scheduled notifications:", error);
+    }
+  }, []);
 
 
   // Time display respects localization and 24-hour clock preferences
