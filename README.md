@@ -320,12 +320,16 @@ Checks code quality and style issues.
 
 - [x] Core CRUD operations for income and expenses
 - [x] Multi-period analytics dashboard
-- [x] Custom categories and income sources
+- [x] Custom expense categories and income sources
 - [x] Light/Dark theme support
 - [x] Biometric app lock
 - [x] Backup and restore functionality
 - [x] Daily reminders
+- [x] Onboarding tutorial
+- [x] Haptic feedbacks
 - [x] Multi-currency support
+- [x] Statistics: net income, savings rate, transaction counts, daily averages, top categories etc
+- [x] Reset App Data
 - [ ] Multi-device cloud sync
 - [ ] More-Themes Support
 - [ ] Budget goals and alerts
