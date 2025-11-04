@@ -4,14 +4,11 @@
     "slug": "SpendMate",
     "version": "1.0.0",
     "orientation": "default",
-    "icon": "./assets/images/icon.png",
+    "icon": "./assets/images/adaptive-icon.png",
     "scheme": "spendmate",
     "userInterfaceStyle": "automatic",
     "newArchEnabled": true,
-    "platforms": [
-      "ios",
-      "android"
-    ],
+    "platforms": ["ios", "android"],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.farhan10ansari.spendmate"
@@ -19,6 +16,7 @@
     "android": {
       "adaptiveIcon": {
         "foregroundImage": "./assets/images/adaptive-icon.png",
+        "monochromeImage": "./assets/images/adaptive-icon.png",
         "backgroundColor": "#ffffff"
       },
       "edgeToEdgeEnabled": true,
@@ -34,15 +32,19 @@
       [
         "expo-splash-screen",
         {
-          "image": "./assets/images/splash-icon.png",
+          "image": "./assets/images/splash-icon-dark.png",
           "imageWidth": 200,
           "resizeMode": "contain",
-          "backgroundColor": "#ffffff"
+          "backgroundColor": "#ffffff",
+          "dark": {
+            "image": "./assets/images/splash-icon-light.png",
+            "backgroundColor": "#000000"
+          }
         }
       ],
       "expo-sqlite",
       "expo-localization",
-      "expo-web-browser",
+      "expo-web-browser", 
       "expo-font",
       [
         "expo-local-authentication",
@@ -53,7 +55,7 @@
       [
         "expo-notifications",
         {
-          "icon": "./assets/images/favicon.png",
+          "icon": "./assets/images/notification-icon.png",
           "color": "#000000",
           "defaultChannel": "default",
           "enableBackgroundRemoteNotifications": false
