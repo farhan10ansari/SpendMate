@@ -3,6 +3,7 @@ import { View, StyleProp, StyleSheet, TextStyle } from "react-native";
 import { Card, IconButton, Portal, Dialog } from "react-native-paper";
 import { ThemedText } from "@/components/base/ThemedText";
 import { useAppTheme } from "@/themes/providers/AppThemeProviders";
+import { useHaptics } from "@/contexts/HapticsProvider";
 
 type StatsCardProps = {
     title: string;
@@ -44,6 +45,7 @@ const StatsCard = ({
     const { colors } = useAppTheme();
     const [showDesc, setShowDesc] = useState(false);
     const resolvedTextColor = textColor ?? colors.text;
+    const { hapticImpact } = useHaptics();
 
     // Helper function to render prefix/suffix
     const renderTextOrNode = (item: React.ReactNode) => {
@@ -96,13 +98,19 @@ const StatsCard = ({
                     {infoIcon ? (
                         // Custom icon provided as prop
                         React.cloneElement(infoIcon, {
-                            onPress: () => setShowDesc(true),
+                            onPress: () => {
+                                hapticImpact()
+                                setShowDesc(true)
+                            },
                         })
                     ) : (
                         <IconButton
                             icon="information-outline"
                             size={20}
-                            onPress={() => setShowDesc(true)}
+                            onPress={() => {
+                                hapticImpact()
+                                setShowDesc(true)
+                            }}
                             accessibilityLabel="Info"
                             rippleColor={colors.backdrop}
                             iconColor={infoIconColor ?? colors.inverseOnSurface}

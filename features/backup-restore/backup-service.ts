@@ -6,7 +6,7 @@ import { log } from '@/lib/logger';
 import { BackupData, BackupMetadata } from '@/lib/types';
 import { getErrorMessage } from '@/lib/utils';
 import * as Sharing from 'expo-sharing';
-import { EMBAK_MIME_TYPE, EMBAK_EXTENSION } from './constants';
+import { BACKUP_MIME_TYPE, BACKUP_EXTENSION } from './constants';
 
 function validateBackup(backup: unknown): backup is BackupData {
   if (!backup || typeof backup !== 'object') {
@@ -112,15 +112,15 @@ export class BackupService {
       log.debug(`Backup JSON size: ${(jsonString.length / 1024).toFixed(2)} KB`);
 
       let backupFileName = fileName;
-      if (!backupFileName.endsWith(EMBAK_EXTENSION)) {
-        backupFileName = backupFileName.replace(/\.[^/.]+$/, '') + EMBAK_EXTENSION;
+      if (!backupFileName.endsWith(BACKUP_EXTENSION)) {
+        backupFileName = backupFileName.replace(/\.[^/.]+$/, '') + BACKUP_EXTENSION;
       }
       log.debug('Creating backup file with extension:', backupFileName);
 
       const fileUri = await FileSystem.StorageAccessFramework.createFileAsync(
         folderUri,
         backupFileName,
-        EMBAK_MIME_TYPE
+        BACKUP_MIME_TYPE
       );
 
       log.debug('Backup file created at:', fileUri);
@@ -149,7 +149,7 @@ export class BackupService {
       }
 
       const fileInfo = await FileSystem.getInfoAsync(fileUri);
-      const fileName = fileUri.split('/').pop() || `unknown${EMBAK_EXTENSION}`;
+      const fileName = fileUri.split('/').pop() || `unknown${BACKUP_EXTENSION}`;
 
       const metadata: BackupMetadata = {
         name: backup.name,
@@ -194,7 +194,7 @@ export class BackupService {
       const backups: BackupMetadata[] = [];
 
       for (const fileUri of files) {
-        if (fileUri.endsWith(EMBAK_EXTENSION)) {
+        if (fileUri.endsWith(BACKUP_EXTENSION)) {
           const metadata = await this.getBackupMetadata(fileUri);
           if (metadata) {
             backups.push(metadata);
@@ -243,7 +243,10 @@ export class BackupService {
       log.debug('Reading backup content for sharing');
       const content = await FileSystem.StorageAccessFramework.readAsStringAsync(fileUri);
 
-      const fileName = `${backupName}${EMBAK_EXTENSION}`.replace(/[^a-zA-Z0-9._-]/g, '_');
+      // Remove any existing extension from backupName first, then add .smbak
+      const nameWithoutExtension = backupName.replace(/\.[^/.]+$/, '');
+      const sanitizedName = nameWithoutExtension.replace(/[^a-zA-Z0-9_-]/g, '_');
+      const fileName = `${sanitizedName}${BACKUP_EXTENSION}`;
       const cacheUri = `${FileSystem.cacheDirectory}${fileName}`;
 
       log.debug('Writing backup to cache:', cacheUri);
@@ -251,8 +254,10 @@ export class BackupService {
 
       log.debug('Opening share dialog');
       await Sharing.shareAsync(cacheUri, {
-        mimeType: EMBAK_MIME_TYPE,
-        dialogTitle: 'Save Backup File'
+        mimeType: BACKUP_MIME_TYPE,
+        dialogTitle: 'Share Backup File',
+        // only for ios
+        // UTI: 'com.spendmate.backup',
       });
 
       // Cleanup cache file
@@ -314,7 +319,7 @@ export class BackupService {
       log.info('Starting backup import process');
 
       const result = await DocumentPicker.getDocumentAsync({
-        type: [EMBAK_MIME_TYPE, 'application/json', '*/*'],
+        type: [BACKUP_MIME_TYPE, 'application/json', '*/*'],
         copyToCacheDirectory: true,
         multiple: false,
       });
@@ -349,13 +354,13 @@ export class BackupService {
         throw new Error(errorMsg);
       }
 
-      const fileName = `Imported_${Date.now()}${EMBAK_EXTENSION}`;
+      const fileName = `Imported_${Date.now()}${BACKUP_EXTENSION}`;
       log.debug('Creating imported backup file:', fileName);
 
       const destinationUri = await FileSystem.StorageAccessFramework.createFileAsync(
         folderUri,
         fileName,
-        EMBAK_MIME_TYPE
+        BACKUP_MIME_TYPE
       );
 
       await FileSystem.StorageAccessFramework.writeAsStringAsync(destinationUri, content);

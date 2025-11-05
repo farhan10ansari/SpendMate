@@ -189,9 +189,9 @@ export function useBackupManager() {
       log.info('Sharing backup:', backup.fileName);
       hapticImpact();
 
-      await backupService.shareBackup(backup.filePath, backup.fileName);
+      await backupService.shareBackup(backup.filePath, backup.name);
 
-      log.info('Backup shared successfully:', backup.fileName);
+      log.info('Backup shared successfully:', backup.name);
     } catch (error) {
       const errorMsg = getErrorMessage(error);
       log.error('Failed to share backup:', errorMsg);

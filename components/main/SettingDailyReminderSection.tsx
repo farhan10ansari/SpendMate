@@ -224,7 +224,6 @@ function DailyReminderSection() {
   useEffect(() => {
     try {
       Notifications.getAllScheduledNotificationsAsync().then((scheduledNotifications) => {
-        console.log("Scheduled notifications:", scheduledNotifications);
         if (scheduledNotifications.length === 0 && dailyReminderNotificationId !== null) {
           // Notification was deleted externally, update state
           updateSettings("dailyReminderNotificationId", null);
