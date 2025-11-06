@@ -1,4 +1,4 @@
-import { StyleSheet, View } from "react-native";
+ import { StyleSheet, View } from "react-native";
 import { ThemedText } from "@/components/base/ThemedText";
 import { useAppTheme } from "@/themes/providers/AppThemeProviders";
 import { ScreenWrapper } from "@/components/main/ScreenWrapper";

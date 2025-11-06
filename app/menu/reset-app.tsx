@@ -19,6 +19,8 @@ import usePersistentAppStore from '@/stores/usePersistentAppStore';
 import { useQueryClient } from '@tanstack/react-query';
 import { useHaptics } from '@/contexts/HapticsProvider';
 import { ThemeType } from '@/themes/theme';
+import { ScreenWrapper } from '@/components/main/ScreenWrapper';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 
 export default function ResetAppScreen() {
@@ -31,6 +33,7 @@ export default function ResetAppScreen() {
     const { showSnackbar } = useSnackbar();
     const resetPersistentStore = usePersistentAppStore((state) => state.resetPersistentStore);
     const styles = createStyles(colors);
+    const insets = useSafeAreaInsets();
 
 
     useEffect(() => {
@@ -107,135 +110,135 @@ export default function ResetAppScreen() {
 
 
     return (
-        <View style={styles.container}>
-            <ScrollView
-                contentContainerStyle={styles.scrollContent}
-                showsVerticalScrollIndicator={false}
-            >
-                {/* Header Section */}
-                <Surface style={styles.headerSurface} elevation={2}>
-                    <View style={styles.iconContainer}>
-                        <IconButton
-                            icon="alert-circle-outline"
-                            size={64}
-                            iconColor={colors.error}
-                        />
-                    </View>
-                    <Text variant="headlineMedium" style={styles.title}>
-                        Reset App Data
-                    </Text>
-                    <Text variant="bodyMedium" style={styles.subtitle}>
-                        This action will permanently delete all your data
-                    </Text>
-                </Surface>
-
-
-                {/* Warning Section */}
-                <Surface style={styles.warningSurface} elevation={0}>
-                    <View style={styles.warningHeader}>
-                        <View style={styles.warningIconCircle}>
-                            <Icon size={24} source="alert" color={colors.error} />
-                        </View>
-                        <View style={styles.warningHeaderText}>
-                            <Text variant="titleMedium" style={styles.warningTitle}>
-                                What will be deleted
-                            </Text>
-                            <Text variant="bodySmall" style={styles.warningSubtitle}>
-                                This action cannot be undone
-                            </Text>
-                        </View>
-                    </View>
-
-                    <View style={styles.warningList}>
-                        <View style={styles.warningItem}>
-                            <View style={styles.warningItemIcon}>
-                                <Icon size={18} source="database-remove" color={colors.error} />
-                            </View>
-                            <View style={styles.warningItemContent}>
-                                <Text variant="bodyMedium" style={styles.warningItemTitle}>
-                                    All expense records
-                                </Text>
-                                <Text variant="bodySmall" style={styles.warningItemDescription}>
-                                    Your complete transaction history
-                                </Text>
-                            </View>
-                        </View>
-
-                        <View style={styles.warningItem}>
-                            <View style={styles.warningItemIcon}>
-                                <Icon size={18} source="cash-remove" color={colors.error} />
-                            </View>
-                            <View style={styles.warningItemContent}>
-                                <Text variant="bodyMedium" style={styles.warningItemTitle}>
-                                    All income records
-                                </Text>
-                                <Text variant="bodySmall" style={styles.warningItemDescription}>
-                                    Your complete income history
-                                </Text>
-                            </View>
-                        </View>
-
-                        <View style={styles.warningItem}>
-                            <View style={styles.warningItemIcon}>
-                                <Icon size={18} source="tag-remove" color={colors.error} />
-                            </View>
-                            <View style={styles.warningItemContent}>
-                                <Text variant="bodyMedium" style={styles.warningItemTitle}>
-                                    All categories
-                                </Text>
-                                <Text variant="bodySmall" style={styles.warningItemDescription}>
-                                    Custom and default categories
-                                </Text>
-                            </View>
-                        </View>
-
-                        <View style={styles.warningItem}>
-                            <View style={styles.warningItemIcon}>
-                                <Icon size={18} source="cog-off" color={colors.error} />
-                            </View>
-                            <View style={styles.warningItemContent}>
-                                <Text variant="bodyMedium" style={styles.warningItemTitle}>
-                                    App settings
-                                </Text>
-                                <Text variant="bodySmall" style={styles.warningItemDescription}>
-                                    All preferences and configurations
-                                </Text>
-                            </View>
-                        </View>
-                    </View>
-                </Surface>
-
-
-                {/* Info Section */}
-                <Surface style={styles.infoSurface} elevation={1}>
-                    <List.Item
-                        title="Cannot be undone"
-                        description="This action is permanent and cannot be reversed"
-                        titleStyle={styles.infoTitle}
-                        descriptionStyle={styles.infoDescription}
-                        left={props => <List.Icon {...props} icon="information" color={colors.primary} />}
+        <ScreenWrapper
+            background="background"
+            withScrollView
+            contentContainerStyle={[styles.scrollContent,{ paddingBottom: insets.bottom + 16 }]}
+        >
+            {/* Header Section */}
+            <Surface style={styles.headerSurface} elevation={2}>
+                <View style={styles.iconContainer}>
+                    <IconButton
+                        icon="alert-circle-outline"
+                        size={64}
+                        iconColor={colors.error}
                     />
-                </Surface>
-
-
-                {/* Reset Button */}
-                <Button
-                    mode="contained"
-                    onPress={showDialog}
-                    style={styles.resetButton}
-                    buttonColor={colors.error}
-                    contentStyle={styles.buttonContent}
-                    labelStyle={styles.buttonLabel}
-                    icon="restart"
-                >
-                    Reset All Data
-                </Button>
-
-
-                <Text variant="bodySmall" style={styles.footerText}>
-                    Make sure you have backed up any important data before proceeding
+                </View>
+                <Text variant="headlineMedium" style={styles.title}>
+                    Reset App Data
                 </Text>
-            </ScrollView>
+                <Text variant="bodyMedium" style={styles.subtitle}>
+                    This action will permanently delete all your data
+                </Text>
+            </Surface>
+
+
+            {/* Warning Section */}
+            <Surface style={styles.warningSurface} elevation={0}>
+                <View style={styles.warningHeader}>
+                    <View style={styles.warningIconCircle}>
+                        <Icon size={24} source="alert" color={colors.error} />
+                    </View>
+                    <View style={styles.warningHeaderText}>
+                        <Text variant="titleMedium" style={styles.warningTitle}>
+                            What will be deleted
+                        </Text>
+                        <Text variant="bodySmall" style={styles.warningSubtitle}>
+                            This action cannot be undone
+                        </Text>
+                    </View>
+                </View>
+
+                <View style={styles.warningList}>
+                    <View style={styles.warningItem}>
+                        <View style={styles.warningItemIcon}>
+                            <Icon size={18} source="database-remove" color={colors.error} />
+                        </View>
+                        <View style={styles.warningItemContent}>
+                            <Text variant="bodyMedium" style={styles.warningItemTitle}>
+                                All expense records
+                            </Text>
+                            <Text variant="bodySmall" style={styles.warningItemDescription}>
+                                Your complete transaction history
+                            </Text>
+                        </View>
+                    </View>
+
+                    <View style={styles.warningItem}>
+                        <View style={styles.warningItemIcon}>
+                            <Icon size={18} source="cash-remove" color={colors.error} />
+                        </View>
+                        <View style={styles.warningItemContent}>
+                            <Text variant="bodyMedium" style={styles.warningItemTitle}>
+                                All income records
+                            </Text>
+                            <Text variant="bodySmall" style={styles.warningItemDescription}>
+                                Your complete income history
+                            </Text>
+                        </View>
+                    </View>
+
+                    <View style={styles.warningItem}>
+                        <View style={styles.warningItemIcon}>
+                            <Icon size={18} source="tag-remove" color={colors.error} />
+                        </View>
+                        <View style={styles.warningItemContent}>
+                            <Text variant="bodyMedium" style={styles.warningItemTitle}>
+                                All categories
+                            </Text>
+                            <Text variant="bodySmall" style={styles.warningItemDescription}>
+                                Custom and default categories
+                            </Text>
+                        </View>
+                    </View>
+
+                    <View style={styles.warningItem}>
+                        <View style={styles.warningItemIcon}>
+                            <Icon size={18} source="cog-off" color={colors.error} />
+                        </View>
+                        <View style={styles.warningItemContent}>
+                            <Text variant="bodyMedium" style={styles.warningItemTitle}>
+                                App settings
+                            </Text>
+                            <Text variant="bodySmall" style={styles.warningItemDescription}>
+                                All preferences and configurations
+                            </Text>
+                        </View>
+                    </View>
+                </View>
+            </Surface>
+
+
+            {/* Info Section */}
+            <Surface style={styles.infoSurface} elevation={1}>
+                <List.Item
+                    title="Cannot be undone"
+                    description="This action is permanent and cannot be reversed"
+                    titleStyle={styles.infoTitle}
+                    descriptionStyle={styles.infoDescription}
+                    left={props => <List.Icon {...props} icon="information" color={colors.primary} />}
+                />
+            </Surface>
+
+
+            {/* Reset Button */}
+            <Button
+                mode="contained"
+                onPress={showDialog}
+                style={styles.resetButton}
+                buttonColor={colors.error}
+                contentStyle={styles.buttonContent}
+                labelStyle={styles.buttonLabel}
+                icon="restart"
+            >
+                Reset All Data
+            </Button>
+
+
+            <Text variant="bodySmall" style={styles.footerText}>
+                Make sure you have backed up any important data before proceeding
+            </Text>
+            {/* </ScrollView> */}
 
 
             {/* Confirmation Dialog */}
@@ -298,7 +301,7 @@ export default function ResetAppScreen() {
                     </Dialog.Actions>
                 </Dialog>
             </Portal>
-        </View>
+        </ScreenWrapper>
     );
 }
 
@@ -310,7 +313,6 @@ const createStyles = (colors: ThemeType["colors"]) => StyleSheet.create({
     },
     scrollContent: {
         padding: 16,
-        paddingBottom: 32,
     },
     headerSurface: {
         padding: 24,

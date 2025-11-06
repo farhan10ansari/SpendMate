@@ -1,7 +1,6 @@
-// components/onboarding/OnboardingItem.tsx
 import React from 'react';
-import { View, useWindowDimensions, StyleSheet } from 'react-native';
-import { Text, Card, RadioButton, Icon } from 'react-native-paper';
+import { View, useWindowDimensions, StyleSheet, ScrollView } from 'react-native';
+import { Text, Icon } from 'react-native-paper';
 import Animated, {
   Extrapolation,
   interpolate,
@@ -26,8 +25,31 @@ export default function OnboardingItem({
   settings,
   onSettingChange,
 }: Props) {
-  const { width: SCREEN_WIDTH } = useWindowDimensions();
+  const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
   const theme = useAppTheme();
+
+  // Responsive sizing based on screen dimensions
+  const isSmallScreen = SCREEN_HEIGHT < 700;
+  const isTinyScreen = SCREEN_HEIGHT < 600;
+  
+  // Icon size responsive scaling
+  const iconSize = isTinyScreen ? 80 : isSmallScreen ? 100 : 120;
+  
+  // Lottie animation container size
+  const lottieContainerHeight = Math.min(SCREEN_WIDTH * 0.8, isTinyScreen ? 250 : isSmallScreen ? 300 : 400);
+  
+  // Font sizes with responsive scaling
+  const titleFontSize = isTinyScreen ? 20 : isSmallScreen ? 24 : 28;
+  const titleLineHeight = isTinyScreen ? 26 : isSmallScreen ? 30 : 34;
+  const descriptionFontSize = isTinyScreen ? 13 : isSmallScreen ? 14 : 16;
+  const descriptionLineHeight = isTinyScreen ? 18 : isSmallScreen ? 20 : 24;
+  
+  // Spacing adjustments
+  const iconBottomMargin = isTinyScreen ? 16 : isSmallScreen ? 24 : 32;
+  const titleBottomMargin = isTinyScreen ? 8 : isSmallScreen ? 12 : 16;
+  const descriptionBottomMargin = isTinyScreen ? 16 : isSmallScreen ? 24 : 32;
+  const horizontalPadding = isTinyScreen ? 16 : 24;
+  const contentBottomPadding = isTinyScreen ? 10 : isSmallScreen ? 15 : 20;
 
   const animatedStyle = useAnimatedStyle(() => {
     const translateY = interpolate(
@@ -69,39 +91,81 @@ export default function OnboardingItem({
     };
   }, [index, x]);
 
-
   return (
     <Animated.View
       style={[
         styles.container,
-        { width: SCREEN_WIDTH },
+        { width: SCREEN_WIDTH, paddingHorizontal: horizontalPadding },
         animatedStyle,
       ]}
     >
-      <View style={styles.content}>
-        {item.lottie ?
-          <View style={{ height: Math.min(SCREEN_WIDTH, 400), width: SCREEN_WIDTH, alignItems: 'center', justifyContent: 'center', padding: 20 }}>
+      <ScrollView 
+        contentContainerStyle={[styles.content, { paddingBottom: contentBottomPadding }]}
+        showsVerticalScrollIndicator={false}
+        bounces={false}
+      >
+        {item.lottie ? (
+          <View 
+            style={{ 
+              height: lottieContainerHeight, 
+              width: SCREEN_WIDTH - (horizontalPadding * 2), 
+              alignItems: 'center', 
+              justifyContent: 'center', 
+              paddingVertical: isTinyScreen ? 10 : 20 
+            }}
+          >
             {item.lottie}
           </View>
-          :
-          <View style={{ ...styles.iconContainer }}>
+        ) : (
+          <View style={{ 
+            ...styles.iconContainer, 
+            width: iconSize, 
+            height: iconSize, 
+            borderRadius: iconSize / 2,
+            marginBottom: iconBottomMargin 
+          }}>
             {typeof item.icon === 'string' ? (
-              <Icon source={item.icon} size={120} color={theme.colors.primary} />
+              <Icon source={item.icon} size={iconSize} color={theme.colors.primary} />
             ) : (
               item.icon
             )}
           </View>
-        }
+        )}
 
-        <Text style={[styles.title, { color: theme.colors.onBackground }]}>
+        <Text 
+          style={[
+            styles.title, 
+            { 
+              color: theme.colors.onBackground,
+              fontSize: titleFontSize,
+              lineHeight: titleLineHeight,
+              marginBottom: titleBottomMargin
+            }
+          ]}
+        >
           {item.title}
         </Text>
 
-        <Text style={[styles.description, { color: theme.colors.onSurfaceVariant }]}>
+        <Text 
+          style={[
+            styles.description, 
+            { 
+              color: theme.colors.onSurfaceVariant,
+              fontSize: descriptionFontSize,
+              lineHeight: descriptionLineHeight,
+              marginBottom: descriptionBottomMargin
+            }
+          ]}
+        >
           {item.description}
         </Text>
-        {item.component}
-      </View>
+        
+        {item.component && (
+          <View style={{ width: '100%', maxWidth: 600 }}>
+            {item.component}
+          </View>
+        )}
+      </ScrollView>
     </Animated.View>
   );
 }
@@ -110,35 +174,25 @@ const styles = StyleSheet.create({
   container: {
     flex: 1,
     justifyContent: 'center',
-    paddingHorizontal: 24,
   },
   content: {
     alignItems: 'center',
-    paddingBottom: 20,
+    flexGrow: 1,
+    justifyContent: 'center',
   },
   iconContainer: {
-    width: 120,
-    height: 120,
-    borderRadius: 60,
     alignItems: 'center',
     justifyContent: 'center',
-    marginBottom: 32,
   },
   icon: {
     fontSize: 64,
   },
   title: {
-    fontSize: 28,
     fontWeight: 'bold',
     textAlign: 'center',
-    marginBottom: 16,
-    lineHeight: 34,
   },
   description: {
-    fontSize: 16,
     textAlign: 'center',
-    lineHeight: 24,
-    marginBottom: 32,
     paddingHorizontal: 8,
     maxWidth: 600,
   },

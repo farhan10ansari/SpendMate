@@ -51,7 +51,7 @@ const SettingSecureLoginToggle = ({ showSuccessSnackbar = true }: { showSuccessS
             ]}
             descriptionStyle={styles.listItemDescription}
             style={styles.listItem}
-            descriptionNumberOfLines={5}
+            descriptionNumberOfLines={6}
             left={(props) => (
                 <List.Icon
                     {...props}

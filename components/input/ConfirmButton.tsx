@@ -2,6 +2,7 @@ import { useEffect, useRef, useState } from "react";
 import { StyleSheet } from "react-native";
 import { useKeyboardState } from "react-native-keyboard-controller";
 import { FAB, Portal } from "react-native-paper";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type ConfirmButtonProps = {
     onPress?: () => void;
@@ -12,6 +13,7 @@ export default function ConfirmButton({ onPress, type }: ConfirmButtonProps) {
     const [show, setShow] = useState(false);
     const timeout = useRef<number | null>(null);
     const keyboard = useKeyboardState();
+    const insets = useSafeAreaInsets();
 
     useEffect(() => {
         // Add a timeout to delay the showing of the FAB
@@ -33,7 +35,7 @@ export default function ConfirmButton({ onPress, type }: ConfirmButtonProps) {
             position: 'absolute',
             margin: 16,
             right: 0,
-            bottom: keyboard.height
+            bottom: Math.max(keyboard.height, insets.bottom), // When keyboard is open, use its height; otherwise, use safe area inset
         },
     })
 

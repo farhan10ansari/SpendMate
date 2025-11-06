@@ -1,15 +1,12 @@
 import LottieView from 'lottie-react-native';
-import { Button, Card, Icon, List, Text } from 'react-native-paper';
+import { Icon } from 'react-native-paper';
 import { useAppTheme } from "@/themes/providers/AppThemeProviders";
 import { useMemo } from "react";
+import { useWindowDimensions } from 'react-native';
 import ThemeSelector from '@/components/main/ThemeSelector';
 import useSettings from '@/hooks/settings/useSettings';
 import SettingSwitchListItem from '@/components/main/SettingSwitchListItem';
 import SettingSecureLoginToggle from '@/components/main/SettingSecureLoginToggle';
-import { View, StyleSheet } from 'react-native';
-import { ThemedText } from '@/components/base/ThemedText';
-import { useCurrency } from '@/contexts/CurrencyProvider';
-import { useNavigation, useRouter } from 'expo-router';
 import OnboardingCurrencyStep from './OnboardingCurrencyStep';
 
 export interface OnboardingStep {
@@ -32,13 +29,18 @@ export interface Settings {
   haptics: boolean;
 }
 
-
 export const useOnboardingData = () => {
   const { colors } = useAppTheme();
+  const { height } = useWindowDimensions();
   const {
     haptics,
     handleHapticsToggle,
   } = useSettings();
+
+  // Responsive icon sizing
+  const isSmallScreen = height < 700;
+  const isTinyScreen = height < 600;
+  const iconSize = isTinyScreen ? 80 : isSmallScreen ? 100 : 120;
 
   return useMemo<OnboardingStep[]>(() => ([
     {
@@ -53,14 +55,14 @@ export const useOnboardingData = () => {
       type: 'intro',
       title: 'Track Every Transaction',
       description: 'Easily manage your incomes and expenses with customizable categories and payment methods. All data stored locally for your privacy.',
-      icon: <Icon source="chart-bar" size={120} color={colors.primary} />
+      icon: <Icon source="chart-bar" size={iconSize} color={colors.primary} />
     },
     {
       id: '3',
       type: 'intro',
       title: 'Smart Insights',
       description: 'Analyze spending patterns and track your financial progress with our intuitive, fast interface. View detailed statistics across different time periods.',
-      icon: <Icon source="lightbulb-on-outline" size={120} color={"orange"} />
+      icon: <Icon source="lightbulb-on-outline" size={iconSize} color={"orange"} />
     },
     {
       id: '4',
@@ -69,7 +71,7 @@ export const useOnboardingData = () => {
       description: 'Choose your preferred theme for the app. System theme will automatically switch between light and dark based on your device settings.',
       settingKey: 'theme',
       component: <ThemeSelector />,
-      icon: <Icon source="palette-outline" size={120} color={colors.primary} />
+      icon: <Icon source="palette-outline" size={iconSize} color={colors.primary} />
     },
     {
       id: '5',
@@ -111,7 +113,7 @@ export const useOnboardingData = () => {
           backgroundColor: colors.elevation.level3
         }}
       />,
-      icon: <Icon source="vibrate" size={120} color={colors.primary} />,
+      icon: <Icon source="vibrate" size={iconSize} color={colors.primary} />,
     },
     {
       id: '8',
@@ -120,8 +122,7 @@ export const useOnboardingData = () => {
       description: 'Enable secure login using biometrics or device passcode.',
       settingKey: 'secureLogin',
       component: <SettingSecureLoginToggle showSuccessSnackbar={false} />,
-
-      icon: <Icon source="fingerprint" size={120} color={colors.primary} />,
+      icon: <Icon source="fingerprint" size={iconSize} color={colors.primary} />,
     },
     {
       id: '9',
@@ -130,7 +131,5 @@ export const useOnboardingData = () => {
       description: `You're all set to take control of your finances with SpendMate. Let's get started!`,
       lottie: <LottieView source={require('../../assets/lottie/success.json')} autoPlay loop style={{ height: "100%", width: "100%" }} />
     }
-  ]), [colors, haptics, handleHapticsToggle])
-
+  ]), [colors, haptics, handleHapticsToggle, iconSize])
 }
-

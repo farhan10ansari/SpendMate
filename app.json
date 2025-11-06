@@ -44,7 +44,7 @@
       ],
       "expo-sqlite",
       "expo-localization",
-      "expo-web-browser", 
+      "expo-web-browser",
       "expo-font",
       [
         "expo-local-authentication",
@@ -59,6 +59,14 @@
           "color": "#000000",
           "defaultChannel": "default",
           "enableBackgroundRemoteNotifications": false
+        }
+      ],
+      [
+        "react-native-edge-to-edge",
+        {
+          "android": {
+            "enforceNavigationBarContrast": false
+          }
         }
       ]
     ],
