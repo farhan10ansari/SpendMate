@@ -57,7 +57,7 @@ export default function ExpenseStats({ expenseStats, showTitle = false, isLoadin
                     isLoading={isLoading}
                 />
                 <StatsCard
-                    title="Top Income Source"
+                    title="Top Expense Category"
                     titleStyle={{
                         fontSize: 12
                     }}
