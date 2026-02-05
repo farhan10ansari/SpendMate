@@ -1,7 +1,7 @@
 import { useAppTheme } from "@/themes/providers/AppThemeProviders";
 import { Href } from "expo-router";
-import { useCallback } from "react";
-import { StyleSheet, View } from "react-native";
+import { useCallback, useMemo } from "react";
+import { Platform, StyleSheet, View } from "react-native";
 import { List } from "react-native-paper";
 
 type MenuItem = {
@@ -17,6 +17,10 @@ type MenuItemComponentProps = {
     onPress: (route: Href) => void;
 };
 
+/**
+ * A menu item component that displays a title, description, and icon.
+ * Uses List.Item from react-native-paper with foreground ripple effect for Android.
+ */
 export default function MenuItemComponent({
     item,
     isLast,
@@ -27,6 +31,13 @@ export default function MenuItemComponent({
     const handlePress = useCallback(() => {
         onPress(item.route);
     }, [onPress, item.route]);
+
+    // Use foreground ripple for Android to fix RN 0.80+ ripple bug
+    const rippleBackground = useMemo(() => 
+        Platform.OS === 'android' 
+            ? { color: colors.ripplePrimary, foreground: true } 
+            : undefined
+    , [colors.ripplePrimary]);
 
     return (
         <View>
@@ -53,6 +64,7 @@ export default function MenuItemComponent({
                 )}
                 onPress={handlePress}
                 rippleColor={colors.ripplePrimary}
+                background={rippleBackground}
             />
             {!isLast && <View style={[menuItemStyles.divider, { backgroundColor: colors.border }]} />}
         </View>

@@ -42,7 +42,7 @@ const PeriodCard = () => {
         <Card style={styles.card}>
             <Pressable
                 onPress={handlePress}
-                android_ripple={{ color: colors.ripplePrimary }}
+                android_ripple={{ color: colors.ripplePrimary, foreground: true }}
             >
                 <Card.Content style={styles.cardContent}>
                     <ThemedText type="defaultSemiBold">

@@ -1,5 +1,5 @@
 import React, { useCallback, useLayoutEffect, useMemo, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { Platform, StyleSheet, View } from 'react-native';
 import { Button, Icon, IconButton, Menu } from 'react-native-paper';
 import { Href, useNavigation, useRouter } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
@@ -111,8 +111,16 @@ function useScreenMenu({ onRefresh }: { onRefresh: () => void }) {
               leadingIcon={showNegativeStats ? 'eye-off' : 'eye'}
               title={showNegativeStats ? 'Hide Negative Stats' : 'Show Negative Stats'}
               onPress={toggleNegativeStats}
+              rippleColor={colors.ripplePrimary}
+              background={Platform.OS === 'android' ? { color: colors.ripplePrimary, foreground: true } : undefined}
             />
-            <Menu.Item leadingIcon="refresh" title="Refresh Data" onPress={triggerRefresh} />
+            <Menu.Item
+              leadingIcon="refresh"
+              title="Refresh Data"
+              onPress={triggerRefresh}
+              rippleColor={colors.ripplePrimary}
+              background={Platform.OS === 'android' ? { color: colors.ripplePrimary, foreground: true } : undefined}
+            />
           </Menu>
         );
       },

@@ -6,7 +6,7 @@ import { getCurrencyData } from "@/lib/currencies";
 import { useAppTheme } from "@/themes/providers/AppThemeProviders";
 import { useRouter } from "expo-router";
 import { useMemo, useState } from "react";
-import { StyleSheet, View, Text, ScrollView } from "react-native";
+import { Platform, StyleSheet, View, Text, ScrollView } from "react-native";
 import { Banner, Icon, List } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
@@ -111,6 +111,8 @@ const CurrencySettingsScreen = () => {
                 hapticImpact();
                 updateCurrency(option.code)
               }}
+              rippleColor={colors.ripplePrimary}
+              background={Platform.OS === 'android' ? { color: colors.ripplePrimary, foreground: true } : undefined}
             />
           ))}
           <List.Item
@@ -123,6 +125,8 @@ const CurrencySettingsScreen = () => {
               </View>
             )}
             onPress={handleNavigateToAllCurrencies}
+            rippleColor={colors.ripplePrimary}
+            background={Platform.OS === 'android' ? { color: colors.ripplePrimary, foreground: true } : undefined}
           />
         </SettingSection>
 
@@ -137,6 +141,8 @@ const CurrencySettingsScreen = () => {
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
             style={[styles.listItem, { backgroundColor: colors.inverseOnSurface }]}
             onPress={handleNavigateToLocaleSelection}
+            rippleColor={colors.ripplePrimary}
+            background={Platform.OS === 'android' ? { color: colors.ripplePrimary, foreground: true } : undefined}
           />
         </SettingSection>
       </ScrollView>

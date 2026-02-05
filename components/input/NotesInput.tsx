@@ -1,12 +1,13 @@
 import { ColorType } from "@/lib/types";
 import { useAppTheme } from "@/themes/providers/AppThemeProviders";
-import { NativeSyntheticEvent, StyleSheet, TextInput, TextInputFocusEventData } from "react-native";
+import { StyleSheet, TextInput } from "react-native";
+import type { TextInputProps } from "react-native";
 
 type NotesInputProps = {
     note: string;
     setNote: (description: string) => void;
-    onFocus?: ((e: NativeSyntheticEvent<TextInputFocusEventData>) => void);
-    onBlur?: ((e: NativeSyntheticEvent<TextInputFocusEventData>) => void);
+    onFocus?: TextInputProps["onFocus"];
+    onBlur?: TextInputProps["onBlur"];
     colorType?: ColorType;
 };
 

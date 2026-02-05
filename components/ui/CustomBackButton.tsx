@@ -38,7 +38,8 @@ const CustomBackButton = (({ onPress }: { onPress: () => void }) => {
                 }}
                 android_ripple={{
                     color: colors.ripplePrimary,
-                    borderless: false
+                    borderless: false,
+                    foreground: true,
                 }}
                 hitSlop={8}
             >

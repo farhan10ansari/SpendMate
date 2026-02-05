@@ -88,7 +88,7 @@ function ExpenseCard({ expense, onPress, theme, uses24HourClock, formatCurrency,
         <View style={styles.wrapper}>
             <Pressable
                 onPress={handleOnPress}
-                android_ripple={{ color: colors.ripplePrimary }}
+                android_ripple={{ color: colors.ripplePrimary, foreground: true }}
                 style={styles.card}
             >
                 <View style={styles.topRow}>

@@ -1,5 +1,5 @@
-import {  LanguageOption } from "@/lib/types";
-import { StyleSheet, View } from "react-native";
+import { LanguageOption } from "@/lib/types";
+import { Platform, StyleSheet, View } from "react-native";
 import { Icon, List } from "react-native-paper";
 import { ThemedText } from "@/components/base/ThemedText";
 
@@ -89,6 +89,8 @@ const SettingOptionListItem = ({ option, isSelected, onPress, colors, leftIcon }
       )}
       onPress={onPress}
       disabled={!option.available}
+      rippleColor={colors.ripplePrimary}
+      background={Platform.OS === 'android' ? { color: colors.ripplePrimary, foreground: true } : undefined}
     />
   );
 };

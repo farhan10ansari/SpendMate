@@ -1,6 +1,6 @@
 // components/backup/BackupListItem.tsx
 import React from 'react';
-import { View, StyleSheet } from 'react-native';
+import { Platform, View, StyleSheet } from 'react-native';
 import { List, Chip, IconButton, Menu, Divider } from 'react-native-paper';
 import { useAppTheme } from '@/themes/providers/AppThemeProviders';
 import { BackupMetadata } from '@/lib/types';
@@ -41,14 +41,28 @@ export function BackupListItem({
               <IconButton {...props} icon="dots-vertical" onPress={onMenuOpen} />
             }
           >
-            <Menu.Item onPress={onRestore} leadingIcon="restore" title="Restore" />
-            <Menu.Item onPress={onShare} leadingIcon="share-variant" title="Share" />
+            <Menu.Item
+              onPress={onRestore}
+              leadingIcon="restore"
+              title="Restore"
+              rippleColor={theme.colors.ripplePrimary}
+              background={Platform.OS === 'android' ? { color: theme.colors.ripplePrimary, foreground: true } : undefined}
+            />
+            <Menu.Item
+              onPress={onShare}
+              leadingIcon="share-variant"
+              title="Share"
+              rippleColor={theme.colors.ripplePrimary}
+              background={Platform.OS === 'android' ? { color: theme.colors.ripplePrimary, foreground: true } : undefined}
+            />
             <Divider />
             <Menu.Item
               onPress={onDelete}
               leadingIcon="delete"
               title="Delete"
               titleStyle={{ color: theme.colors.error }}
+              rippleColor={theme.colors.ripplePrimary}
+              background={Platform.OS === 'android' ? { color: theme.colors.ripplePrimary, foreground: true } : undefined}
             />
           </Menu>
         )}

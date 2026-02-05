@@ -1,7 +1,7 @@
 import * as DocumentPicker from 'expo-document-picker';
 import { drizzle } from 'drizzle-orm/expo-sqlite';
 import { Platform } from 'react-native';
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 import { log } from '@/lib/logger';
 import { BackupData, BackupMetadata } from '@/lib/types';
 import { getErrorMessage } from '@/lib/utils';
