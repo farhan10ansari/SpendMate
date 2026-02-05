@@ -267,7 +267,13 @@ export const getIncomeStatsByPeriod = async (
     // Calculate the total days in the period (inclusive)
     let days: number;
     if (startDate && endDate) {
-      days = Math.floor((endDate.getTime() - startDate.getTime()) / msPerDay) + 1;
+      const now = new Date();
+      const isCurrentRollingPeriod =
+        (period.type === "week" || period.type === "month" || period.type === "year") &&
+        (period.offset ?? 0) === 0 &&
+        endDate.getTime() > now.getTime();
+      const effectiveEndDate = isCurrentRollingPeriod ? now : endDate;
+      days = Math.floor((effectiveEndDate.getTime() - startDate.getTime()) / msPerDay) + 1;
     } else {
       days = 0
     }
