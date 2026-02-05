@@ -1,6 +1,7 @@
 import { useAppTheme } from "@/themes/providers/AppThemeProviders";
 import { useRef } from "react";
-import { NativeSyntheticEvent, Pressable, StyleSheet, TextInput, TextInputFocusEventData } from "react-native";
+import { Pressable, StyleSheet, TextInput } from "react-native";
+import type { TextInputProps } from "react-native";
 import { ColorType } from "@/lib/types";
 import { Icon } from "react-native-paper";
 import { useCurrency } from "@/contexts/CurrencyProvider";
@@ -9,8 +10,8 @@ import { useCurrency } from "@/contexts/CurrencyProvider";
 export type AmountInputProps = {
     amount: string;
     setAmount: (amount: string) => void;
-    onFocus?: ((e: NativeSyntheticEvent<TextInputFocusEventData>) => void)
-    onBlur?: ((e: NativeSyntheticEvent<TextInputFocusEventData>) => void)
+    onFocus?: TextInputProps["onFocus"];
+    onBlur?: TextInputProps["onBlur"];
     colorType?: ColorType
 };
 

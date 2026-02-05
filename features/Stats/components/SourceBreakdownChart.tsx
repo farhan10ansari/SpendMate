@@ -76,14 +76,14 @@ export default function IncomeSourceBreakdownChart({ data }: IncomeBreakdownData
         <View style={styles.header}>
           <View style={styles.toggleGroup}>
             <Pressable
-              android_ripple={{ color: colors.backdrop }}
+              android_ripple={{ color: colors.backdrop, foreground: true }}
               onPress={() => setChartType('pie')}
               style={styles.toggleBtn}
             >
               <ThemedText color={chartType === 'pie' ? colors.tertiary : colors.text}>Pie</ThemedText>
             </Pressable>
             <Pressable
-              android_ripple={{ color: colors.backdrop }}
+              android_ripple={{ color: colors.backdrop, foreground: true }}
               onPress={() => setChartType('bar')}
               style={styles.toggleBtn}
             >

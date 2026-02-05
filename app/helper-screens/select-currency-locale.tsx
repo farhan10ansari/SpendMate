@@ -1,5 +1,5 @@
 import React, { useCallback } from "react";
-import { StyleSheet, View } from "react-native";
+import { Platform, StyleSheet, View } from "react-native";
 import { List, Icon } from "react-native-paper";
 import { ScreenWrapper } from "@/components/main/ScreenWrapper";
 import { useAppTheme } from "@/themes/providers/AppThemeProviders";
@@ -109,6 +109,8 @@ const MemoizedLocaleListItem = React.memo(
                 ) : null
             }
             onPress={() => onPress(item.locale)}
+            rippleColor={colors.ripplePrimary}
+            background={Platform.OS === 'android' ? { color: colors.ripplePrimary, foreground: true } : undefined}
         />
     )
 );

@@ -85,7 +85,7 @@ function IncomeCard({ income, onPress, theme, uses24HourClock, formatCurrency }:
         <View style={styles.wrapper}>
             <Pressable
                 onPress={handleOnPress}
-                android_ripple={{ color: colors.rippleTertiary }}
+                android_ripple={{ color: colors.rippleTertiary, foreground: true }}
                 style={styles.card}
             >
                 <View style={styles.topRow}>

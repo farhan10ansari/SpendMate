@@ -1,7 +1,7 @@
 import { useLocalAuth } from "@/contexts/LocalAuthProvider";
 import { useAppTheme } from "@/themes/providers/AppThemeProviders";
 import { useCallback } from "react";
-import { StyleSheet } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 import { List, Switch } from "react-native-paper";
 
 const SettingSecureLoginToggle = ({ showSuccessSnackbar = true }: { showSuccessSnackbar?: boolean }) => {
@@ -80,6 +80,8 @@ const SettingSecureLoginToggle = ({ showSuccessSnackbar = true }: { showSuccessS
             )}
             onPress={onToggle.bind(null, !biometricLogin)}
             disabled={!isAuthenticationSupported}
+            rippleColor={colors.ripplePrimary}
+            background={Platform.OS === 'android' ? { color: colors.ripplePrimary, foreground: true } : undefined}
         />
     )
 };

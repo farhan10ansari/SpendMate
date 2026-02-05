@@ -1,5 +1,5 @@
-import React, { use, useCallback } from "react";
-import { View, StyleSheet, Text } from "react-native";
+import React, { useCallback } from "react";
+import { Platform, View, StyleSheet, Text } from "react-native";
 import { List, Icon } from "react-native-paper";
 import { ScreenWrapper } from "@/components/main/ScreenWrapper";
 import { useAppTheme } from "@/themes/providers/AppThemeProviders";
@@ -127,6 +127,8 @@ const MemoizedListItem = React.memo(
                 ) : null
             }
             onPress={() => onPress(item.code)}
+            rippleColor={colors.ripplePrimary}
+            background={Platform.OS === 'android' ? { color: colors.ripplePrimary, foreground: true } : undefined}
         />
     )
 );

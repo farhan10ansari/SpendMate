@@ -1,7 +1,10 @@
 import { useAppTheme } from "@/themes/providers/AppThemeProviders";
 import ThemedButton from "@/components/ui/ThemedButton";
-import { StyleSheet } from "react-native";
+import { Platform, StyleSheet } from "react-native";
 
+/**
+ * A styled button for settings screens with foreground ripple effect.
+ */
 const SettingButton = ({ onPress, title }: { onPress: () => void; title: string }) => {
     const { colors } = useAppTheme();
     return (
@@ -11,6 +14,8 @@ const SettingButton = ({ onPress, title }: { onPress: () => void; title: string 
             contentStyle={styles.buttonContent}
             onPress={onPress}
             icon={"refresh"}
+            rippleColor={colors.ripplePrimary}
+            background={Platform.OS === 'android' ? { color: colors.ripplePrimary, foreground: true } : undefined}
         >
             {title}
         </ThemedButton>

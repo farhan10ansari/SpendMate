@@ -401,6 +401,7 @@ function AboutItem({ icon, title, description, onPress, children }: AboutItemPro
                 android_ripple={{
                     color: colors.ripplePrimary,
                     borderless: false,
+                    foreground: true,
                 }}
             >
                 <View style={styles.itemPressable}>

@@ -1,5 +1,5 @@
 import { useAppTheme } from "@/themes/providers/AppThemeProviders";
-import { StyleProp, StyleSheet, ViewStyle } from "react-native";
+import { Platform, StyleProp, StyleSheet, ViewStyle } from "react-native";
 import { List, Switch } from "react-native-paper";
 
 interface SettingSwitchListItemProps {
@@ -75,6 +75,8 @@ const SettingSwitchListItem = ({
             )}
             onPress={onPress || (() => !disabled && onValueChange(!value))}
             disabled={disabled}
+            rippleColor={colors.ripplePrimary}
+            background={Platform.OS === 'android' ? { color: colors.ripplePrimary, foreground: true } : undefined}
         />
     );
 };

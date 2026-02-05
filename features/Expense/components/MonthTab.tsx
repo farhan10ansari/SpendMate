@@ -26,7 +26,9 @@ export default function MonthTab({ month, count, isSelected, onPress }: MonthTab
             borderWidth: 1,
             borderColor: isSelected ? colors.primary : colors.outline,
             minWidth: 75,
+            minHeight: 44,
             alignItems: 'center',
+            justifyContent: 'center',
             elevation: isSelected ? 3 : 1,
             shadowColor: colors.shadow,
             shadowOffset: { width: 0, height: isSelected ? 2 : 1 },
@@ -38,7 +40,6 @@ export default function MonthTab({ month, count, isSelected, onPress }: MonthTab
             fontWeight: isSelected ? '600' : '500',
             color: isSelected ? colors.onPrimary : colors.onSurface,
             lineHeight: 14,
-            width: '100%',
             textAlign: 'center',
         },
         countText: {
@@ -58,13 +59,22 @@ export default function MonthTab({ month, count, isSelected, onPress }: MonthTab
                 android_ripple={{
                     color: colors.ripplePrimary,
                     borderless: false,
+                    foreground: true,
                 }}
             >
-                <ThemedText style={styles.tabText}>
+                <ThemedText
+                    style={styles.tabText}
+                    numberOfLines={1}
+                    ellipsizeMode="tail"
+                >
                     {month}
                 </ThemedText>
                 {count !== undefined && (
-                    <ThemedText style={styles.countText}>
+                    <ThemedText
+                        style={styles.countText}
+                        numberOfLines={1}
+                        ellipsizeMode="tail"
+                    >
                         {count} items
                     </ThemedText>
                 )}

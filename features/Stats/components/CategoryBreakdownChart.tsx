@@ -77,13 +77,13 @@ export default function CategoryBreakdownChart({ data }: CategoryBreakdownData) 
         <View style={styles.header}>
           <View style={styles.toggleGroup}>
             <Pressable
-              android_ripple={{ color: colors.backdrop }}
+              android_ripple={{ color: colors.backdrop, foreground: true }}
               onPress={() => setChartType('pie')}
               style={styles.toggleBtn}>
               <ThemedText color={chartType === 'pie' ? colors.tertiary : colors.text}>Pie</ThemedText>
             </Pressable>
             <Pressable
-              android_ripple={{ color: colors.backdrop }}
+              android_ripple={{ color: colors.backdrop, foreground: true }}
               onPress={() => setChartType('bar')}
               style={styles.toggleBtn}>
               <ThemedText color={chartType === 'bar' ? colors.tertiary : colors.text}>Bar</ThemedText>
