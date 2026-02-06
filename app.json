@@ -7,7 +7,6 @@
     "icon": "./assets/images/adaptive-icon.png",
     "scheme": "spendmate",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
     "platforms": ["ios", "android"],
     "ios": {
       "supportsTablet": true,

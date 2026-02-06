@@ -1,7 +1,7 @@
 import * as DocumentPicker from 'expo-document-picker';
 import { drizzle } from 'drizzle-orm/expo-sqlite';
 import { Platform } from 'react-native';
-import * as FileSystem from 'expo-file-system';
+import * as FileSystem from 'expo-file-system/legacy';
 import { log } from '@/lib/logger';
 import { BackupData, BackupMetadata } from '@/lib/types';
 import { getErrorMessage } from '@/lib/utils';
@@ -247,7 +247,11 @@ export class BackupService {
       const nameWithoutExtension = backupName.replace(/\.[^/.]+$/, '');
       const sanitizedName = nameWithoutExtension.replace(/[^a-zA-Z0-9_-]/g, '_');
       const fileName = `${sanitizedName}${BACKUP_EXTENSION}`;
-      const cacheUri = `${FileSystem.cacheDirectory}${fileName}`;
+      const cacheDir = FileSystem.cacheDirectory;
+      if (!cacheDir) {
+        throw new Error('Cache directory is not available');
+      }
+      const cacheUri = `${cacheDir}${fileName}`;
 
       log.debug('Writing backup to cache:', cacheUri);
       await FileSystem.writeAsStringAsync(cacheUri, content);

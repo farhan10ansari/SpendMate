@@ -5,7 +5,7 @@ module.exports = function (api) {
     plugins: [["inline-import", { "extensions": [".sql"] }]],
     env: {
       production: {
-        plugins: ['react-native-paper/babel', 'react-native-reanimated/plugin',],
+        plugins: ['react-native-paper/babel', 'react-native-reanimated/plugin', 'react-native-worklets/plugin'],
       },
     },
   };

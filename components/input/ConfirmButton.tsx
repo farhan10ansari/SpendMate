@@ -7,11 +7,14 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 type ConfirmButtonProps = {
     onPress?: () => void;
     type: 'create' | 'edit';
-}
+};
 
+/**
+ * FAB confirm button shown when keyboard is visible; supports create/edit modes.
+ */
 export default function ConfirmButton({ onPress, type }: ConfirmButtonProps) {
     const [show, setShow] = useState(false);
-    const timeout = useRef<number | null>(null);
+    const timeout = useRef<ReturnType<typeof setTimeout> | null>(null);
     const keyboard = useKeyboardState();
     const insets = useSafeAreaInsets();
 

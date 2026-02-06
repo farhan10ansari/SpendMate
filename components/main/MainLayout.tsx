@@ -60,7 +60,7 @@ export default function MainLayout() {
       <Stack.Screen
         name="(tabs)"
         options={{ headerShown: false }}
-        redirect={!onboardingCompleted} // Redirect to onboarding if not completed
+        {...({ redirect: !onboardingCompleted } as { redirect?: boolean })}
       />
 
       {/* Onboarding Screen */}
