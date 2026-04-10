@@ -1,4 +1,4 @@
-# <h1 align="center">💰 SpendMate</h1>
+# <h1 align="center">💰 SpendMate </h1>
 
 <p align="center"><strong>Smart Personal Finance & Expense Tracking Made Simple</strong></p>
 
