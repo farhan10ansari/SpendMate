@@ -4,8 +4,8 @@ import { CategoryManagerScreen } from '@/features/Category/components/CategoryMa
 import { View } from 'react-native';
 import { useAppTheme } from '@/themes/providers/AppThemeProviders';
 import { softDeleteIncomesBySource } from '@/repositories/IncomeRepo';
-import { useQueryClient } from '@tanstack/react-query';
-import { Category, CreateCategoryData, UpdateCategoryData } from '@/lib/types';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
+import { CreateCategoryData, UpdateCategoryData } from '@/lib/types';
 import { createNewCategory, deleteCategory, getAllCategories, updateCategory } from '@/repositories/CategoryRepo';
 import { tryCatch } from '@/lib/try-catch';
 import { ThemedView } from '@/components/base/ThemedView';
@@ -13,25 +13,10 @@ import { ThemedView } from '@/components/base/ThemedView';
 export default function IncomeSourcesScreen() {
     const { colors } = useAppTheme();
     const queryClient = useQueryClient();
-    const [sources, setSources] = React.useState<Category[]>([]);
-    const [error, setError] = React.useState<Error | null>(null);
-
-    const handleGetSources = React.useCallback(async () => {
-        setError(null);
-        try {
-            const data = await getAllCategories('income-source', true);
-            setSources(data as Category[]);
-        } catch (error: any) {
-            setError(error);
-        }
-    }, []);
-
-    React.useEffect(() => {
-        handleGetSources();
-        return () => {
-            queryClient.invalidateQueries({ queryKey: ['incomeSources'] });
-        };
-    }, [handleGetSources]);
+    const { data: sources = [], error, refetch } = useQuery({
+        queryKey: ['incomeSources'],
+        queryFn: () => getAllCategories('income-source', true),
+    });
 
     const deleteSourceWithCorrespondingIncomes = useCallback((source: string) => {
         // First, soft-delete all incomes with this source
@@ -48,12 +33,12 @@ export default function IncomeSourcesScreen() {
                 return;
             }
             // Finally, refresh the sources list
-            handleGetSources();
+            await refetch();
         }).catch((error) => {
             console.error('Error deleting incomes for source:', error);
             // Optionally, show an error message to the user
         });
-    }, []);
+    }, [queryClient, refetch]);
 
     const handleAddCategory = useCallback(async (data: CreateCategoryData) => {
         const { data: newCategory, error } = await tryCatch(createNewCategory("income-source", {
@@ -66,9 +51,8 @@ export default function IncomeSourcesScreen() {
             console.error("Error creating income source:", error);
             return;
         }
-        setSources(prevCategories => [...prevCategories, newCategory]);
-        handleGetSources();
-    }, []);
+        await refetch();
+    }, [refetch]);
 
     const handleUpdateIncome = useCallback(async (name: string, updates: UpdateCategoryData) => {
         const { data: updatedSource, error } = await tryCatch(updateCategory("income-source", name, {
@@ -81,9 +65,8 @@ export default function IncomeSourcesScreen() {
             console.error("Error updating income source:", error);
             return;
         }
-        setSources(prevCategories => prevCategories.map((category) => (category.name === name ? updatedSource : category)));
-        handleGetSources();
-    }, []);
+        await refetch();
+    }, [refetch]);
 
     if (error) {
         return <ThemedView><ThemedText centered>Error: {error?.message}</ThemedText></ThemedView>;

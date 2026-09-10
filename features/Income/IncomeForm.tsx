@@ -10,7 +10,7 @@ import DateInput from '@/components/input/DateInput';
 import NotesInput from '@/components/input/NotesInput';
 import TimeInput from '@/components/input/TimeInput';
 import { useEnabledIncomeSources } from '@/contexts/CategoryDataProvider';
-import { useIsFocused } from '@react-navigation/native';
+import { useIsFocused } from 'expo-router/react-navigation';
 import { useSnackbarState } from '@/contexts/GlobalSnackbarProvider';
 
 type IncomeFormProps = {

@@ -4,7 +4,7 @@ import { CategoryManagerScreen } from '@/features/Category/components/CategoryMa
 import { View } from 'react-native';
 import { useAppTheme } from '@/themes/providers/AppThemeProviders';
 import { softDeleteExpensesByCategory } from '@/repositories/ExpenseRepo';
-import { useQueryClient } from '@tanstack/react-query';
+import { useQuery, useQueryClient } from '@tanstack/react-query';
 import { Category, CreateCategoryData, UpdateCategoryData } from '@/lib/types';
 import { createNewCategory, deleteCategory, getAllCategories, updateCategory } from '@/repositories/CategoryRepo';
 import { tryCatch } from '@/lib/try-catch';
@@ -13,25 +13,10 @@ import { ThemedView } from '@/components/base/ThemedView';
 export default function ExpenseCategoriesScreen() {
     const { colors } = useAppTheme();
     const queryClient = useQueryClient();
-    const [categories, setCategories] = React.useState<Category[]>([]);
-    const [error, setError] = React.useState<Error | null>(null);
-
-    const handleGetCategories = useCallback(async () => {
-        setError(null);
-        try {
-            const data = await getAllCategories('expense-category', true);
-            setCategories(data as Category[]);
-        } catch (error: any) {
-            setError(error);
-        }
-    }, []);
-
-    React.useEffect(() => {
-        handleGetCategories();
-        return () => {
-            queryClient.invalidateQueries({ queryKey: ['expenseCategories'] });
-        };
-    }, [handleGetCategories]);
+    const { data: categories = [], error, refetch } = useQuery({
+        queryKey: ['expenseCategories'],
+        queryFn: () => getAllCategories('expense-category', true),
+    });
 
 
     const deleteCategoryWithCorrespondingExpenses = useCallback(async (category: string) => {
@@ -49,12 +34,12 @@ export default function ExpenseCategoriesScreen() {
                 return;
             }
             // Finally, refresh the categories list
-            handleGetCategories();
+            await refetch();
         }).catch((error) => {
             console.error('Error deleting expenses for source:', error);
             // Optionally, show an error message to the user
         });
-    }, []);
+    }, [queryClient, refetch]);
 
     const handleAddCategory = useCallback(async (data: CreateCategoryData) => {
         const { data: newCategory, error } = await tryCatch(createNewCategory("expense-category", {
@@ -67,9 +52,8 @@ export default function ExpenseCategoriesScreen() {
             console.error("Error creating expense category:", error);
             return;
         }
-        setCategories(prevCategories => [...prevCategories, newCategory]);
-        handleGetCategories();
-    }, []);
+        await refetch();
+    }, [refetch]);
 
     const handleUpdateExpense = useCallback(async (name: string, updates: UpdateCategoryData) => {
         const { data: updatedExpense, error } = await tryCatch(updateCategory("expense-category", name, {
@@ -82,9 +66,8 @@ export default function ExpenseCategoriesScreen() {
             console.error("Error updating expense category:", error);
             return;
         }
-        setCategories(prevCategories => prevCategories.map((category) => (category.name === name ? updatedExpense : category)));
-        handleGetCategories();
-    }, []);
+        await refetch();
+    }, [refetch]);
 
     if (error) {
         return <ThemedView><ThemedText centered>Error: {error?.message}</ThemedText></ThemedView>;

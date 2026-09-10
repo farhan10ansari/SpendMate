@@ -33,7 +33,7 @@ export const CategoryIcon = ({
             borderWidth: isSelected ? 3 : 0,
             borderColor: isSelected ? (dark ? colors.primary : colors.tertiary) : dark ? "transparent" : colors.border,
         }
-    ], [color, dark, isSelected]);
+    ], [color, colors.border, colors.primary, colors.tertiary, dark, isSelected]);
 
     return (
         <Avatar.Icon

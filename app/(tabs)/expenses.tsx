@@ -2,7 +2,7 @@ import { StyleSheet } from "react-native";
 import { FAB, Portal } from "react-native-paper";
 import { useRef, useState } from "react";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
-import { useIsFocused } from "@react-navigation/native";
+import { useIsFocused } from "expo-router/react-navigation";
 import MonthTabsContainer from "@/features/Expense/components/MonthTabsContainer";
 import ExpensesList, { ExpenseListItem } from "@/features/Expense/components/ExpenseList";
 import { ScreenWrapper } from "@/components/main/ScreenWrapper";

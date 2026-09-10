@@ -1,9 +1,7 @@
 import { paymentMethods } from "@/lib/constants";
 import { PaymentMethod } from "@/lib/types";
-import { useAppTheme } from "@/themes/providers/AppThemeProviders";
 import React from "react";
 import { ScrollView, StyleSheet, View } from "react-native";
-import { Button } from "react-native-paper";
 import ThemedButton from "../ui/ThemedButton";
 import { useHaptics } from "@/contexts/HapticsProvider";
 

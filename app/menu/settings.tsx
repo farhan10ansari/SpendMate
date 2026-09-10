@@ -3,7 +3,6 @@ import { ThemedText } from "@/components/base/ThemedText";
 import { useAppTheme } from "@/themes/providers/AppThemeProviders";
 import { ScreenWrapper } from "@/components/main/ScreenWrapper";
 import useSettings from "@/hooks/settings/useSettings";
-import { Language } from "@/lib/types";
 import SettingSwitchListItem from "@/components/main/SettingSwitchListItem";
 import SettingOptionListItem from "@/components/main/SettingOptionListItem";
 import { LANGUAGE_OPTIONS } from "@/lib/constants";
@@ -67,15 +66,7 @@ function SecureLoginSection() {
   );
 }
 
-interface LanguageSectionProps {
-  // language: Language;
-  // handleLanguageChange: (languageKey: Language) => void;
-}
-
-const LanguageSection = ({
-  // language,
-  // handleLanguageChange,
-}: LanguageSectionProps) => {
+const LanguageSection = () => {
   const { colors } = useAppTheme();
 
   return (
@@ -197,10 +188,7 @@ export default function SettingsScreen() {
             }}
           />
         </SettingSection>
-        <LanguageSection
-        // language={language}
-        // handleLanguageChange={handleLanguageChange}
-        />
+        <LanguageSection />
         <ComingSoonSection />
       </View>
     </ScreenWrapper>

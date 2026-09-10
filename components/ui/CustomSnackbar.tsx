@@ -56,33 +56,27 @@ function CustomSnackbar(props: CustomSnackbarProps) {
         }
     };
 
-    const Component = () => {
-        return (
-            <Snackbar
-                {...rest}
-                style={[style]}
-                wrapperStyle={[
-                    position === "top" && { top: offset + insets.top },
-                    position === "bottom" && { bottom: offset },
-                    wrapperStyle,
-                ]}
-                theme={{
-                    colors: {
-                        ...getThemeColors(),
-                    },
-                }}
-            >
-                {children}
-            </Snackbar>
-        );
-    };
+    const snackbar = (
+        <Snackbar
+            {...rest}
+            style={[style]}
+            wrapperStyle={[
+                position === "top" && { top: offset + insets.top },
+                position === "bottom" && { bottom: offset },
+                wrapperStyle,
+            ]}
+            theme={{ colors: getThemeColors() }}
+        >
+            {children}
+        </Snackbar>
+    );
 
     return usePortal ? (
         <Portal>
-            <Component />
+            {snackbar}
         </Portal>
     ) : (
-        <Component />
+        snackbar
     );
 }
 

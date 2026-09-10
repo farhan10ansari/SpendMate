@@ -4,7 +4,7 @@ import { FlashList, FlashListRef } from "@shopify/flash-list";
 import { useRouter } from "expo-router";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { ActivityIndicator, Button, FAB, Portal } from "react-native-paper";
-import { useIsFocused } from "@react-navigation/native";
+import { useIsFocused } from "expo-router/react-navigation";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { ThemedText } from "@/components/base/ThemedText";

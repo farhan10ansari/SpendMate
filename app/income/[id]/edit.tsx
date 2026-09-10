@@ -11,7 +11,7 @@ export default function EditIncomeScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();
     const { handleUpdateIncome } = useTransactionForm();
 
-    const { data: income, isLoading, isError, error } = useQuery({
+    const { data: income } = useQuery({
         queryKey: ['income', id],
         queryFn: async () => getIncomeById(id),
         enabled: !!id,

@@ -1,4 +1,4 @@
-import React, { use, useCallback } from "react";
+import React, { useCallback } from "react";
 import { View, StyleSheet, Text } from "react-native";
 import { List, Icon } from "react-native-paper";
 import { ScreenWrapper } from "@/components/main/ScreenWrapper";

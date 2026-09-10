@@ -120,7 +120,7 @@ const CustomChip: React.FC<CustomChipProps> = ({
                 borderWidth: showBorder ? 1 : 0,
             };
         }
-    }, [variant, dark, VARIANT_COLORS]);
+    }, [variant, dark, showBorder, VARIANT_COLORS]);
 
     // Memoize chip style
     const chipStyle = useMemo(() => [

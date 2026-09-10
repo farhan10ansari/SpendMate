@@ -35,7 +35,7 @@ export default function ExpenseInfoScreen() {
     const insets = useSafeAreaInsets();
     const { hapticImpact, hapticNotify } = useHaptics()
 
-    const { data: expense, isLoading, isError, error } = useQuery({
+    const { data: expense, isError, error } = useQuery({
         queryKey: ['expense', id],
         queryFn: async () => getExpenseById(id),
         enabled: !!id,
@@ -307,4 +307,3 @@ const InfoRow = ({ label, content, layout = "horizontal", scrollable = false, he
         </View>
     )
 };
-
