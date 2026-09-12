@@ -4,7 +4,7 @@ import { Pressable, ScaledSize, StyleSheet, View } from "react-native";
 import { ThemedText } from "@/components/base/ThemedText";
 import CustomChip from "@/components/ui/CustomChip";
 import { memo } from "react";
-import { extractDateLabel, extractTimeString } from "@/lib/functions";
+import { extractTimeString } from "@/lib/functions";
 import Color from "color";
 import { useExpenseCategoryMapping } from "@/contexts/CategoryDataProvider";
 import { Category, Expense } from "@/lib/types";
@@ -26,7 +26,6 @@ function ExpenseCard({ expense, onPress, theme, uses24HourClock, formatCurrency,
     const categoryMapping = useExpenseCategoryMapping()
 
 
-    const formattedDate = extractDateLabel(expense.dateTime)
     const formattedTime = extractTimeString(expense.dateTime, uses24HourClock)
 
     // Lookup the category definition (icon, label, color) by expense.category (string)
@@ -73,7 +72,7 @@ function ExpenseCard({ expense, onPress, theme, uses24HourClock, formatCurrency,
             flexDirection: "row",
             gap: 6,
         },
-        dateText: {
+        timeText: {
             fontSize: 12,
             color: "#666",
             lineHeight: 14,
@@ -117,8 +116,8 @@ function ExpenseCard({ expense, onPress, theme, uses24HourClock, formatCurrency,
                     </View>
                 </View>
                 <View>
-                    <ThemedText type="default" style={styles.dateText}>
-                        {formattedDate} • {formattedTime}
+                    <ThemedText type="default" style={styles.timeText}>
+                        {formattedTime}
                     </ThemedText>
                 </View>
             </Pressable>

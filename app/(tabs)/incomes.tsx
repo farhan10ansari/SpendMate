@@ -113,7 +113,7 @@ export default function IncomesScreen() {
         <ThemedText
           type="defaultSemiBold"
           fontSize={20}
-          style={[styles.sectionHeader, { color: colors.text }]}
+          style={[styles.sectionHeader, { color: colors.muted }]}
         >
           {item.title}
         </ThemedText>
@@ -130,7 +130,7 @@ export default function IncomesScreen() {
         formatCurrency={formatCurrency}
       />
     );
-  }, [colors.text, handleIncomeCardPress, theme, uses24HourClock, formatCurrency]);
+  }, [colors.muted, handleIncomeCardPress, theme, uses24HourClock, formatCurrency]);
 
   // Get item type for FlashList optimization
   const getItemType = useCallback((item: ListItem) => {
