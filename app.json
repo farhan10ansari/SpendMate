@@ -71,7 +71,8 @@
             "enableShrinkResourcesInReleaseBuilds": true
           }
         }
-      ]
+      ],
+      "./plugins/withAndroidR8Optimization"
     ],
     "experiments": {
       "typedRoutes": true
