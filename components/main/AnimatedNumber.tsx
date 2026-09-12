@@ -1,6 +1,5 @@
-import { useIsFocused } from "@react-navigation/native";
+import { useIsFocused } from "expo-router/react-navigation";
 import { useSegments } from "expo-router";
-import { useEffect, useState } from "react";
 import { StyleProp, TextStyle, ViewStyle } from "react-native";
 import AnimatedNumbers from 'react-native-animated-numbers';
 
@@ -13,17 +12,8 @@ type Props = {
 
 export default function AnimatedNumber({ value, fontStyle, containerStyle }: Props) {
     const segments = useSegments();
-    const [displayValue, setDisplayValue] = useState(0);
     const isFocused = useIsFocused();
-
-    useEffect(() => {
-        // Start from 0 and animate to actual value
-        if (isFocused) {
-            setDisplayValue(value);
-        } else if ((segments as string[]).includes("(tabs)")) { // if screen belongs to the main tab navigator then only reset to 0 for animating it next time
-            setDisplayValue(0);
-        }
-    }, [value, isFocused]);
+    const displayValue = !isFocused && (segments as string[]).includes("(tabs)") ? 0 : value;
 
     return (
         <AnimatedNumbers

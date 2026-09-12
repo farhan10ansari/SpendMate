@@ -34,7 +34,7 @@ export default function IncomeInfoScreen() {
     const insets = useSafeAreaInsets();
     const { hapticImpact, hapticNotify } = useHaptics()
 
-    const { data: income, isLoading, isError, error } = useQuery({
+    const { data: income, isError, error } = useQuery({
         queryKey: ['income', id],
         queryFn: async () => getIncomeById(id),
         enabled: !!id,

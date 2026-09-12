@@ -11,7 +11,7 @@ import PaymentMethodInput from '@/components/input/PaymentMethodInput';
 import TimeInput from '@/components/input/TimeInput';
 import { ExpenseData, useExpenseStore } from './ExpenseStoreProvider';
 import { useEnabledExpenseCategories } from '@/contexts/CategoryDataProvider';
-import { useIsFocused } from '@react-navigation/native';
+import { useIsFocused } from 'expo-router/react-navigation';
 import { useSnackbarState } from '@/contexts/GlobalSnackbarProvider';
 
 type ExpenseFormProps = {

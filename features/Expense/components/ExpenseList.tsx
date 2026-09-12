@@ -15,6 +15,7 @@ import ErrorState from "@/components/main/ErrorState";
 import { useLocalization } from "@/hooks/useLocalization";
 import { useCurrency } from "@/contexts/CurrencyProvider";
 import { MinimumItemsToLoadForScroll } from "@/lib/constants";
+import { extractDateLabel } from "@/lib/functions";
 
 type HeaderItem = {
     type: 'header';
@@ -27,6 +28,19 @@ export type ExpenseListItem = HeaderItem | Expense;
 // Type guard function
 const isHeaderItem = (item: ExpenseListItem): item is HeaderItem => {
     return 'type' in item && item.type === 'header';
+};
+
+const getDayHeaderTitle = (date: Date) => {
+    const relativeLabel = extractDateLabel(date);
+    const fullDate = date.toLocaleDateString(undefined, {
+        year: 'numeric',
+        month: 'short',
+        day: 'numeric',
+    });
+
+    return relativeLabel === 'Today' || relativeLabel === 'Yesterday'
+        ? `${relativeLabel} · ${fullDate}`
+        : fullDate;
 };
 
 type ExpensesListProps = {
@@ -87,15 +101,32 @@ export default function ExpensesList({
     });
 
     const listData = useMemo((): ExpenseListItem[] => {
-        if (!data?.pages || !data?.pages.some(page => page.expenses.length > 0)) return [];
-        return data.pages.filter(page => page.expenses.length > 0).flatMap((page) => [
-            {
-                type: 'header' as const,
-                id: `header-${page.month}`,
-                title: page.month
-            },
-            ...page.expenses
-        ]);
+        if (!data?.pages) return [];
+
+        const items: ExpenseListItem[] = [];
+        let previousDayKey: number | null = null;
+
+        for (const page of data.pages) {
+            for (const expense of page.expenses) {
+                const date = expense.dateTime;
+                const dayKey = date.getFullYear() * 10_000
+                    + (date.getMonth() + 1) * 100
+                    + date.getDate();
+
+                if (dayKey !== previousDayKey) {
+                    items.push({
+                        type: 'header',
+                        id: `day-${dayKey}`,
+                        title: getDayHeaderTitle(date),
+                    });
+                    previousDayKey = dayKey;
+                }
+
+                items.push(expense);
+            }
+        }
+
+        return items;
     }, [data]);
 
 
@@ -129,13 +160,16 @@ export default function ExpensesList({
     const renderItem = useCallback(({ item }: { item: ExpenseListItem }) => {
         if (isHeaderItem(item)) {
             return (
-                <ThemedText
-                    type="defaultSemiBold"
-                    fontSize={20}
-                    style={[styles.sectionHeader, { color: colors.text }]}
-                >
-                    {item.title}
-                </ThemedText>
+                <View style={styles.dayHeader}>
+                    <ThemedText
+                        type="defaultSemiBold"
+                        fontSize={15}
+                        style={{ color: colors.muted }}
+                    >
+                        {item.title}
+                    </ThemedText>
+                    <View style={[styles.dayHeaderLine, { backgroundColor: colors.border }]} />
+                </View>
             );
         }
 
@@ -143,14 +177,14 @@ export default function ExpensesList({
         return (
             <ExpenseCard
                 expense={item}
-                onPress={() => handleExpensePress(item.id!)}
+                onPress={handleExpensePress}
                 theme={theme}
                 uses24HourClock={uses24HourClock}
                 formatCurrency={formatCurrency}
                 dimensions={dimensions}
             />
         );
-    }, [colors.text, handleExpensePress, theme, uses24HourClock, formatCurrency, dimensions]);
+    }, [colors.border, colors.muted, handleExpensePress, theme, uses24HourClock, formatCurrency, dimensions]);
 
     // Get item type for FlashList optimization
     const getItemType = useCallback((item: ExpenseListItem) => {
@@ -164,6 +198,15 @@ export default function ExpensesList({
         }
         return `expense-${item.id!.toString()}`; // Convert number to string with prefix
     }, []);
+
+    const renderSeparator = useCallback(({ trailingItem }: { trailingItem: ExpenseListItem }) => (
+        <View
+            style={[
+                styles.itemSeparator,
+                { backgroundColor: isHeaderItem(trailingItem) ? 'transparent' : colors.border }
+            ]}
+        />
+    ), [colors.border]);
 
     // Total expenses for auto-loading
     const totalExpenses = useMemo(() => (
@@ -231,9 +274,7 @@ export default function ExpensesList({
                     </Button>
                 </View>
             }
-            ItemSeparatorComponent={() => (
-                <View style={[styles.itemSeparator, { backgroundColor: colors.border }]} />
-            )}
+            ItemSeparatorComponent={renderSeparator}
             contentContainerStyle={styles.contentContainer}
         />
 
@@ -241,11 +282,18 @@ export default function ExpensesList({
 }
 
 const styles = StyleSheet.create({
-    sectionHeader: {
-        marginTop: 10,
-        marginBottom: -10,
+    dayHeader: {
+        flexDirection: 'row',
+        alignItems: 'center',
+        gap: 10,
+        marginBottom: -8,
         paddingHorizontal: 10,
-        paddingVertical: 8,
+        paddingTop: 12,
+        paddingBottom: 4,
+    },
+    dayHeaderLine: {
+        flex: 1,
+        height: StyleSheet.hairlineWidth,
     },
     loadingMore: {
         flexDirection: "row",

@@ -36,17 +36,6 @@ export default function NewTransactionScreen() {
     };
 
 
-    const HeaderTitleComponent = () => (
-        <>
-            <FormSheetTabs
-                tabs={TABS}
-                activeTab={activeTab}
-                onTabChange={handleTabChange}
-            />
-        </>
-    );
-
-
     const renderForm = () => {
         if (activeTab === 'expense') {
             return (
@@ -72,7 +61,13 @@ export default function NewTransactionScreen() {
     return (
         <View style={styles.container}>
             <FormSheetHeader
-                title={<HeaderTitleComponent />}
+                title={(
+                    <FormSheetTabs
+                        tabs={TABS}
+                        activeTab={activeTab}
+                        onTabChange={handleTabChange}
+                    />
+                )}
                 onClose={() => router.back()}
                 headerStyle={{
                     paddingTop: 4,

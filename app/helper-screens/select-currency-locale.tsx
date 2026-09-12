@@ -3,7 +3,6 @@ import { StyleSheet, View } from "react-native";
 import { List, Icon } from "react-native-paper";
 import { ScreenWrapper } from "@/components/main/ScreenWrapper";
 import { useAppTheme } from "@/themes/providers/AppThemeProviders";
-import { useRouter } from "expo-router";
 import { useCurrency } from "@/contexts/CurrencyProvider";
 import { locales, LocaleValue } from "@/lib/currencies";
 import { FlashList } from "@shopify/flash-list";
@@ -30,7 +29,6 @@ const baseStyles = StyleSheet.create({
 });
 
 export default function AllLocalesScreen() {
-    const router = useRouter();
     const { currencyLocale, updateCurrencyLocale } = useCurrency();
     const { colors } = useAppTheme();
     const { hapticImpact } = useHaptics();
@@ -43,7 +41,7 @@ export default function AllLocalesScreen() {
             //     router.back();
             // }, 500);
         },
-        [updateCurrencyLocale, router]
+        [hapticImpact, updateCurrencyLocale]
     );
 
     const renderItem = useCallback(

@@ -25,12 +25,12 @@ export default function HomeScreen() {
   const [isRefreshing, setIsRefreshing] = useState(false);
   const { hapticImpact } = useHaptics();
 
-  const { data: expenseStats, isLoading: isExpenseStatsLoading, refetch: refetchExpenseStats } = useQuery({
+  const { data: expenseStats, refetch: refetchExpenseStats } = useQuery({
     queryKey: ['stats', 'expenses', 'stats-in-a-period', expensesPeriod],
     queryFn: () => getExpenseStatsByPeriod(expensesPeriod),
   });
 
-  const { data: incomeStats, isLoading: isIncomeStatsLoading, refetch: refetchIncomeStats } = useQuery({
+  const { data: incomeStats, refetch: refetchIncomeStats } = useQuery({
     queryKey: ['stats', 'incomes', 'stats-in-a-period', expensesPeriod],
     queryFn: () => getIncomeStatsByPeriod(expensesPeriod),
   });
@@ -46,7 +46,7 @@ export default function HomeScreen() {
     } finally {
       setIsRefreshing(false);
     }
-  }, [hapticImpact]);
+  }, [hapticImpact, refetchExpenseStats, refetchIncomeStats]);
 
   // Setup screen menu with options
   useScreenMenu({ onRefresh: handleRefresh });

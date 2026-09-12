@@ -4,7 +4,7 @@ import { FlashList, FlashListRef } from "@shopify/flash-list";
 import { useRouter } from "expo-router";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { ActivityIndicator, Button, FAB, Portal } from "react-native-paper";
-import { useIsFocused } from "@react-navigation/native";
+import { useIsFocused } from "expo-router/react-navigation";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { ThemedText } from "@/components/base/ThemedText";
@@ -113,7 +113,7 @@ export default function IncomesScreen() {
         <ThemedText
           type="defaultSemiBold"
           fontSize={20}
-          style={[styles.sectionHeader, { color: colors.text }]}
+          style={[styles.sectionHeader, { color: colors.muted }]}
         >
           {item.title}
         </ThemedText>
@@ -130,7 +130,7 @@ export default function IncomesScreen() {
         formatCurrency={formatCurrency}
       />
     );
-  }, [colors.text, handleIncomeCardPress, theme, uses24HourClock, formatCurrency]);
+  }, [colors.muted, handleIncomeCardPress, theme, uses24HourClock, formatCurrency]);
 
   // Get item type for FlashList optimization
   const getItemType = useCallback((item: ListItem) => {

@@ -37,10 +37,10 @@ This document captures the shared standards, features, tooling, and key packages
 
 ## Important Packages
 - Core: `expo`, `react`, `react-native`.
-- Navigation: `expo-router`, `@react-navigation/*`.
+- Navigation: `expo-router` and its React Navigation entry points.
 - State/data: `zustand`, `@tanstack/react-query` (async state management).
 - Database: `expo-sqlite`, `drizzle-orm`, `drizzle-kit`.
-- UI: `react-native-paper`, `expo-blur`, `expo-linear-gradient`.
+- UI: `react-native-paper`, `expo-linear-gradient`.
 - UX: `expo-haptics`, `lottie-react-native`, `react-native-reanimated`.
 - Charts: `react-native-gifted-charts`.
 - Auth/security: `expo-local-authentication`.

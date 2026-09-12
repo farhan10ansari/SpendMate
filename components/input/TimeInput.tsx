@@ -40,7 +40,7 @@ export default function TimeInput({ datetime, setDatetime, style }: TimeInputPro
         setTimePickerVisibility(false);
         hapticImpact()
         setDatetime(date);
-    }, [datetime, setDatetime]);
+    }, [datetime, hapticImpact, setDatetime]);
 
     const onDismissTime = useCallback(() => {
         setTimePickerVisibility(false);

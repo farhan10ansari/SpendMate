@@ -45,21 +45,21 @@ function TabLayout() {
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ color }) => <Icon size={28} source="home" color={color} />,
+          tabBarIcon: ({ color }) => <Icon size={28} source="home" color={String(color)} />,
         }}
       />
       <Tabs.Screen
         name="expenses"
         options={{
           title: 'Expenses',
-          tabBarIcon: ({ color }) => <Icon size={28} source={currencyData.icon ? currencyData.icon : "currency-usd"} color={color} />,
+          tabBarIcon: ({ color }) => <Icon size={28} source={currencyData.icon ? currencyData.icon : "currency-usd"} color={String(color)} />,
         }}
       />
       <Tabs.Screen
         name="circle"
         options={{
           title: 'Transaction',
-          tabBarIcon: ({ color }) => <Icon size={28} source="add" color={color} />,
+          tabBarIcon: ({ color }) => <Icon size={28} source="add" color={String(color)} />,
           tabBarButton: renderCustomTabButton,
         }}
       />
@@ -67,14 +67,14 @@ function TabLayout() {
         name="incomes"
         options={{
           title: 'Incomes',
-          tabBarIcon: ({ color }) => <Icon size={28} source="cash" color={color} />,
+          tabBarIcon: ({ color }) => <Icon size={28} source="cash" color={String(color)} />,
         }}
       />
       <Tabs.Screen
         name="menu"
         options={{
           title: 'Menu',
-          tabBarIcon: ({ color }) => <Icon size={28} source="menu" color={color} />,
+          tabBarIcon: ({ color }) => <Icon size={28} source="menu" color={String(color)} />,
         }}
       />
     </Tabs>

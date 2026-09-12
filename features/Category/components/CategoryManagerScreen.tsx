@@ -2,7 +2,7 @@ import React, { useState, useCallback } from 'react';
 import { StyleSheet, View } from 'react-native';
 import { Banner, FAB, Icon, Portal, Text } from 'react-native-paper';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
-import { useIsFocused } from '@react-navigation/native';
+import { useIsFocused } from 'expo-router/react-navigation';
 
 import { Category, CategoryFormData, CreateCategoryData, UpdateCategoryData } from '@/lib/types';
 import { CategoryList } from '@/features/Category/components/CategoryList';

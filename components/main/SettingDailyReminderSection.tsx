@@ -31,7 +31,6 @@ async function createAndroidChannel() {
       importance: Notifications.AndroidImportance.MAX,
       vibrationPattern: [0, 250, 250, 250],
       lightColor: "#FF231F7C",
-      sound: "default",
     });
   }
 }
@@ -71,16 +70,6 @@ function DailyReminderSection() {
   }, []);
 
 
-  // Sync time if dailyReminderTime changes externally
-  useEffect(() => {
-    if (dailyReminderTime) {
-      const newDate = new Date();
-      newDate.setHours(dailyReminderTime.hour, dailyReminderTime.minute, 0, 0);
-      setTime(newDate);
-    }
-  }, [dailyReminderTime]);
-
-
   const showSnackbarWithDismiss = useCallback((message: string, type?: "error" | "success" | "info", delay = 200) => {
     dismissSnackbar();
     setTimeout(() => {
@@ -89,7 +78,7 @@ function DailyReminderSection() {
   }, [showSnackbar, dismissSnackbar]);
 
 
-  async function ensurePermissions(): Promise<boolean> {
+  const ensurePermissions = useCallback(async (): Promise<boolean> => {
     let { status } = await Notifications.getPermissionsAsync();
     if (status !== "granted") {
       const { status: requestStatus } =
@@ -101,7 +90,7 @@ function DailyReminderSection() {
       return false;
     }
     return true;
-  }
+  }, [showSnackbarWithDismiss]);
 
 
   const scheduleNotificationAt = useCallback(
@@ -187,7 +176,7 @@ function DailyReminderSection() {
     } finally {
       schedulingRef.current = false;
     }
-  }, [updateSettings, scheduleNotificationAt, hapticImpact, showSnackbarWithDismiss]);
+  }, [ensurePermissions, updateSettings, scheduleNotificationAt, hapticImpact, showSnackbarWithDismiss]);
 
 
   const onConfirmTime = useCallback(
@@ -241,7 +230,7 @@ function DailyReminderSection() {
     } catch (error) {
       uiLog.error("Error syncing scheduled notifications:", error);
     }
-  }, []);
+  }, [dailyReminderNotificationId, updateSettings]);
 
 
   // Time display respects localization and 24-hour clock preferences

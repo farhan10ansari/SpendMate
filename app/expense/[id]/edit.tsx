@@ -11,7 +11,7 @@ export default function EditExpenseScreen() {
     const { id } = useLocalSearchParams<{ id: string }>();
     const { handleUpdateExpense } = useTransactionForm();
 
-    const { data: expense, isLoading, isError, error } = useQuery({
+    const { data: expense } = useQuery({
         queryKey: ['expense', id],
         queryFn: async () => getExpenseById(id),
         enabled: !!id,

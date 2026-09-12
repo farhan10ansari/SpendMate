@@ -2,13 +2,15 @@
   "expo": {
     "name": "SpendMate",
     "slug": "SpendMate",
-    "version": "1.0.0",
+    "version": "1.0.1",
     "orientation": "default",
     "icon": "./assets/images/adaptive-icon.png",
     "scheme": "spendmate",
     "userInterfaceStyle": "automatic",
-    "newArchEnabled": true,
-    "platforms": ["ios", "android"],
+    "platforms": [
+      "ios",
+      "android"
+    ],
     "ios": {
       "supportsTablet": true,
       "bundleIdentifier": "com.farhan10ansari.spendmate"
@@ -19,7 +21,6 @@
         "monochromeImage": "./assets/images/monochrome-icon.png",
         "backgroundColor": "#d2f5ec"
       },
-      "edgeToEdgeEnabled": true,
       "package": "com.farhan10ansari.spendmate",
       "permissions": [
         "android.permission.USE_BIOMETRIC",
@@ -44,7 +45,6 @@
       ],
       "expo-sqlite",
       "expo-localization",
-      "expo-web-browser",
       "expo-font",
       [
         "expo-local-authentication",
@@ -61,14 +61,8 @@
           "enableBackgroundRemoteNotifications": false
         }
       ],
-      [
-        "react-native-edge-to-edge",
-        {
-          "android": {
-            "enforceNavigationBarContrast": false
-          }
-        }
-      ]
+      "expo-sharing",
+      "expo-status-bar"
     ],
     "experiments": {
       "typedRoutes": true

@@ -38,21 +38,12 @@ export default function SelectStatsPeriodScreen() {
     setTimeout(() => router.back(), 150);
   };
 
-  function SectionHeader({ title }: { title: string }) {
-    return (
-      <ThemedText type="subtitle" style={{ color: colors.onSurface, fontSize: 12, marginBottom: 4, position: "absolute", top: 5, left: 5, zIndex: 999 }}>
-        {title}
-      </ThemedText>
-    );
-  }
-
-
   return (
     <ThemedView style={{ backgroundColor: colors.card, paddingBottom: 40 }}>
       <FormSheetHeader title="Select Period" onClose={() => router.back()} />
       <View style={{ paddingHorizontal: 12, gap: 4, marginTop: 14 }}>
         <View style={{ marginBottom: 8, gap: 8, position: "relative" }}>
-          <SectionHeader title="Quick Access" />
+          <SectionHeader title="Quick Access" color={colors.onSurface} />
           <PeriodList
             periods={quickPeriodOptions}
             selectedPeriod={period}
@@ -65,7 +56,7 @@ export default function SelectStatsPeriodScreen() {
 
         {periodsData?.months && periodsData.months.length > 0 && (
           <View style={{ marginBottom: 8, gap: 8, position: "relative" }}>
-            <SectionHeader title="Months" />
+            <SectionHeader title="Months" color={colors.onSurface} />
             <PeriodList
               periods={periodsData.months}
               selectedPeriod={period}
@@ -80,7 +71,7 @@ export default function SelectStatsPeriodScreen() {
 
         {periodsData?.years && periodsData.years.length > 0 && (
           <View style={{ marginBottom: 8, gap: 8, position: "relative" }}>
-            <SectionHeader title="Years" />
+            <SectionHeader title="Years" color={colors.onSurface} />
             <PeriodList
               periods={periodsData.years}
               selectedPeriod={period}
@@ -96,6 +87,14 @@ export default function SelectStatsPeriodScreen() {
           <EmptyState />}
       </View>
     </ThemedView>
+  );
+}
+
+function SectionHeader({ title, color }: { title: string; color: string }) {
+  return (
+    <ThemedText type="subtitle" style={{ color, fontSize: 12, marginBottom: 4, position: "absolute", top: 5, left: 5, zIndex: 999 }}>
+      {title}
+    </ThemedText>
   );
 }
 
@@ -160,4 +159,3 @@ function EmptyState() {
     </Card>
   );
 }
-

@@ -1,5 +1,5 @@
 import usePersistentAppStore from "@/stores/usePersistentAppStore";
-import { ThemeProvider } from "@react-navigation/native";
+import { DarkTheme, DefaultTheme, ThemeProvider } from "expo-router/react-navigation";
 import { createContext, useContext, useEffect, useMemo } from "react";
 import { Platform, useColorScheme } from "react-native";
 import { PaperProvider } from "react-native-paper";
@@ -21,6 +21,21 @@ function AppThemeProvider({ children }: { children: React.ReactNode }) {
 
     // ✅ Memoize context value to prevent provider re-renders
     const contextValue = useMemo(() => theme, [theme]);
+    const navigationTheme = useMemo(() => {
+        const baseTheme = theme.dark ? DarkTheme : DefaultTheme;
+        return {
+            ...baseTheme,
+            colors: {
+                ...baseTheme.colors,
+                primary: theme.colors.primary,
+                background: theme.colors.background,
+                card: theme.colors.card,
+                text: theme.colors.text,
+                border: theme.colors.border,
+                notification: theme.colors.error,
+            },
+        };
+    }, [theme]);
 
     useEffect(() => {
         if (Platform.OS === 'android') {
@@ -42,7 +57,7 @@ function AppThemeProvider({ children }: { children: React.ReactNode }) {
 
     return (
         <ThemeContext.Provider value={contextValue}>
-            <ThemeProvider value={theme}>
+            <ThemeProvider value={navigationTheme}>
                 <PaperProvider theme={theme}>
                     {children}
                 </PaperProvider>
