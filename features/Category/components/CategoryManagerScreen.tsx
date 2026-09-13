@@ -247,6 +247,7 @@ export function CategoryManagerScreen({
         <FAB
           visible={dialogState.mode === null && isFocused}
           icon="plus"
+          label={type === 'income' ? 'Add source' : 'Add category'}
           style={[
             styles.fab,
             {
@@ -255,7 +256,7 @@ export function CategoryManagerScreen({
             }
           ]}
           onPress={openCreateDialog}
-          variant={type === 'income' ? 'tertiary' : 'surface'}
+          variant={type === 'income' ? 'tertiary' : 'primary'}
           size="medium"
         />
       </Portal>
@@ -267,7 +268,6 @@ const styles = StyleSheet.create({
   fab: {
     position: "absolute",
     height: 48,
-    width: 48,
     justifyContent: 'center',
     alignItems: 'center',
   },

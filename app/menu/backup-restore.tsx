@@ -6,8 +6,10 @@ import { InfoCard } from "@/features/backup-restore/components/InfoCard";
 import { useBackupManager } from "@/features/backup-restore/useBackupManager";
 import { useAppTheme } from "@/themes/providers/AppThemeProviders";
 import { useState } from "react";
-import { RefreshControl, ScrollView, StyleSheet } from "react-native";
-import { Banner } from "react-native-paper";
+import { RefreshControl, ScrollView, StyleSheet, View } from "react-native";
+import { Banner, Icon } from "react-native-paper";
+import { ThemedText } from '@/components/base/ThemedText';
+import Color from 'color';
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function BackupRestoreScreen() {
@@ -50,6 +52,7 @@ export default function BackupRestoreScreen() {
       </Banner>
 
       <ScrollView
+        showsVerticalScrollIndicator={false}
         contentContainerStyle={[
           styles.contentContainer,
           { paddingBottom: insets.bottom + 12 }
@@ -68,7 +71,13 @@ export default function BackupRestoreScreen() {
           ) : undefined
         }
       >
-
+        <View style={[styles.overview, { backgroundColor: Color(colors.surface).mix(Color(colors.primary), 0.12).hex() }]}>
+          <View style={[styles.overviewIcon, { backgroundColor: colors.surface }]}><Icon source="backup-restore" size={24} color={colors.primary} /></View>
+          <View style={styles.overviewText}>
+            <ThemedText style={styles.title}>Your data, backed up</ThemedText>
+            <ThemedText style={styles.caption} color={colors.muted}>Create a copy today. Restore it when you need it.</ThemedText>
+          </View>
+        </View>
         {/* Backup Location */}
         <BackupLocationCard
           backupFolderUri={backupFolderUri}
@@ -109,6 +118,14 @@ export default function BackupRestoreScreen() {
 const styles = StyleSheet.create({
   contentContainer: {
     padding: 16,
-    gap: 16
-  }
+    gap: 14,
+    width: '100%',
+    maxWidth: 760,
+    alignSelf: 'center',
+  },
+  overview: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 16, borderRadius: 24 },
+  overviewIcon: { padding: 11, borderRadius: 16 },
+  overviewText: { flex: 1 },
+  title: { fontSize: 17, lineHeight: 24, fontWeight: '700' },
+  caption: { fontSize: 12, lineHeight: 18, marginTop: 3 },
 });

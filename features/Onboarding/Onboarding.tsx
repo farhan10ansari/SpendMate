@@ -1,176 +1,117 @@
-import React, { useCallback, useState } from 'react';
-import { View, StyleSheet, ViewToken, useWindowDimensions } from 'react-native';
+import React, { useCallback, useRef, useState } from 'react';
+import { FlatList, View, StyleSheet, ViewToken } from 'react-native';
 import { SafeAreaView } from 'react-native-safe-area-context';
-import { Button, useTheme } from 'react-native-paper';
-import Animated, {
-  useAnimatedRef,
-  useAnimatedScrollHandler,
-  useSharedValue,
-} from 'react-native-reanimated';
+import { Button, Icon, Text } from 'react-native-paper';
 import { OnboardingStep, useOnboardingData } from './OnboardingData';
 import OnboardingItem from './OnboardingItem';
-import PaginationDots from './PaginationDots';
-import OnboardingButton from './OnboardingButton';
 import usePersistentAppStore from '@/stores/usePersistentAppStore';
 import { useHaptics } from '@/contexts/HapticsProvider';
-import { uiLog as log } from '@/lib/logger';
 import { useRouter } from 'expo-router';
+import { useAppTheme } from '@/themes/providers/AppThemeProviders';
 
 export default function OnboardingScreen() {
   return <OnboardingSteps />;
 }
 
 export function OnboardingSteps() {
-  const theme = useTheme();
-  const { height } = useWindowDimensions();
-  const x = useSharedValue(0);
-  const flatListIndex = useSharedValue(0);
-  const flatListRef = useAnimatedRef<Animated.FlatList<OnboardingStep>>();
+  const { colors } = useAppTheme();
+  const data = useOnboardingData();
+  const [width, setWidth] = useState(0);
+  const [index, setIndex] = useState(0);
+  const listRef = useRef<FlatList<OnboardingStep>>(null);
   const updateUIFlag = usePersistentAppStore(state => state.updateUIFlag);
-  const onboardingData = useOnboardingData();
-  const { hapticNotify } = useHaptics();
+  const { hapticNotify, hapticImpact } = useHaptics();
   const router = useRouter();
-
-  const [settings, setSettings] = useState({
-    theme: 'system',
-    language: 'en',
-    currency: 'USD',
-    secureLogin: false,
-    haptics: true,
-  });
-
-  // Responsive spacing based on screen height
-  const isSmallScreen = height < 700;
-  const skipButtonTopMargin = isSmallScreen ? 10 : 20;
-  const skipButtonRightMargin = isSmallScreen ? 8 : 10;
-  const skipButtonFontSize = isSmallScreen ? 14 : 16;
-  const bottomContainerGap = isSmallScreen ? 15 : 30;
-  const bottomContainerPadding = isSmallScreen ? 10 : 20;
-
-  const onViewableItemsChanged = useCallback(
-    ({ viewableItems }: { viewableItems: ViewToken[] }) => {
-      // sometimes viewableItems can be empty when scrolling fast, so we guard against that
-      if (!viewableItems[0]) return;
-
-      if (viewableItems[0]?.index !== null) {
-        flatListIndex.value = viewableItems[0].index ?? 0;
-      }
-    },
-    []
-  );
-
-  const scrollHandler = useAnimatedScrollHandler({
-    onScroll: (event) => {
-      x.value = event.contentOffset.x;
-    },
-  });
-
-  const renderItem = useCallback(
-    ({
-      item,
-      index,
-    }: {
-      item: OnboardingStep;
-      index: number;
-    }) => {
-      return (
-        <OnboardingItem
-          item={item}
-          index={index}
-          x={x}
-          settings={settings}
-          onSettingChange={setSettings}
-        />
-      );
-    },
-    [x, settings]
-  );
-
-  const onFinish = useCallback(() => {
-    // Navigate to main app
+  const lastStep = index === data.length - 1;
+  const viewabilityConfig = useRef({ itemVisiblePercentThreshold: 60 }).current;
+  const onViewableItemsChanged = useCallback(({ viewableItems }: { viewableItems: ViewToken[] }) => {
+    const visibleIndex = viewableItems[0]?.index;
+    if (visibleIndex != null) setIndex(visibleIndex);
+  }, []);
+  const finish = () => {
     hapticNotify('success');
     updateUIFlag('onboardingCompleted', true);
     router.replace('/(tabs)');
-    log.info("Onboarding completed, navigating to main app");
-  }, [updateUIFlag, hapticNotify, router]);
-
-  const onSkip = useCallback(() => {
-    hapticNotify('success');
-    updateUIFlag('onboardingCompleted', true);
-    router.replace('/(tabs)');
-    log.info("Onboarding skipped, navigating to main app");
-  }, [updateUIFlag, hapticNotify, router]);
+  };
+  const goTo = (next: number) => {
+    hapticImpact();
+    listRef.current?.scrollToIndex({ index: next, animated: true });
+  };
 
   return (
-    <View style={styles.mainContainer}>
-      <SafeAreaView style={[styles.container, { backgroundColor: theme.colors.background }]}>
-        <View style={{ 
-          alignItems: 'flex-end', 
-          marginTop: skipButtonTopMargin, 
-          marginRight: skipButtonRightMargin 
-        }}>
-          <Button
-            mode="text"
-            onPress={onSkip}
-            labelStyle={{ 
-              color: theme.colors.primary, 
-              fontSize: skipButtonFontSize 
-            }}
-          >
-            Skip
-          </Button>
+    <SafeAreaView style={[styles.screen, { backgroundColor: colors.background }]}>
+      <View style={styles.header}>
+        <View style={styles.brand}>
+          <View style={[styles.brandIcon, { backgroundColor: colors.primaryContainer }]}>
+            <Icon source="wallet-outline" size={20} color={colors.onPrimaryContainer} />
+          </View>
+          <Text style={styles.brandName}>SpendMate</Text>
         </View>
-        <Animated.FlatList
-          ref={flatListRef}
-          onScroll={scrollHandler}
-          scrollEventThrottle={16}
+        <Button onPress={finish} compact>{lastStep ? 'Done' : 'Skip tour'}</Button>
+      </View>
+      <View style={styles.progressArea}>
+        <View style={styles.progressLabels}>
+          <Text style={[styles.eyebrow, { color: colors.primary }]}>YOUR QUICK TOUR</Text>
+          <Text accessibilityLiveRegion="polite" style={{ color: colors.onSurfaceVariant, fontSize: 12 }}>
+            {index + 1} of {data.length}
+          </Text>
+        </View>
+        <View accessibilityRole="progressbar" accessibilityValue={{ min: 1, max: data.length, now: index + 1 }} style={styles.progress}>
+          {data.map((step, i) => <View key={step.id} style={[styles.segment, { backgroundColor: i <= index ? colors.primary : colors.surfaceVariant }]} />)}
+        </View>
+      </View>
+      <View style={styles.pager} onLayout={event => setWidth(event.nativeEvent.layout.width)}>
+        {width > 0 && <FlatList
+          key={width}
+          ref={listRef}
+          data={data}
+          extraData={index}
           horizontal
           pagingEnabled
-          data={onboardingData}
-          keyExtractor={(item) => item.id}
-          bounces={false}
-          showsHorizontalScrollIndicator={false}
-          renderItem={renderItem}
+          initialScrollIndex={index}
+          getItemLayout={(_, i) => ({ length: width, offset: width * i, index: i })}
+          keyExtractor={item => item.id}
+          renderItem={({ item, index: itemIndex }) => <OnboardingItem item={item} width={width} isActive={index === itemIndex} />}
           onViewableItemsChanged={onViewableItemsChanged}
-          viewabilityConfig={{
-            minimumViewTime: 300,
-            viewAreaCoveragePercentThreshold: 50,
-          }}
-        />
-
-        <View style={[
-          styles.bottomContainer, 
-          { 
-            gap: bottomContainerGap, 
-            paddingBottom: bottomContainerPadding 
-          }
-        ]}>
-          <PaginationDots length={onboardingData.length} x={x} />
-          <OnboardingButton
-            currentIndex={flatListIndex}
-            length={onboardingData.length}
-            flatListRef={flatListRef}
-            onFinish={onFinish}
-          />
+          viewabilityConfig={viewabilityConfig}
+          showsHorizontalScrollIndicator={false}
+          bounces={false}
+          windowSize={3}
+          initialNumToRender={1}
+          maxToRenderPerBatch={2}
+        />}
+      </View>
+      <View style={[styles.footer, { borderTopColor: colors.outlineVariant }]}>
+        <View style={styles.actions}>
+          <Button mode="text" onPress={() => goTo(index - 1)} disabled={index === 0} icon="arrow-left">Back</Button>
+          <Button mode="contained" onPress={() => lastStep ? finish() : goTo(index + 1)}
+            icon={lastStep ? 'check' : 'arrow-right'} contentStyle={styles.nextContent} style={styles.next}>
+            {lastStep ? 'Get started' : 'Continue'}
+          </Button>
         </View>
-      </SafeAreaView>
-    </View>
+        <Text style={[styles.footerText, { color: colors.onSurfaceVariant }]}>
+          {data[index].type === 'setting' ? 'Make it yours. You can change these settings anytime.' : 'Swipe to explore · Your records stay on your device'}
+        </Text>
+      </View>
+    </SafeAreaView>
   );
 }
 
 const styles = StyleSheet.create({
-  mainContainer: {
-    position: 'absolute',
-    top: 0,
-    left: 0,
-    right: 0,
-    bottom: 0,
-    zIndex: 9999,
-  },
-  container: {
-    flex: 1,
-  },
-  bottomContainer: {
-    alignItems: 'center',
-  },
+  screen: { flex: 1 },
+  header: { width: '100%', maxWidth: 880, alignSelf: 'center', paddingHorizontal: 16, paddingVertical: 8, flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  brand: { flexDirection: 'row', alignItems: 'center', gap: 9 },
+  brandIcon: { width: 34, height: 34, borderRadius: 12, alignItems: 'center', justifyContent: 'center' },
+  brandName: { fontSize: 16, fontWeight: '700' },
+  progressArea: { width: '100%', maxWidth: 880, alignSelf: 'center', paddingHorizontal: 24, paddingBottom: 12, gap: 10 },
+  progressLabels: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between' },
+  eyebrow: { fontSize: 10, fontWeight: '700', letterSpacing: 1.4 },
+  progress: { flexDirection: 'row', gap: 5 },
+  segment: { height: 4, borderRadius: 4, flex: 1 },
+  pager: { flex: 1 },
+  footer: { width: '100%', maxWidth: 880, alignSelf: 'center', padding: 16, gap: 10, borderTopWidth: StyleSheet.hairlineWidth },
+  actions: { flexDirection: 'row', alignItems: 'center', justifyContent: 'space-between', gap: 12 },
+  next: { borderRadius: 16 },
+  nextContent: { flexDirection: 'row-reverse', minHeight: 48, paddingHorizontal: 8 },
+  footerText: { fontSize: 11, textAlign: 'center', lineHeight: 16 },
 });

@@ -1,57 +1,35 @@
 import React from "react";
 import { StyleSheet, View } from "react-native";
-import { Button, Card, List } from "react-native-paper";
+import { Button, Text } from "react-native-paper";
 import { useCurrency } from "@/contexts/CurrencyProvider";
 import { useRouter } from "expo-router";
-import { ThemedText } from "@/components/base/ThemedText";
 import { useAppTheme } from "@/themes/providers/AppThemeProviders";
 
-const OnboardingCurrencyStep = () => {
-    const { colors } = useAppTheme()
+export default function OnboardingCurrencyStep() {
+    const { colors } = useAppTheme();
     const { currencyCode, currencyData, currencyLocale, formatCurrency } = useCurrency();
     const router = useRouter();
-
     return (
         <View style={styles.container}>
-            <Card style={[styles.card, { backgroundColor: colors.elevation.level3 }]}>
-                <List.Section>
-                    <List.Subheader>Current Selection</List.Subheader>
-                    <List.Item
-                        title="Selected Currency"
-                        description={`${currencyData.name} (${currencyCode})`}
-                        left={(props) => <List.Icon {...props} icon="currency-sign" />}
-                        right={(props) => <ThemedText {...props}>{formatCurrency(1)}</ThemedText>}
-                    />
-                    <List.Item
-                        title="Selected Locale"
-                        description={currencyLocale}
-                        left={(props) => <List.Icon {...props} icon="web" />}
-                        right={(props) => <ThemedText {...props}>{currencyLocale}</ThemedText>}
-                    />
-                </List.Section>
-            </Card>
-            <Button
-                mode="contained"
-                style={styles.button}
-                onPress={() => router.push("/menu/currency-settings")}
-                icon="cog"
-            >
-                Manage Currency
+            <View style={[styles.preview, { backgroundColor: colors.surfaceVariant }]}>
+                <Text style={[styles.label, { color: colors.onSurfaceVariant }]}>YOUR AMOUNTS WILL LOOK LIKE</Text>
+                <Text style={[styles.amount, { color: colors.onSurface }]}>{formatCurrency(1234.56)}</Text>
+                <Text style={[styles.detail, { color: colors.onSurfaceVariant }]}>{currencyData.name} · {currencyCode}</Text>
+                <Text style={[styles.detail, { color: colors.onSurfaceVariant }]}>Number format: {currencyLocale}</Text>
+            </View>
+            <Button mode="contained-tonal" style={styles.button}
+                onPress={() => router.push("/menu/currency-settings")} icon="tune-variant">
+                Change currency & format
             </Button>
         </View>
     );
-};
+}
 
 const styles = StyleSheet.create({
-    container: {
-        width: "100%",
-    },
-    card: {
-        marginVertical: 16,
-    },
-    button: {
-        marginTop: 24,
-    },
+    container: { width: "100%", gap: 12 },
+    preview: { padding: 16, borderRadius: 16, gap: 7 },
+    label: { fontSize: 10, fontWeight: "700", letterSpacing: 1 },
+    amount: { fontSize: 27, fontWeight: "700" },
+    detail: { fontSize: 12, lineHeight: 18 },
+    button: { borderRadius: 14 },
 });
-
-export default OnboardingCurrencyStep;

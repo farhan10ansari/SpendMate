@@ -9,12 +9,12 @@ import { useCurrency } from "@/contexts/CurrencyProvider";
 import { useHaptics } from "@/contexts/HapticsProvider";
 
 const baseStyles = StyleSheet.create({
+    rippleClip: { borderRadius: 8, overflow: 'hidden', marginBottom: 8 },
     container: { flex: 1 },
     listItem: {
         paddingHorizontal: 0,
         paddingVertical: 8,
         borderRadius: 8,
-        marginBottom: 8,
     },
     checkIconContainer: {
         paddingHorizontal: 8,
@@ -90,6 +90,7 @@ const MemoizedListItem = React.memo(
         colors: any;
         onPress: (code: string) => void;
     }) => (
+        <View style={baseStyles.rippleClip}>
         <List.Item
             title={`${item.name} - ${item.code}`}
             titleNumberOfLines={2}
@@ -128,6 +129,7 @@ const MemoizedListItem = React.memo(
             }
             onPress={() => onPress(item.code)}
         />
+        </View>
     )
 );
 

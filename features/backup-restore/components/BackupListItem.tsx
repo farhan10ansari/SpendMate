@@ -1,7 +1,8 @@
 // components/backup/BackupListItem.tsx
 import React from 'react';
 import { View, StyleSheet } from 'react-native';
-import { List, Chip, IconButton, Menu, Divider } from 'react-native-paper';
+import { List, Icon, IconButton, Menu, Divider } from 'react-native-paper';
+import { ThemedText } from '@/components/base/ThemedText';
 import { useAppTheme } from '@/themes/providers/AppThemeProviders';
 import { BackupMetadata } from '@/lib/types';
 import { formatDate, formatFileSize } from '@/features/backup-restore/backup-utils';
@@ -28,17 +29,20 @@ export function BackupListItem({
   const theme = useAppTheme();
 
   return (
-    <View>
+    <View style={[styles.item, { backgroundColor: theme.colors.surfaceVariant }]}>
       <List.Item
         title={backup.name}
+        titleNumberOfLines={2}
+        titleStyle={styles.title}
+        descriptionStyle={styles.caption}
         description={formatDate(backup.date)}
-        left={(props) => <List.Icon {...props} icon="file-document-outline" />}
+        left={() => <View style={[styles.iconBadge, { backgroundColor: theme.colors.surface }]}><Icon source="file-document-outline" size={22} color={theme.colors.primary} /></View>}
         right={(props) => (
           <Menu
             visible={menuVisible}
             onDismiss={onMenuClose}
             anchor={
-              <IconButton {...props} icon="dots-vertical" onPress={onMenuOpen} />
+              <IconButton {...props} icon="dots-vertical" onPress={onMenuOpen} accessibilityLabel={`Actions for ${backup.name}`} />
             }
           >
             <Menu.Item onPress={onRestore} leadingIcon="restore" title="Restore" />
@@ -54,28 +58,20 @@ export function BackupListItem({
         )}
       />
       <View style={styles.chipContainer}>
-        <Chip icon="chart-bar" compact>
-          {backup.recordCount.expenses} expenses
-        </Chip>
-        <Chip icon="cash-plus" compact>
-          {backup.recordCount.incomes} incomes
-        </Chip>
-        <Chip icon="tag" compact>
-          {backup.recordCount.categories} (categories + sources)
-        </Chip>
-        <Chip icon="file" compact>
-          {formatFileSize(backup.size)}
-        </Chip>
+        <ThemedText style={styles.caption} color={theme.colors.muted}>{backup.recordCount.expenses} expenses · {backup.recordCount.incomes} incomes</ThemedText>
+        <ThemedText style={styles.caption} color={theme.colors.muted}>{backup.recordCount.categories} categories & sources · {formatFileSize(backup.size)}</ThemedText>
       </View>
     </View>
   );
 }
 
 const styles = StyleSheet.create({
+  item: { borderRadius: 18 },
+  title: { fontSize: 14, fontWeight: '600' },
+  caption: { fontSize: 11, lineHeight: 17 },
+  iconBadge: { alignSelf: 'center', padding: 10, marginLeft: 12, borderRadius: 13 },
   chipContainer: {
-    flexDirection: 'row',
-    flexWrap: 'wrap',
-    gap: 8,
+    gap: 3,
     paddingHorizontal: 16,
     paddingBottom: 12,
   },

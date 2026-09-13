@@ -1,6 +1,6 @@
 import React, { useCallback, useMemo } from 'react';
 import { View, StyleSheet, Platform } from 'react-native';
-import { Card, Text, IconButton, Button, Divider, Icon } from 'react-native-paper';
+import { Card, Text, IconButton, Button, Icon } from 'react-native-paper';
 import { useAppTheme } from '@/themes/providers/AppThemeProviders';
 import { BackupMetadata } from '@/lib/types';
 import { BackupListItem } from './BackupListItem';
@@ -146,6 +146,7 @@ export const BackupListCard = React.memo<BackupListCardProps>(({
     <Card mode="contained" style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
       <Card.Title
         title="Saved Backups"
+        titleStyle={{ fontSize: 16, fontWeight: '700' }}
         titleVariant="titleMedium"
         subtitle={subtitle}
         left={(props) => <Icon {...props} source="folder-multiple" color={colors.onSurfaceVariant} />}
@@ -153,6 +154,7 @@ export const BackupListCard = React.memo<BackupListCardProps>(({
           <IconButton
             {...props}
             icon="refresh"
+            accessibilityLabel="Refresh saved backups"
             onPress={handleRefresh}
             disabled={refreshing}
             loading={refreshing}
@@ -162,7 +164,7 @@ export const BackupListCard = React.memo<BackupListCardProps>(({
       <Card.Content style={styles.content}>
         {emptyState || backups.map((backup, index) => (
           <View key={backup.filePath}>
-            {index > 0 && <Divider style={styles.divider} />}
+            {index > 0 && <View style={styles.divider} />}
             <BackupListItem
               backup={backup}
               menuVisible={menuVisible === backup.filePath}
@@ -193,7 +195,7 @@ const styles = StyleSheet.create({
   },
   emptyContainer: {
     alignItems: 'center',
-    paddingVertical: 32,
+    paddingVertical: 20,
     paddingHorizontal: 16,
     gap: 8,
   },
@@ -209,7 +211,7 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   divider: {
-    marginVertical: 8,
+    height: 10,
   },
   dialogContent: {
     alignItems: 'center',

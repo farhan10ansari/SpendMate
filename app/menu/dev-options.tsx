@@ -3,6 +3,7 @@ import { ThemedText } from "@/components/base/ThemedText";
 import { tryCatch } from "@/lib/try-catch";
 import { seedDummyExpenses, seedDummyIncome } from "@/repositories/DevRepo";
 import { useQueryClient } from "@tanstack/react-query";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 import { useState } from "react";
 import { Button, Icon, TextInput } from "react-native-paper";
 import { useAppTheme } from "@/themes/providers/AppThemeProviders";
@@ -18,6 +19,7 @@ export default function DevOptionsScreen() {
   const queryClient = useQueryClient();
   const { colors } = useAppTheme();
   const router = useRouter();
+  const insets = useSafeAreaInsets();
   const [numberOfExpenses, setNumberOfExpenses] = useState(0);
   const [numberOfIncomes, setNumberOfIncomes] = useState(0);
   const updateUIFlag = usePersistentAppStore((state) => state.updateUIFlag);
@@ -128,10 +130,19 @@ export default function DevOptionsScreen() {
         <View style={{ flex: 1 }}>
           <ScrollView
             style={styles.container}
-            contentContainerStyle={styles.scrollContentContainer}
+            contentContainerStyle={[styles.scrollContentContainer, { paddingBottom: insets.bottom + 24 }]}
             showsVerticalScrollIndicator={false}
             keyboardShouldPersistTaps="handled"
           >
+            <View style={styles.intro}>
+              <View style={[styles.iconBadge, { backgroundColor: colors.primaryContainer }]}>
+                <Icon source="flask-outline" size={24} color={colors.onPrimaryContainer} />
+              </View>
+              <View style={styles.headerCopy}>
+                <ThemedText style={[styles.sectionTitle, { color: colors.onSurface }]}>Your testing toolkit</ThemedText>
+                <ThemedText style={[styles.helperText, { color: colors.onSurfaceVariant }]}>Explore the app with sample records.</ThemedText>
+              </View>
+            </View>
             {/* Warning Section */}
             <View style={[styles.warningContainer, { backgroundColor: colors.errorContainer }]}>
               <View style={styles.warningIconWrapper}>
@@ -142,21 +153,20 @@ export default function DevOptionsScreen() {
                 />
               </View>
               <ThemedText style={[styles.warningText, { color: colors.onErrorContainer }]}>
-                This section is for development purposes only. Use dummy data to test the app functionality.
+                For testing only. Sample records are added to your real data and affect your totals. Back up your records first.
               </ThemedText>
             </View>
 
             {/* Dummy Expenses Section */}
-            <View style={[styles.sectionContainer, { backgroundColor: colors.surface, shadowColor: colors.shadow }]}>
+            <View style={[styles.sectionContainer, { backgroundColor: colors.surface, borderColor: colors.outlineVariant }]}>
               <View style={styles.sectionHeader}>
-                <Icon
-                  source="receipt"
-                  size={24}
-                  color={colors.primary}
-                />
-                <ThemedText style={[styles.sectionTitle, { color: colors.primary }]}>
-                  Add Dummy Expenses
-                </ThemedText>
+                <View style={[styles.iconBadge, { backgroundColor: colors.primaryContainer }]}>
+                  <Icon source="receipt-text-outline" size={22} color={colors.onPrimaryContainer} />
+                </View>
+                <View style={styles.headerCopy}>
+                  <ThemedText style={[styles.sectionTitle, { color: colors.onSurface }]}>Sample expenses</ThemedText>
+                  <ThemedText style={[styles.helperText, { color: colors.onSurfaceVariant }]}>Test your spending lists and charts.</ThemedText>
+                </View>
               </View>
 
               <View style={styles.inputContainer}>
@@ -167,10 +177,12 @@ export default function DevOptionsScreen() {
                   onChangeText={handleExpenseInputChange}
                   value={numberOfExpenses.toString()}
                   mode="outlined"
+                  dense
+                  outlineStyle={{ borderRadius: 14 }}
                   right={<TextInput.Icon icon="counter" />}
                   error={numberOfExpenses > 0 && !isValidInput(numberOfExpenses)}
                 />
-                <ThemedText style={[styles.helperText, { color: colors.muted }]}>
+                <ThemedText style={[styles.helperText, { color: colors.onSurfaceVariant }]}>
                   Enter a number between 1 and 1000
                 </ThemedText>
               </View>
@@ -182,21 +194,20 @@ export default function DevOptionsScreen() {
                 disabled={!isValidInput(numberOfExpenses)}
                 icon="plus-circle"
               >
-                Insert {numberOfExpenses} Dummy Expenses
+                Add {numberOfExpenses || ""} sample expenses
               </Button>
             </View>
 
             {/* Dummy Incomes Section */}
-            <View style={[styles.sectionContainer, { backgroundColor: colors.surface, shadowColor: colors.shadow }]}>
+            <View style={[styles.sectionContainer, { backgroundColor: colors.surface, borderColor: colors.outlineVariant }]}>
               <View style={styles.sectionHeader}>
-                <Icon
-                  source="cash-plus"
-                  size={24}
-                  color={colors.primary}
-                />
-                <ThemedText style={[styles.sectionTitle, { color: colors.primary }]}>
-                  Add Dummy Incomes
-                </ThemedText>
+                <View style={[styles.iconBadge, { backgroundColor: colors.tertiaryContainer }]}>
+                  <Icon source="cash-plus" size={22} color={colors.onTertiaryContainer} />
+                </View>
+                <View style={styles.headerCopy}>
+                  <ThemedText style={[styles.sectionTitle, { color: colors.onSurface }]}>Sample income</ThemedText>
+                  <ThemedText style={[styles.helperText, { color: colors.onSurfaceVariant }]}>Test your income lists and insights.</ThemedText>
+                </View>
               </View>
 
               <View style={styles.inputContainer}>
@@ -207,10 +218,12 @@ export default function DevOptionsScreen() {
                   onChangeText={handleIncomeInputChange}
                   value={numberOfIncomes.toString()}
                   mode="outlined"
+                  dense
+                  outlineStyle={{ borderRadius: 14 }}
                   right={<TextInput.Icon icon="counter" />}
                   error={numberOfIncomes > 0 && !isValidInput(numberOfIncomes)}
                 />
-                <ThemedText style={[styles.helperText, { color: colors.muted }]}>
+                <ThemedText style={[styles.helperText, { color: colors.onSurfaceVariant }]}>
                   Enter a number between 1 and 1000
                 </ThemedText>
               </View>
@@ -222,25 +235,25 @@ export default function DevOptionsScreen() {
                 disabled={!isValidInput(numberOfIncomes)}
                 icon="plus-circle"
               >
-                Insert {numberOfIncomes} Dummy Incomes
+                Add {numberOfIncomes || ""} sample incomes
               </Button>
             </View>
 
-            {/* Disable Dev Options Section */}
-            <View style={[styles.sectionContainer, styles.disableSection, { backgroundColor: colors.surface, shadowColor: colors.shadow, borderColor: colors.error }]}>
+            {/* Finished testing? Section */}
+            <View style={[styles.sectionContainer, { backgroundColor: colors.surface, borderColor: colors.outlineVariant }]}>
               <View style={styles.sectionHeader}>
                 <Icon
-                  source="close-circle"
+                  source="eye-off-outline"
                   size={20}
-                  color={colors.error}
+                  color={colors.onSurfaceVariant}
                 />
-                <ThemedText style={[styles.sectionTitle, { color: colors.error, fontSize: 16 }]}>
+                <ThemedText style={[styles.sectionTitle, { color: colors.onSurface, fontSize: 16 }]}>
                   Disable Dev Options
                 </ThemedText>
               </View>
 
-              <ThemedText style={{ color: colors.muted, marginBottom: 12, fontSize: 13 }}>
-                Hide dev options from menu (re-enable by tapping version 5x from About screen)
+              <ThemedText style={{ color: colors.onSurfaceVariant, marginBottom: 12, fontSize: 13 }}>
+                Hide these tools from the menu. To bring them back, tap the version five times on the About page.
               </ThemedText>
 
               <Button
@@ -248,10 +261,10 @@ export default function DevOptionsScreen() {
                 style={styles.button}
                 onPress={handleDisableDevOptions}
                 icon="close"
-                textColor={colors.error}
+                textColor={colors.primary}
                 buttonColor="transparent"
               >
-                Disable
+                Hide developer options
               </Button>
             </View>
           </ScrollView>
@@ -268,20 +281,18 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    padding: 16,
   },
   scrollContentContainer: {
-    paddingBottom: 120,
-    flexGrow: 1,
+    padding: 16,
+    width: "100%",
+    maxWidth: 720,
+    alignSelf: "center",
   },
   sectionContainer: {
     borderRadius: 24,
     padding: 16,
     marginBottom: 16,
-    elevation: 0,
-    shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0,
-    shadowRadius: 2,
+    borderWidth: StyleSheet.hairlineWidth,
   },
   sectionHeader: {
     flexDirection: "row",
@@ -290,14 +301,15 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   sectionTitle: {
-    fontSize: 17,
+    fontSize: 16,
     fontWeight: "600",
   },
   inputContainer: {
-    marginBottom: 16,
+    marginBottom: 4,
   },
   button: {
     marginTop: 8,
+    borderRadius: 14,
   },
   warningContainer: {
     borderRadius: 16,
@@ -319,7 +331,18 @@ const styles = StyleSheet.create({
     fontSize: 12,
     marginTop: 4,
   },
-  disableSection: {
-    borderWidth: 1,
+  intro: {
+    flexDirection: "row",
+    alignItems: "center",
+    gap: 12,
+    marginBottom: 16,
   },
+  iconBadge: {
+    width: 42,
+    height: 42,
+    borderRadius: 14,
+    alignItems: "center",
+    justifyContent: "center",
+  },
+  headerCopy: { flex: 1 },
 });

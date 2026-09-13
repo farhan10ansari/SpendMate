@@ -9,11 +9,13 @@ import { useMemo, useState } from "react";
 import { StyleSheet, View, Text, ScrollView } from "react-native";
 import { Banner, Icon, List } from "react-native-paper";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
+import Color from 'color';
 
 const CurrencySettingsScreen = () => {
   const insets = useSafeAreaInsets();
   const router = useRouter();
-  const { colors } = useAppTheme();
+  const { colors, dark } = useAppTheme();
+  const selectionTint = Color(colors.surface).mix(Color(colors.primary), 0.12).hex();
   const [bannerVisible, setBannerVisible] = useState(true);
   const { hapticImpact } = useHaptics();
 
@@ -62,19 +64,21 @@ const CurrencySettingsScreen = () => {
       >
         Changing the currency only updates the formatting style. The actual amount remains unchanged.
       </Banner>
-      <ScrollView style={styles.container} contentContainerStyle={[styles.contentContainer, { paddingBottom: insets.bottom + 12 }]}>
+      <ScrollView style={styles.container} showsVerticalScrollIndicator={false} contentContainerStyle={[styles.contentContainer, { paddingBottom: insets.bottom + 20 }]}>
         {/* Amount Formatting Preview */}
-        <SettingSection
-          icon="cash"
-          title="Amount Formatting Preview"
-          description="Preview how amounts will be displayed with your selected currency and locale."
-        >
-          <View style={[styles.previewContainer, { backgroundColor: colors.primaryContainer, borderRadius: 18 }]}>
-            <Text style={[styles.previewText, { color: colors.onPrimaryContainer }]}>
+          <View style={[styles.previewContainer, { backgroundColor: dark ? colors.primaryContainer : selectionTint }]}>
+            <View style={styles.previewHeader}>
+              <Icon source="cash-multiple" size={22} color={colors.primary} />
+              <Text style={[styles.eyebrow, { color: colors.muted }]}>AMOUNT PREVIEW</Text>
+              <View style={[styles.codeBadge, { backgroundColor: colors.surface }]}>
+                <Text style={[styles.currencyCode, { color: colors.primary }]}>{currencyCode}</Text>
+              </View>
+            </View>
+            <Text style={[styles.previewText, { color: colors.text }]}>
               {formatCurrency(previewAmount)}
             </Text>
+            <Text style={[styles.previewCaption, { color: colors.muted }]}>Number format · {currencyLocale}</Text>
           </View>
-        </SettingSection>
         {/* Currency Selection Section */}
         <SettingSection
           icon="currency-sign"
@@ -82,14 +86,20 @@ const CurrencySettingsScreen = () => {
           description="Choose your default currency for displaying amounts."
         >
           {currencyOptions.map((option) => (
+            <View key={option.code} style={styles.rippleClip}>
             <List.Item
-              key={option.code}
-              title={`${option.name} - ${option.code}`}
+              title={option.code}
+              description={option.name}
+              titleStyle={styles.currencyTitle}
+              descriptionStyle={[styles.currencyDescription, { color: colors.muted }]}
+              descriptionNumberOfLines={2}
+              accessibilityRole="radio"
+              accessibilityState={{ checked: currencyCode === option.code }}
               titleNumberOfLines={2}
               style={[
-                styles.listItem,
-                { backgroundColor: colors.inverseOnSurface },
-                currencyCode === option.code && { backgroundColor: colors.primaryContainer },
+                styles.listItem, styles.clippedItem,
+                { backgroundColor: colors.surface, borderColor: colors.border },
+                currencyCode === option.code && { backgroundColor: selectionTint, borderColor: colors.primary },
               ]}
               left={(props) => (
                 <View style={styles.leftIconContainer}>
@@ -102,21 +112,24 @@ const CurrencySettingsScreen = () => {
               )}
               right={() =>
                 currencyCode === option.code ? (
-                  <View style={[styles.checkIconContainer, { backgroundColor: colors.ripplePrimary }]}>
-                    <Icon source="check" size={20} color={colors.primary} />
+                  <View style={styles.checkIconContainer}>
+                    <Icon source="check-circle" size={21} color={colors.primary} />
                   </View>
-                ) : null
+                ) : <View style={styles.checkIconContainer}><Icon source="circle-outline" size={21} color={colors.muted} /></View>
               }
               onPress={() => {
                 hapticImpact();
                 updateCurrency(option.code)
               }}
             />
+            </View>
           ))}
+          <View style={styles.rippleClip}>
           <List.Item
-            title="More Options"
+            title="Browse all currencies"
+            right={props => <List.Icon {...props} icon="chevron-right" color={colors.primary} />}
             titleStyle={[styles.moreOptionsTitle, { color: colors.primary }]}
-            style={[styles.moreOptionsListItem, { backgroundColor: colors.surfaceVariant, borderColor: colors.border }]}
+            style={[styles.moreOptionsListItem, styles.clippedItem, { backgroundColor: colors.surfaceVariant, borderColor: colors.border }]}
             left={(props) => (
               <View style={styles.leftIconContainer}>
                 <List.Icon {...props} icon="currency-sign" color={colors.primary} style={styles.icon} />
@@ -124,20 +137,26 @@ const CurrencySettingsScreen = () => {
             )}
             onPress={handleNavigateToAllCurrencies}
           />
+          </View>
         </SettingSection>
 
         {/* New Currency Locale Section */}
         <SettingSection
           icon="web"
-          title="Currency Locale"
-          description="Select your preferred locale for currency formatting."
+          title="Number Format"
+          description="Choose how currency symbols, commas, and decimals appear."
         >
+          <View style={styles.rippleClip}>
           <List.Item
             title={currencyLocale}
+            titleStyle={styles.currencyTitle}
+            description="Tap to change locale"
+            descriptionStyle={[styles.currencyDescription, { color: colors.muted }]}
             right={(props) => <List.Icon {...props} icon="chevron-right" />}
-            style={[styles.listItem, { backgroundColor: colors.inverseOnSurface }]}
+            style={[styles.listItem, styles.clippedItem, { backgroundColor: colors.surfaceVariant, borderColor: colors.border }]}
             onPress={handleNavigateToLocaleSelection}
           />
+          </View>
         </SettingSection>
       </ScrollView>
 
@@ -148,23 +167,30 @@ const CurrencySettingsScreen = () => {
 export default CurrencySettingsScreen;
 
 const styles = StyleSheet.create({
+  rippleClip: { borderRadius: 16, overflow: 'hidden', marginBottom: 8 },
+  clippedItem: { marginBottom: 0 },
   container: {
     flex: 1,
   },
   contentContainer: {
     padding: 16,
+    width: '100%',
+    maxWidth: 720,
+    alignSelf: 'center',
   },
   listItem: {
     paddingHorizontal: 0,
     paddingVertical: 8,
     borderRadius: 16,
     marginBottom: 8,
+    borderWidth: StyleSheet.hairlineWidth,
+    overflow: 'hidden',
   },
   checkIconContainer: {
     paddingHorizontal: 8,
     paddingVertical: 4,
     borderRadius: 12,
-    alignSelf: "flex-start",
+    alignSelf: "center",
   },
   leftIconContainer: {
     width: 64,
@@ -184,18 +210,27 @@ const styles = StyleSheet.create({
     borderWidth: 1,
   },
   moreOptionsTitle: {
-    fontStyle: "italic",
+    fontSize: 13,
     fontWeight: "600",
   },
   icon: {
     width: "100%",
   },
   previewContainer: {
-    paddingVertical: 12,
-    paddingHorizontal: 16,
+    padding: 18,
+    borderRadius: 24,
+    marginBottom: 16,
+    gap: 12,
   },
   previewText: {
     fontSize: 26,
     fontWeight: "600",
   },
+  previewHeader: { flexDirection: 'row', alignItems: 'center', gap: 8, flexWrap: 'wrap' },
+  eyebrow: { fontSize: 10, fontWeight: '600', letterSpacing: 0.8, flex: 1 },
+  codeBadge: { paddingHorizontal: 10, paddingVertical: 5, borderRadius: 10 },
+  currencyCode: { fontSize: 11, fontWeight: '700' },
+  previewCaption: { fontSize: 12, lineHeight: 18 },
+  currencyTitle: { fontSize: 14, fontWeight: '700' },
+  currencyDescription: { fontSize: 12, lineHeight: 18 },
 });

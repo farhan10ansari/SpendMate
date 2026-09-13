@@ -10,6 +10,7 @@ import { useHaptics } from "@/contexts/HapticsProvider";
 
 // Reuse baseStyles or augment if needed
 const baseStyles = StyleSheet.create({
+    rippleClip: { borderRadius: 8, overflow: 'hidden', marginBottom: 8 },
     container: {
         flex: 1,
         padding: 18,
@@ -18,7 +19,6 @@ const baseStyles = StyleSheet.create({
         paddingHorizontal: 0,
         paddingVertical: 8,
         borderRadius: 8,
-        marginBottom: 8,
     },
     checkIconContainer: {
         paddingHorizontal: 8,
@@ -85,6 +85,7 @@ const MemoizedLocaleListItem = React.memo(
         colors: any;
         onPress: (locale: LocaleValue) => void;
     }) => (
+        <View style={baseStyles.rippleClip}>
         <List.Item
             title={item.name}
             description={item.locale}
@@ -108,6 +109,7 @@ const MemoizedLocaleListItem = React.memo(
             }
             onPress={() => onPress(item.locale)}
         />
+        </View>
     )
 );
 

@@ -2,7 +2,6 @@ import LottieView from 'lottie-react-native';
 import { Icon } from 'react-native-paper';
 import { useAppTheme } from "@/themes/providers/AppThemeProviders";
 import { useMemo } from "react";
-import { useWindowDimensions } from 'react-native';
 import ThemeSelector from '@/components/main/ThemeSelector';
 import useSettings from '@/hooks/settings/useSettings';
 import SettingSwitchListItem from '@/components/main/SettingSwitchListItem';
@@ -31,44 +30,40 @@ export interface Settings {
 
 export const useOnboardingData = () => {
   const { colors } = useAppTheme();
-  const { height } = useWindowDimensions();
   const {
     haptics,
     handleHapticsToggle,
   } = useSettings();
 
-  // Responsive icon sizing
-  const isSmallScreen = height < 700;
-  const isTinyScreen = height < 600;
-  const iconSize = isTinyScreen ? 80 : isSmallScreen ? 100 : 120;
+  const iconSize = 52;
 
   return useMemo<OnboardingStep[]>(() => ([
     {
       id: '1',
       type: 'intro',
       title: `Welcome to SpendMate`,
-      description: 'Your smart companion for tracking expenses, managing budgets, and gaining insights into your spending habits. Take control of your finances with ease.',
+      description: 'A little clarity for your everyday money. Track what comes in, what goes out, and what stays with you.',
       lottie: <LottieView source={require('../../assets/lottie/onboarding.json')} autoPlay loop style={{ height: "100%", width: "100%" }} />
     },
     {
       id: '2',
       type: 'intro',
       title: 'Track Every Transaction',
-      description: 'Easily manage your incomes and expenses with customizable categories and payment methods. All data stored locally for your privacy.',
+      description: 'From your morning coffee to payday, keep your expenses and income together in one simple place.',
       icon: <Icon source="chart-bar" size={iconSize} color={colors.primary} />
     },
     {
       id: '3',
       type: 'intro',
       title: 'Smart Insights',
-      description: 'Analyze spending patterns and track your financial progress with our intuitive, fast interface. View detailed statistics across different time periods.',
-      icon: <Icon source="lightbulb-on-outline" size={iconSize} color={"orange"} />
+      description: 'Turn everyday entries into a clearer picture of your money. Choose a period and explore your progress.',
+      icon: <Icon source="lightbulb-on-outline" size={iconSize} color={colors.primary} />
     },
     {
       id: '4',
       type: 'setting',
       title: 'Choose Your Theme',
-      description: 'Choose your preferred theme for the app. System theme will automatically switch between light and dark based on your device settings.',
+      description: 'Light, dark, or in sync with your device. Choose the look that feels right.',
       settingKey: 'theme',
       component: <ThemeSelector />,
       icon: <Icon source="palette-outline" size={iconSize} color={colors.primary} />
@@ -77,7 +72,7 @@ export const useOnboardingData = () => {
       id: '5',
       type: 'setting',
       title: 'Default Currency',
-      description: 'Set your currency for expense tracking.',
+      description: 'Choose how amounts appear, with your currency and preferred number format.',
       settingKey: 'currency',
       component: <OnboardingCurrencyStep />,
       icon: 'cash',
@@ -101,7 +96,7 @@ export const useOnboardingData = () => {
       id: '7',
       type: 'setting',
       title: 'Haptic Feedback',
-      description: 'Enable vibration feedback for better interaction experience.',
+      description: 'Add a subtle touch of feedback to everyday actions. Keep it on, or enjoy a quieter feel.',
       settingKey: 'haptics',
       component: <SettingSwitchListItem
         title="Enable Haptic Feedback"
@@ -119,7 +114,7 @@ export const useOnboardingData = () => {
       id: '8',
       type: 'setting',
       title: 'Secure Login',
-      description: 'Enable secure login using biometrics or device passcode.',
+      description: 'Add an extra layer of privacy with your fingerprint, face, or device passcode when supported.',
       settingKey: 'secureLogin',
       component: <SettingSecureLoginToggle showSuccessSnackbar={false} />,
       icon: <Icon source="fingerprint" size={iconSize} color={colors.primary} />,
@@ -128,7 +123,7 @@ export const useOnboardingData = () => {
       id: '9',
       type: 'intro',
       title: 'All Set!',
-      description: `You're all set to take control of your finances with SpendMate. Let's get started!`,
+      description: 'Your next chapter starts with an entry. You can revisit this tour and adjust your preferences anytime.',
       lottie: <LottieView source={require('../../assets/lottie/success.json')} autoPlay loop style={{ height: "100%", width: "100%" }} />
     }
   ]), [colors, haptics, handleHapticsToggle, iconSize])

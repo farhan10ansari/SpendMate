@@ -1,4 +1,5 @@
- import { StyleSheet, View } from "react-native";
+import { StyleSheet, View } from "react-native";
+import { Icon, TouchableRipple } from 'react-native-paper';
 import { ThemedText } from "@/components/base/ThemedText";
 import { useAppTheme } from "@/themes/providers/AppThemeProviders";
 import { ScreenWrapper } from "@/components/main/ScreenWrapper";
@@ -6,22 +7,12 @@ import useSettings from "@/hooks/settings/useSettings";
 import SettingSwitchListItem from "@/components/main/SettingSwitchListItem";
 import SettingOptionListItem from "@/components/main/SettingOptionListItem";
 import { LANGUAGE_OPTIONS } from "@/lib/constants";
-import SettingButton from "@/components/main/SettingButton";
 import SettingSecureLoginToggle from "@/components/main/SettingSecureLoginToggle";
 import SettingSection from "@/components/main/SettingSection";
 import { useNavigation, useRouter } from "expo-router";
 import { uiLog as log } from "@/lib/logger";
 import { useEffect } from "react";
 import SettingDailyReminderSection from "@/components/main/SettingDailyReminderSection";
-
-function SecureLoginSection() {
-  return (
-    <SettingSection icon="fingerprint" title="Secure Login"
-      description="Use fingerprint, face recognition, or device passcode to secure your app login.">
-      <SettingSecureLoginToggle />
-    </SettingSection>
-  );
-}
 
 const LanguageSection = () => {
   const { colors } = useAppTheme();
@@ -71,52 +62,32 @@ export const HapticsSection = ({
   );
 };
 
-const ComingSoonSection = () => {
-  const { colors } = useAppTheme();
-
-  const styles = StyleSheet.create({
-    comingSoonBadge: {
-      backgroundColor: colors.primaryContainer,
-      paddingHorizontal: 8,
-      paddingVertical: 4,
-      borderRadius: 24,
-      alignSelf: "center",
-      marginTop: 8,
-    },
-    comingSoonText: {
-      color: colors.onPrimaryContainer,
-      fontSize: 12,
-      fontWeight: "600",
-    },
-  });
-
-  return (
-    <SettingSection
-      icon="cog-outline"
-      title="More Settings"
-      description="Additional settings and customization options are being developed and will be available in future updates."
-    >
-      <View style={styles.comingSoonBadge}>
-        <ThemedText style={styles.comingSoonText}>
-          More options coming soon!
-        </ThemedText>
-      </View>
-    </SettingSection>
-  );
-};
-
 // Main Component
 export default function SettingsScreen() {
   const router = useRouter();
+  const { colors } = useAppTheme();
   const navigation = useNavigation();
   const { haptics, handleHapticsToggle } =
     useSettings();
 
   const styles = StyleSheet.create({
     container: {
-      flex: 1,
       padding: 16,
+      width: '100%',
+      maxWidth: 720,
+      alignSelf: 'center',
+      gap: 12,
     },
+    groupHeading: { flexDirection: 'row', alignItems: 'center', gap: 10, marginTop: 6 },
+    groupTitle: { fontSize: 12, fontWeight: '700', color: colors.muted },
+    line: { flex: 1, height: StyleSheet.hairlineWidth, backgroundColor: colors.border },
+    controls: { padding: 10, paddingBottom: 2, borderRadius: 22, backgroundColor: colors.surface, borderWidth: StyleSheet.hairlineWidth, borderColor: colors.border },
+    actionCard: { borderRadius: 22, overflow: 'hidden', backgroundColor: colors.surface, borderWidth: StyleSheet.hairlineWidth, borderColor: colors.border },
+    action: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14 },
+    iconBadge: { padding: 10, borderRadius: 14, backgroundColor: colors.surfaceVariant },
+    actionText: { flex: 1 },
+    actionTitle: { fontSize: 14, lineHeight: 21, fontWeight: '600' },
+    caption: { fontSize: 12, lineHeight: 18, color: colors.muted },
   });
 
   useEffect(() => {
@@ -126,27 +97,39 @@ export default function SettingsScreen() {
   return (
     <ScreenWrapper background="background" withScrollView>
       <View style={styles.container}>
-        <HapticsSection
-          haptics={haptics}
-          handleHapticsToggle={handleHapticsToggle}
-        />
+        <View style={styles.groupHeading}>
+          <ThemedText style={styles.groupTitle}>EVERYDAY EXPERIENCE</ThemedText><View style={styles.line} />
+        </View>
+        <View style={styles.controls}>
+          <SettingSwitchListItem title="Haptic feedback" description="A little feedback with every tap"
+            value={haptics.enabled} onValueChange={handleHapticsToggle}
+            leftIcon={haptics.enabled ? 'vibrate' : 'vibrate-off'} />
+        </View>
         <SettingDailyReminderSection />
-        <SecureLoginSection />
-        <SettingSection
-          icon="account-cog-outline"
-          title="Show Onboarding"
-          description="Revisit the onboarding screens to learn about the app features and setup."
-        >
-          <SettingButton
-            title="Revisit Onboarding"
-            onPress={() => {
+        <View style={styles.groupHeading}>
+          <ThemedText style={styles.groupTitle}>PRIVACY & SECURITY</ThemedText><View style={styles.line} />
+        </View>
+        <View style={styles.controls}><SettingSecureLoginToggle /></View>
+        <View style={styles.groupHeading}>
+          <ThemedText style={styles.groupTitle}>LANGUAGE & GUIDANCE</ThemedText><View style={styles.line} />
+        </View>
+        <LanguageSection />
+        <View style={styles.actionCard}>
+          <TouchableRipple accessibilityRole="button" accessibilityLabel="Revisit onboarding" onPress={() => {
               router.push("/onboarding");
               log.info("Navigating to Onboarding screens");
-            }}
-          />
-        </SettingSection>
-        <LanguageSection />
-        <ComingSoonSection />
+            }}>
+            <View style={styles.action}>
+              <View style={styles.iconBadge}><Icon source="compass-outline" size={22} color={colors.primary} /></View>
+              <View style={styles.actionText}>
+                <ThemedText style={styles.actionTitle}>Take a quick tour</ThemedText>
+                <ThemedText style={styles.caption}>Revisit SpendMate’s features and setup</ThemedText>
+              </View>
+              <Icon source="chevron-right" size={20} color={colors.muted} />
+            </View>
+          </TouchableRipple>
+        </View>
+        <ThemedText style={styles.caption} centered>More personalization options are on the way.</ThemedText>
       </View>
     </ScreenWrapper>
   );

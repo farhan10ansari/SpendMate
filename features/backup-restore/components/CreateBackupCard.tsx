@@ -54,14 +54,17 @@ export const CreateBackupCard = React.memo<CreateBackupCardProps>(({
   return (
     <Card mode="contained" style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
       <Card.Title
-        title="Create New Backup"
+        title="Create a backup"
+        titleStyle={styles.title}
         titleVariant="titleMedium"
-        subtitle="Export all your data"
+        subtitle="Save a snapshot of your records"
         left={(props) => <Icon {...props} source="backup-restore" color={colors.onSurfaceVariant} />}
       />
       <Card.Content style={styles.content}>
         <TextInput
           mode="outlined"
+          dense
+          outlineStyle={{ borderRadius: 14 }}
           label="Backup Name (Optional)"
           placeholder="e.g., Monthly Backup"
           value={customName}
@@ -94,7 +97,7 @@ export const CreateBackupCard = React.memo<CreateBackupCardProps>(({
           Create Backup
         </Button>
         <Button
-          mode="outlined"
+          mode="contained-tonal"
           onPress={onImportBackup}
           disabled={isDisabled}
           icon="import"
@@ -110,6 +113,7 @@ export const CreateBackupCard = React.memo<CreateBackupCardProps>(({
 CreateBackupCard.displayName = 'CreateBackupCard';
 
 const styles = StyleSheet.create({
+  title: { fontSize: 16, fontWeight: '700' },
   card: {
     borderRadius: 24,
     borderWidth: StyleSheet.hairlineWidth,
@@ -125,9 +129,9 @@ const styles = StyleSheet.create({
   },
   actions: {
     flexWrap: 'wrap',
-    paddingHorizontal: 12,
+    paddingHorizontal: 16,
     paddingTop: 0,
-    paddingBottom: 8,
+    paddingBottom: 12,
     gap: 8,
   },
   createButton: {

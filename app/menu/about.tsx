@@ -96,257 +96,72 @@ export default function AboutScreen() {
     };
 
 
-    const styles = StyleSheet.create({
-        container: {
-            flex: 1,
-            padding: 16,
-        },
-        sectionContainer: {
-            backgroundColor: colors.surface,
-            borderWidth: StyleSheet.hairlineWidth,
-            borderColor: colors.border,
-            borderRadius: 24,
-            padding: 16,
-            marginBottom: 16,
-            elevation: 0,
-            shadowColor: colors.shadow,
-            shadowOffset: { width: 0, height: 1 },
-            shadowOpacity: 0,
-            shadowRadius: 2,
-        },
-        sectionHeader: {
-            flexDirection: "row",
-            alignItems: "center",
-            marginBottom: 16,
-            gap: 12,
-        },
-        sectionIcon: {
-            marginRight: 12,
-        },
-        sectionTitle: {
-            fontSize: 17,
-            fontWeight: "600",
-            color: colors.primary,
-        },
-        descriptionText: {
-            color: colors.muted,
-            fontSize: 12,
-            lineHeight: 20,
-            marginBottom: 16,
-        },
-        appInfoContainer: {
-            alignItems: "center",
-            paddingVertical: 8,
-        },
-        appLogoIcon: {
-            marginBottom: 12,
-        },
-        appName: {
-            fontSize: 24,
-            fontWeight: "bold",
-            color: colors.primary,
-            marginBottom: 4,
-            textAlign: "center",
-        },
-        appAuthor: {
-            fontSize: 16,
-            color: colors.secondary,
-            marginBottom: 4,
-            textAlign: "center",
-        },
-        appVersion: {
-            fontSize: 15,
-            color: colors.muted,
-            marginBottom: 8,
-            textAlign: "center",
-        },
-        appDescription: {
-            fontSize: 12,
-            color: colors.text,
-            textAlign: "center",
-            opacity: 0.90,
-            lineHeight: 20,
-        },
-    });
-
-
     return (
-        <ScreenWrapper
-            background="background"
-            withScrollView
-        >
-            <View
-                style={styles.container}
-            >
-                {/* App Information Section */}
-                <View style={styles.sectionContainer}>
-                    <View style={styles.sectionHeader}>
-                        <Icon
-                            source="information-outline"
-                            size={24}
-                            color={colors.primary}
-                        />
-                        <ThemedText style={styles.sectionTitle}>
-                            App Information
-                        </ThemedText>
-                    </View>
-
-
-                    <View style={styles.appInfoContainer}>
-                        <Icon
-                            source="wallet"
-                            size={48}
-                            color={colors.primary}
-                        />
-                        <ThemedText style={styles.appName}>SpendMate</ThemedText>
-                        <ThemedText style={styles.appAuthor}>by {APP_AUTHOR}</ThemedText>
-                        <ThemedText style={styles.appVersion}>Version {APP_VERSION}</ThemedText>
-                        <ThemedText style={styles.appDescription}>
-                            {`Expense management made simple, powerful, and intelligent.`}
-                        </ThemedText>
-
-
-                    </View>
+        <ScreenWrapper background="background" withScrollView contentContainerStyle={pageStyles.content}>
+            <View style={[pageStyles.hero, { backgroundColor: colors.surface, borderColor: colors.border }]}>
+                <View style={[pageStyles.logo, { backgroundColor: colors.primaryContainer }]}>
+                    <Icon source="wallet-outline" size={32} color={colors.primary} />
                 </View>
-
-
-                {/* Version Section */}
-                <View style={styles.sectionContainer}>
-                    <View style={styles.sectionHeader}>
-                        <Icon
-                            source="tag-outline"
-                            size={24}
-                            color={colors.primary}
-                        />
-                        <ThemedText style={styles.sectionTitle}>
-                            Version Details
-                        </ThemedText>
-                    </View>
-
-
-                    <ThemedText style={styles.descriptionText}>
-                        Tap the version number 5 times quickly to enable developer options for testing and debugging.
-                    </ThemedText>
-
-
-                    <AboutItem
-                        icon="information-outline"
-                        title="App Version"
-                        description="Current version of the application"
-                        onPress={handleVersionTap}
-                    >
-                        <ThemedText style={{ opacity: 0.8, fontWeight: "600" }}>
-                            {APP_VERSION}
-                        </ThemedText>
-                    </AboutItem>
-                </View>
-
-
-                {/* Social Section */}
-                <View style={styles.sectionContainer}>
-                    <View style={styles.sectionHeader}>
-                        <Icon
-                            source="account-group"
-                            size={24}
-                            color={colors.primary}
-                        />
-                        <ThemedText style={styles.sectionTitle}>
-                            Social & Community
-                        </ThemedText>
-                    </View>
-
-
-                    <ThemedText style={styles.descriptionText}>
-                        Connect with us on various platforms for updates, support, and community discussions.
-                    </ThemedText>
-
-
-                    <AboutItem
-                        icon="github"
-                        title="GitHub Repository"
-                        description="View source code, report issues, or request features"
-                        onPress={handleRepoPress}
-                    />
-                    {TELEGRAM_URL && (
-                        <AboutItem
-                            icon="send"
-                            title="Telegram Community"
-                            description="Join our community for discussions and support"
-                            onPress={handleTelegramPress}
-                        />
-                    )}
-                </View>
-
-
-                {/* Contact Section */}
-                <View style={styles.sectionContainer}>
-                    <View style={styles.sectionHeader}>
-                        <Icon
-                            source="email-outline"
-                            size={24}
-                            color={colors.primary}
-                        />
-                        <ThemedText style={styles.sectionTitle}>
-                            Get in Touch
-                        </ThemedText>
-                    </View>
-
-
-                    <ThemedText style={styles.descriptionText}>
-                        {"Have questions, feedback, or need support? We're here to help."}
-                    </ThemedText>
-
-
-                    {CONTACT_EMAIL && (
-                        <AboutItem
-                            icon="email-outline"
-                            title="Email Support"
-                            description="Send us an email for direct contact and support"
-                            onPress={handleEmailPress}
-                        />
-                    )}
-
-                    {FEEDBACK_FORM && (
-                        <AboutItem
-                            icon="comment-outline"
-                            title="Feedback"
-                            description="Share your feedback, suggestions, or report issues"
-                            onPress={handleFeedbackPress}
-                        />
-                    )}
-                </View>
-
-                {/* Privacy Policy Section */}
-                <View style={styles.sectionContainer}>
-                    <View style={styles.sectionHeader}>
-                        <Icon
-                            source="shield-outline"
-                            size={24}
-                            color={colors.primary}
-                        />
-                        <ThemedText style={styles.sectionTitle}>
-                            Privacy Policy
-                        </ThemedText>
-                    </View>
-
-
-                    <ThemedText style={styles.descriptionText}>
-                        {"Your privacy is important to us. Please review our policy to understand how we handle your data."}
-                    </ThemedText>
-
-
-                    <AboutItem
-                        icon="file-document-outline"
-                        title="View Privacy Policy"
-                        description="Read our full privacy policy"
-                        onPress={handlePrivacyPolicyPress}
-                    />
-                </View>
+                <ThemedText style={pageStyles.appName}>SpendMate</ThemedText>
+                <ThemedText color={colors.muted} style={pageStyles.tagline}>A little clarity for your everyday money.</ThemedText>
+                {APP_AUTHOR && <ThemedText color={colors.muted} style={pageStyles.author}>Made by {APP_AUTHOR}</ThemedText>}
+                <Pressable onPress={handleVersionTap} accessibilityRole="button"
+                    accessibilityLabel={`Version ${APP_VERSION ?? 'Unknown'}`}
+                    accessibilityHint="Tap five times quickly to enable developer options"
+                    style={({ pressed }) => [pageStyles.version, { backgroundColor: colors.surfaceVariant, opacity: pressed ? 0.7 : 1 }]}>
+                    <Icon source="tag-outline" size={15} color={colors.primary} />
+                    <ThemedText color={colors.primary} style={pageStyles.versionText}>Version {APP_VERSION ?? 'Unknown'}</ThemedText>
+                </Pressable>
             </View>
+
+            <AboutGroup title="Community">
+                <AboutItem icon="github" title="GitHub" description="Explore the code or report an issue" onPress={handleRepoPress} />
+                {TELEGRAM_URL && <AboutItem icon="send" title="Telegram" description="Updates and conversations with the community" onPress={handleTelegramPress} />}
+            </AboutGroup>
+            {(CONTACT_EMAIL || FEEDBACK_FORM) && (
+                <AboutGroup title="Support & feedback">
+                    {CONTACT_EMAIL && <AboutItem icon="email-outline" title="Get in touch" description="Questions or need a hand? Send us an email" onPress={handleEmailPress} />}
+                    {FEEDBACK_FORM && <AboutItem icon="message-outline" title="Share feedback" description="Help shape what comes next" onPress={handleFeedbackPress} />}
+                </AboutGroup>
+            )}
+            {PRIVACY_POLICY && (
+                <AboutGroup title="Privacy">
+                    <AboutItem icon="shield-check-outline" title="Privacy policy" description="Learn how your data is handled" onPress={handlePrivacyPolicyPress} />
+                </AboutGroup>
+            )}
+            <ThemedText color={colors.muted} style={pageStyles.footer}>Tap the version five times quickly to enable developer options.</ThemedText>
         </ScreenWrapper>
     );
 }
 
+function AboutGroup({ title, children }: { title: string; children: React.ReactNode }) {
+    const { colors } = useAppTheme();
+    return (
+        <View style={pageStyles.group}>
+            <View style={pageStyles.groupHeading}>
+                <ThemedText color={colors.muted} style={pageStyles.groupTitle}>{title}</ThemedText>
+                <View style={[pageStyles.line, { backgroundColor: colors.border }]} />
+            </View>
+            {children}
+        </View>
+    );
+}
+
+const pageStyles = StyleSheet.create({
+    content: { padding: 16, paddingBottom: 32, gap: 18, width: '100%', maxWidth: 720, alignSelf: 'center' },
+    hero: { padding: 22, borderRadius: 26, borderWidth: StyleSheet.hairlineWidth, alignItems: 'center', gap: 8 },
+    logo: { padding: 14, borderRadius: 22, marginBottom: 4 },
+    appName: { fontSize: 28, lineHeight: 36, fontWeight: '800' },
+    tagline: { fontSize: 13, lineHeight: 20, textAlign: 'center' },
+    author: { fontSize: 11, lineHeight: 17 },
+    version: { paddingHorizontal: 12, paddingVertical: 8, borderRadius: 12, flexDirection: 'row', alignItems: 'center', gap: 6, marginTop: 4 },
+    versionText: { fontSize: 12, lineHeight: 18, fontWeight: '600' },
+    group: { gap: 8 },
+    groupHeading: { flexDirection: 'row', alignItems: 'center', gap: 10, marginBottom: 2 },
+    groupTitle: { fontSize: 12, lineHeight: 18, fontWeight: '700' },
+    line: { flex: 1, height: StyleSheet.hairlineWidth },
+    footer: { fontSize: 10, lineHeight: 16, textAlign: 'center', paddingHorizontal: 16 },
+});
 
 // AboutItem component with consistent styling
 interface AboutItemProps {
@@ -366,12 +181,13 @@ function AboutItem({ icon, title, description, onPress, children }: AboutItemPro
         itemContainer: {
             borderRadius: 16,
             overflow: 'hidden',
-            marginBottom: 8,
-            backgroundColor: colors.inverseOnSurface,
+            borderWidth: StyleSheet.hairlineWidth,
+            borderColor: colors.border,
+            backgroundColor: colors.surface,
         },
         itemPressable: {
             flexDirection: "row",
-            alignItems: "flex-start",
+            alignItems: "center",
             padding: 12,
             gap: 12,
         },
@@ -385,7 +201,7 @@ function AboutItem({ icon, title, description, onPress, children }: AboutItemPro
             flex: 1,
         },
         itemTitle: {
-            fontSize: 16,
+            fontSize: 14,
             fontWeight: "600",
             color: colors.text,
             marginBottom: 2,
@@ -403,6 +219,8 @@ function AboutItem({ icon, title, description, onPress, children }: AboutItemPro
         <View style={styles.itemContainer}>
             <Pressable
                 onPress={onPress}
+                accessibilityRole="link"
+                accessibilityLabel={`${title}. ${description}`}
                 android_ripple={{
                     color: colors.ripplePrimary,
                     borderless: false,
@@ -413,7 +231,7 @@ function AboutItem({ icon, title, description, onPress, children }: AboutItemPro
                         <Icon
                             source={icon}
                             size={20}
-                            color={colors.secondary}
+                            color={colors.primary}
                         />
                     </View>
                     <View style={styles.itemContent}>
@@ -425,6 +243,7 @@ function AboutItem({ icon, title, description, onPress, children }: AboutItemPro
                         </ThemedText>
                         {children}
                     </View>
+                    <Icon source="arrow-top-right" size={17} color={colors.muted} />
                 </View>
             </Pressable>
         </View>

@@ -7,7 +7,6 @@ import {
     Dialog,
     List,
     Surface,
-    IconButton,
     ProgressBar,
     Icon
 } from 'react-native-paper';
@@ -116,20 +115,18 @@ export default function ResetAppScreen() {
             contentContainerStyle={[styles.scrollContent,{ paddingBottom: insets.bottom + 16 }]}
         >
             {/* Header Section */}
-            <Surface style={styles.headerSurface} elevation={2}>
+            <Surface style={styles.headerSurface} elevation={0}>
                 <View style={styles.iconContainer}>
-                    <IconButton
-                        icon="alert-circle-outline"
-                        size={64}
-                        iconColor={colors.error}
-                    />
+                    <Icon source="restart-alert" size={26} color={colors.onErrorContainer} />
                 </View>
-                <Text variant="headlineMedium" style={styles.title}>
-                    Reset App Data
-                </Text>
-                <Text variant="bodyMedium" style={styles.subtitle}>
-                    This action will permanently delete all your data
-                </Text>
+                <View style={styles.warningHeaderText}>
+                    <Text variant="titleMedium" style={styles.title}>
+                        A fresh start
+                    </Text>
+                    <Text variant="bodyMedium" style={styles.subtitle}>
+                        Reset SpendMate and erase your app data. This cannot be undone.
+                    </Text>
+                </View>
             </Surface>
 
 
@@ -210,13 +207,14 @@ export default function ResetAppScreen() {
 
 
             {/* Info Section */}
-            <Surface style={styles.infoSurface} elevation={1}>
+            <Surface style={styles.infoSurface} elevation={0}>
                 <List.Item
-                    title="Cannot be undone"
-                    description="This action is permanent and cannot be reversed"
+                    title="Back up before you reset"
+                    description="Save important records from Backup & Restore before continuing."
+                    descriptionNumberOfLines={4}
                     titleStyle={styles.infoTitle}
                     descriptionStyle={styles.infoDescription}
-                    left={props => <List.Icon {...props} icon="information" color={colors.primary} />}
+                    left={props => <List.Icon {...props} icon="database-export-outline" color={colors.primary} />}
                 />
             </Surface>
 
@@ -236,7 +234,7 @@ export default function ResetAppScreen() {
 
 
             <Text variant="bodySmall" style={styles.footerText}>
-                Make sure you have backed up any important data before proceeding
+                You’ll confirm this action after a 10-second safety countdown.
             </Text>
             {/* </ScrollView> */}
 
@@ -313,45 +311,53 @@ const createStyles = (colors: ThemeType["colors"]) => StyleSheet.create({
     },
     scrollContent: {
         padding: 16,
+        width: '100%',
+        maxWidth: 720,
+        alignSelf: 'center',
     },
     headerSurface: {
-        padding: 24,
-        borderRadius: 26,
+        padding: 16,
+        borderRadius: 22,
         marginBottom: 16,
         backgroundColor: colors.errorContainer,
+        flexDirection: 'row',
+        gap: 12,
         alignItems: 'center',
     },
     iconContainer: {
-        marginBottom: 8,
+        width: 44,
+        height: 44,
+        alignItems: 'center',
+        justifyContent: 'center',
     },
     title: {
-        textAlign: 'center',
         fontWeight: 'bold',
         color: colors.onErrorContainer,
-        marginBottom: 8,
+        marginBottom: 4,
     },
     subtitle: {
-        textAlign: 'center',
         color: colors.onErrorContainer,
+        fontSize: 13,
+        lineHeight: 19,
     },
     warningSurface: {
-        padding: 20,
+        padding: 16,
         borderRadius: 24,
         marginBottom: 16,
         backgroundColor: colors.surface,
         borderWidth: 1,
-        borderColor: colors.error,
+        borderColor: colors.outlineVariant,
     },
     warningHeader: {
         flexDirection: 'row',
         alignItems: 'center',
-        marginBottom: 24,
-        gap: 16,
+        marginBottom: 18,
+        gap: 12,
     },
     warningIconCircle: {
-        width: 48,
-        height: 48,
-        borderRadius: 24,
+        width: 40,
+        height: 40,
+        borderRadius: 14,
         backgroundColor: colors.errorContainer,
         alignItems: 'center',
         justifyContent: 'center',
@@ -369,18 +375,18 @@ const createStyles = (colors: ThemeType["colors"]) => StyleSheet.create({
         fontWeight: '500',
     },
     warningList: {
-        gap: 16,
+        gap: 14,
     },
     warningItem: {
         flexDirection: 'row',
         alignItems: 'flex-start',
-        gap: 16,
+        gap: 12,
     },
     warningItemIcon: {
         width: 36,
         height: 36,
-        borderRadius: 8,
-        backgroundColor: colors.errorContainer,
+        borderRadius: 12,
+        backgroundColor: colors.surfaceVariant,
         alignItems: 'center',
         justifyContent: 'center',
         marginTop: 2,
@@ -399,31 +405,33 @@ const createStyles = (colors: ThemeType["colors"]) => StyleSheet.create({
     },
     infoSurface: {
         borderRadius: 20,
-        marginBottom: 24,
-        backgroundColor: colors.primaryContainer,
+        marginBottom: 16,
+        backgroundColor: colors.surface,
     },
     infoTitle: {
         fontWeight: '600',
-        color: colors.onPrimaryContainer,
+        color: colors.onSurface,
+        fontSize: 14,
     },
     infoDescription: {
-        color: colors.onPrimaryContainer,
+        color: colors.onSurfaceVariant,
+        fontSize: 12,
     },
     resetButton: {
         marginBottom: 16,
         borderRadius: 16,
     },
     buttonContent: {
-        paddingVertical: 8,
+        paddingVertical: 4,
     },
     buttonLabel: {
-        fontSize: 16,
+        fontSize: 14,
         fontWeight: 'bold',
     },
     footerText: {
         textAlign: 'center',
         color: colors.onSurfaceVariant,
-        fontStyle: 'italic',
+        lineHeight: 18,
     },
     dialog: {
         backgroundColor: colors.surface,

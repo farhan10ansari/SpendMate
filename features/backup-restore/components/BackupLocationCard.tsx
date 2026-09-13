@@ -110,6 +110,7 @@ export const BackupLocationCard = React.memo<BackupLocationCardProps>(({
     <Card mode="contained" style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
       <Card.Title
         title="Backup Location"
+        titleStyle={{ fontSize: 16, fontWeight: '700' }}
         titleVariant="titleMedium"
         left={(props) => <Icon {...props} source="folder-cog" color={colors.onSurfaceVariant} />}
       />

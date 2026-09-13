@@ -1,216 +1,96 @@
 import React from 'react';
 import { View, useWindowDimensions, StyleSheet, ScrollView } from 'react-native';
 import { Text, Icon } from 'react-native-paper';
-import Animated, {
-  Extrapolation,
-  interpolate,
-  SharedValue,
-  useAnimatedStyle,
-} from 'react-native-reanimated';
-import { OnboardingStep, Settings } from './OnboardingData';
+import { OnboardingStep } from './OnboardingData';
 import { useAppTheme } from '@/themes/providers/AppThemeProviders';
 
 interface Props {
   item: OnboardingStep;
-  index: number;
-  x: SharedValue<number>;
-  settings: Settings;
-  onSettingChange: (settings: Settings) => void;
+  width: number;
+  isActive: boolean;
 }
 
-export default function OnboardingItem({
-  item,
-  index,
-  x,
-  settings,
-  onSettingChange,
-}: Props) {
-  const { width: SCREEN_WIDTH, height: SCREEN_HEIGHT } = useWindowDimensions();
-  const theme = useAppTheme();
+const highlights: Record<string, { icon: string; title: string; detail: string }[]> = {
+  '1': [
+    { icon: 'plus-circle-outline', title: 'Capture the everyday', detail: 'Add expenses and income in a few taps.' },
+    { icon: 'shield-lock-outline', title: 'Keep it personal', detail: 'Local storage, with you in control.' },
+  ],
+  '2': [
+    { icon: 'tag-outline', title: 'Organized your way', detail: 'Custom categories, sources and payment methods.' },
+    { icon: 'calendar-outline', title: 'An easy-to-follow timeline', detail: 'Browse your records by date and period.' },
+  ],
+  '3': [
+    { icon: 'chart-donut', title: 'See the bigger picture', detail: 'Explore categories, totals and spending patterns.' },
+    { icon: 'piggy-bank-outline', title: 'Know what’s left', detail: 'Check net income and your savings rate.' },
+  ],
+  '9': [
+    { icon: 'plus', title: 'Start with one entry', detail: 'Tap + on Home to add an expense or income.' },
+    { icon: 'database-export-outline', title: 'Keep a safe copy', detail: 'Create a backup from the menu when you need it.' },
+  ],
+};
 
-  // Responsive sizing based on screen dimensions
-  const isSmallScreen = SCREEN_HEIGHT < 700;
-  const isTinyScreen = SCREEN_HEIGHT < 600;
-  
-  // Icon size responsive scaling
-  const iconSize = isTinyScreen ? 80 : isSmallScreen ? 100 : 120;
-  
-  // Lottie animation container size
-  const lottieContainerHeight = Math.min(SCREEN_WIDTH * 0.8, isTinyScreen ? 250 : isSmallScreen ? 300 : 400);
-  
-  // Font sizes with responsive scaling
-  const titleFontSize = isTinyScreen ? 20 : isSmallScreen ? 24 : 28;
-  const titleLineHeight = isTinyScreen ? 26 : isSmallScreen ? 30 : 34;
-  const descriptionFontSize = isTinyScreen ? 13 : isSmallScreen ? 14 : 16;
-  const descriptionLineHeight = isTinyScreen ? 18 : isSmallScreen ? 20 : 24;
-  
-  // Spacing adjustments
-  const iconBottomMargin = isTinyScreen ? 16 : isSmallScreen ? 24 : 32;
-  const titleBottomMargin = isTinyScreen ? 8 : isSmallScreen ? 12 : 16;
-  const descriptionBottomMargin = isTinyScreen ? 16 : isSmallScreen ? 24 : 32;
-  const horizontalPadding = isTinyScreen ? 16 : 24;
-  const contentBottomPadding = isTinyScreen ? 10 : isSmallScreen ? 15 : 20;
-
-  const animatedStyle = useAnimatedStyle(() => {
-    const translateY = interpolate(
-      x.value,
-      [
-        (index - 1) * SCREEN_WIDTH,
-        index * SCREEN_WIDTH,
-        (index + 1) * SCREEN_WIDTH,
-      ],
-      [50, 0, 50],
-      Extrapolation.CLAMP
-    );
-
-    const opacity = interpolate(
-      x.value,
-      [
-        (index - 1) * SCREEN_WIDTH,
-        index * SCREEN_WIDTH,
-        (index + 1) * SCREEN_WIDTH,
-      ],
-      [0, 1, 0],
-      Extrapolation.CLAMP
-    );
-
-    const scale = interpolate(
-      x.value,
-      [
-        (index - 1) * SCREEN_WIDTH,
-        index * SCREEN_WIDTH,
-        (index + 1) * SCREEN_WIDTH,
-      ],
-      [0.8, 1, 0.8],
-      Extrapolation.CLAMP
-    );
-
-    return {
-      opacity,
-      transform: [{ translateY }, { scale }],
-    };
-  }, [index, x]);
-
+export default function OnboardingItem({ item, width, isActive }: Props) {
+  const { height, fontScale } = useWindowDimensions();
+  const { colors } = useAppTheme();
+  const wide = width >= 760 * Math.max(1, fontScale);
+  const artworkHeight = height < 650 ? 130 : 190;
   return (
-    <Animated.View
-      style={[
-        styles.container,
-        { width: SCREEN_WIDTH, paddingHorizontal: horizontalPadding },
-        animatedStyle,
-      ]}
-    >
-      <ScrollView 
-        contentContainerStyle={[styles.content, { paddingBottom: contentBottomPadding }]}
-        showsVerticalScrollIndicator={false}
-        bounces={false}
-      >
-        {item.lottie ? (
-          <View 
-            style={{ 
-              height: lottieContainerHeight, 
-              width: SCREEN_WIDTH - (horizontalPadding * 2), 
-              alignItems: 'center', 
-              justifyContent: 'center', 
-              paddingVertical: isTinyScreen ? 10 : 20 
-            }}
-          >
-            {item.lottie}
+    <View style={{ width, flex: 1 }} accessibilityElementsHidden={!isActive} importantForAccessibility={isActive ? 'auto' : 'no-hide-descendants'}>
+      <ScrollView showsVerticalScrollIndicator={false} contentContainerStyle={styles.scroll} bounces={false}>
+        <View style={[styles.content, wide && styles.wide]}>
+          <View style={[styles.story, wide && styles.column]}>
+            <View accessibilityElementsHidden importantForAccessibility="no-hide-descendants"
+              style={[styles.artwork, { height: artworkHeight, backgroundColor: colors.primaryContainer }]}>
+              <View style={[styles.orbit, { borderColor: colors.primary }]} />
+              <View style={[styles.smallOrbit, { borderColor: colors.primary }]} />
+              {item.lottie
+                ? (isActive ? <View style={styles.animation}>{item.lottie}</View> : null)
+                : <View style={[styles.iconTile, { backgroundColor: colors.surface }]}>
+                    {typeof item.icon === 'string' ? <Icon source={item.icon} size={52} color={colors.primary} /> : item.icon}
+                  </View>}
+            </View>
+            <Text style={[styles.tag, { color: colors.primary }]}>{item.type === 'setting' ? 'MAKE IT YOURS' : item.id === '9' ? 'READY WHEN YOU ARE' : 'MEET SPENDMATE'}</Text>
+            <Text accessibilityRole="header" style={[styles.title, { color: colors.onSurface }]}>{item.title}</Text>
+            <Text style={[styles.description, { color: colors.onSurfaceVariant }]}>{item.description}</Text>
           </View>
-        ) : (
-          <View style={{ 
-            ...styles.iconContainer, 
-            width: iconSize, 
-            height: iconSize, 
-            borderRadius: iconSize / 2,
-            marginBottom: iconBottomMargin 
-          }}>
-            {typeof item.icon === 'string' ? (
-              <Icon source={item.icon} size={iconSize} color={theme.colors.primary} />
-            ) : (
-              item.icon
-            )}
+          <View style={[styles.details, wide && styles.column]}>
+            {item.component ? <View style={[styles.settingCard, { backgroundColor: colors.surface, borderColor: colors.outlineVariant }]}>{item.component}</View> : highlights[item.id]?.map(row => (
+              <View key={row.title} style={[styles.feature, { backgroundColor: colors.surface, borderColor: colors.outlineVariant }]}>
+                <View style={[styles.featureIcon, { backgroundColor: colors.secondaryContainer }]}>
+                  <Icon source={row.icon} size={22} color={colors.onSecondaryContainer} />
+                </View>
+                <View style={styles.featureCopy}>
+                  <Text style={[styles.featureTitle, { color: colors.onSurface }]}>{row.title}</Text>
+                  <Text style={[styles.featureDescription, { color: colors.onSurfaceVariant }]}>{row.detail}</Text>
+                </View>
+              </View>
+            ))}
           </View>
-        )}
-
-        <Text 
-          style={[
-            styles.title, 
-            { 
-              color: theme.colors.onBackground,
-              fontSize: titleFontSize,
-              lineHeight: titleLineHeight,
-              marginBottom: titleBottomMargin
-            }
-          ]}
-        >
-          {item.title}
-        </Text>
-
-        <Text 
-          style={[
-            styles.description, 
-            { 
-              color: theme.colors.onSurfaceVariant,
-              fontSize: descriptionFontSize,
-              lineHeight: descriptionLineHeight,
-              marginBottom: descriptionBottomMargin
-            }
-          ]}
-        >
-          {item.description}
-        </Text>
-        
-        {item.component && (
-          <View style={{ width: '100%', maxWidth: 600 }}>
-            {item.component}
-          </View>
-        )}
+        </View>
       </ScrollView>
-    </Animated.View>
+    </View>
   );
 }
 
 const styles = StyleSheet.create({
-  container: {
-    flex: 1,
-    justifyContent: 'center',
-  },
-  content: {
-    alignItems: 'center',
-    flexGrow: 1,
-    justifyContent: 'center',
-  },
-  iconContainer: {
-    alignItems: 'center',
-    justifyContent: 'center',
-  },
-  icon: {
-    fontSize: 64,
-  },
-  title: {
-    fontWeight: 'bold',
-    textAlign: 'center',
-  },
-  description: {
-    textAlign: 'center',
-    paddingHorizontal: 8,
-    maxWidth: 600,
-  },
-  optionsContainer: {
-    width: '100%',
-    gap: 12,
-  },
-  optionCard: {
-    borderWidth: 1,
-  },
-  optionContent: {
-    flexDirection: 'row',
-    alignItems: 'center',
-    paddingVertical: 8,
-  },
-  optionLabel: {
-    fontSize: 16,
-    marginLeft: 12,
-    flex: 1,
-  },
+  scroll: { flexGrow: 1, justifyContent: 'center', padding: 20 },
+  content: { width: '100%', maxWidth: 560, alignSelf: 'center', gap: 20 },
+  wide: { maxWidth: 840, flexDirection: 'row', alignItems: 'center', gap: 28 },
+  column: { flex: 1 },
+  story: { gap: 10 },
+  artwork: { borderRadius: 28, overflow: 'hidden', alignItems: 'center', justifyContent: 'center', marginBottom: 8 },
+  orbit: { position: 'absolute', width: 240, height: 240, borderRadius: 120, borderWidth: 28, opacity: 0.08, right: -80, top: -100 },
+  smallOrbit: { position: 'absolute', width: 130, height: 130, borderRadius: 65, borderWidth: 20, opacity: 0.08, left: -35, bottom: -65 },
+  animation: { width: '100%', height: '100%', maxWidth: 240 },
+  iconTile: { width: 88, height: 88, borderRadius: 28, alignItems: 'center', justifyContent: 'center', transform: [{ rotate: '-6deg' }] },
+  tag: { fontSize: 10, letterSpacing: 1.4, fontWeight: '700' },
+  title: { fontSize: 27, lineHeight: 33, fontWeight: '700' },
+  description: { fontSize: 14, lineHeight: 21 },
+  details: { gap: 10 },
+  settingCard: { padding: 12, borderRadius: 22, borderWidth: StyleSheet.hairlineWidth },
+  feature: { flexDirection: 'row', alignItems: 'center', gap: 12, padding: 14, borderRadius: 20, borderWidth: StyleSheet.hairlineWidth },
+  featureIcon: { width: 38, height: 38, borderRadius: 13, alignItems: 'center', justifyContent: 'center' },
+  featureCopy: { flex: 1, gap: 4 },
+  featureTitle: { fontSize: 14, fontWeight: '600' },
+  featureDescription: { fontSize: 12, lineHeight: 18 },
 });
