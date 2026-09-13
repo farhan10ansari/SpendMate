@@ -18,6 +18,14 @@ function MenuScreenBase() {
   const onLayout = useCallback((event: LayoutChangeEvent) => setContentWidth(event.nativeEvent.layout.width), []);
   const twoColumns = contentWidth >= 720 * Math.max(1, fontScale);
   const showDevOptions = usePersistentAppStore((state) => state.uiFlags.showDevOptions);
+  const columns = useMemo(() => {
+    const visibleSections = menuSections.filter(section => section.title !== 'Developer' || showDevOptions);
+    if (!twoColumns) return [visibleSections];
+    return [
+      visibleSections.filter((_, index) => index % 2 === 0),
+      visibleSections.filter((_, index) => index % 2 === 1),
+    ];
+  }, [showDevOptions, twoColumns]);
 
   const handleItemPress = useCallback((route: Href) => {
     router.push(route);
@@ -55,12 +63,10 @@ function MenuScreenBase() {
           </View>
         </View>
         <View style={styles.grid} onLayout={onLayout}>
-        {menuSections.map((section) => {
-          // Skip Developer section if dev options are hidden
-          if (section.title === "Developer" && !showDevOptions) return null;
-
-          return (
-            <View key={section.title} style={[styles.section, { width: twoColumns ? (contentWidth - 16) / 2 : '100%' }]}>
+          {columns.map((sections, columnIndex) => (
+            <View key={columnIndex} style={styles.column}>
+              {sections.map(section => (
+            <View key={section.title} style={styles.section}>
               <View style={styles.sectionHeading}>
               <ThemedText style={dynamicStyles.sectionTitle}>
                 {section.title}
@@ -79,8 +85,9 @@ function MenuScreenBase() {
                 ))}
               </View>
             </View>
-          );
-        })}
+              ))}
+            </View>
+          ))}
         </View>
       </ScrollView>
     </ScreenWrapper>
@@ -188,7 +195,8 @@ const styles = StyleSheet.create({
   heroText: { flex: 1, gap: 4 },
   heroTitle: { fontSize: 23, lineHeight: 30, fontWeight: '800' },
   heroCaption: { fontSize: 12, lineHeight: 19 },
-  grid: { flexDirection: 'row', flexWrap: 'wrap', gap: 16, alignItems: 'flex-start' },
+  grid: { flexDirection: 'row', gap: 16, alignItems: 'flex-start' },
+  column: { flex: 1, minWidth: 0, gap: 16 },
   section: { gap: 10 },
   sectionHeading: { flexDirection: 'row', alignItems: 'center', gap: 12 },
   line: { flex: 1, height: StyleSheet.hairlineWidth },
