@@ -9,7 +9,7 @@
       "developmentClient": true,
       "distribution": "internal",
       "env": {
-        "EXPO_PUBLIC_APP_VERSION": "1.0.2",
+        "EXPO_PUBLIC_APP_VERSION": "2.0.0",
         "EXPO_PUBLIC_APP_AUTHOR": "farhan10ansari",
         "EXPO_PUBLIC_TELEGRAM_URL": "https://t.me/farhan10ansari_spend_mate_disc",
         "EXPO_PUBLIC_CONTACT_EMAIL": "spendmate.assist@gmail.com",
@@ -24,7 +24,7 @@
         "buildType": "apk"
       },
       "env": {
-        "EXPO_PUBLIC_APP_VERSION": "1.0.2",
+        "EXPO_PUBLIC_APP_VERSION": "2.0.0",
         "EXPO_PUBLIC_APP_AUTHOR": "farhan10ansari",
         "EXPO_PUBLIC_TELEGRAM_URL": "https://t.me/farhan10ansari_spend_mate_disc",
         "EXPO_PUBLIC_CONTACT_EMAIL": "spendmate.assist@gmail.com",
@@ -36,7 +36,7 @@
       "bun": "1.4.0",
       "autoIncrement": true,
       "env": {
-        "EXPO_PUBLIC_APP_VERSION": "1.0.2",
+        "EXPO_PUBLIC_APP_VERSION": "2.0.0",
         "EXPO_PUBLIC_APP_AUTHOR": "farhan10ansari",
         "EXPO_PUBLIC_TELEGRAM_URL": "https://t.me/farhan10ansari_spend_mate_disc",
         "EXPO_PUBLIC_CONTACT_EMAIL": "spendmate.assist@gmail.com",
