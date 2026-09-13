@@ -73,6 +73,8 @@ InfoCard.displayName = 'InfoCard';
 
 const styles = StyleSheet.create({
     card: {
+    borderRadius: 24,
+    borderWidth: StyleSheet.hairlineWidth,
         overflow: 'hidden',
     },
     content: {

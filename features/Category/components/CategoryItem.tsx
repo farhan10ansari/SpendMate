@@ -40,9 +40,10 @@ export const CategoryItem = React.memo<CategoryItemProps>(({
         styles.item,
         {
             backgroundColor: colors.surface,
+            borderColor: colors.border,
             opacity: category.enabled ? 1 : 0.7,
         }
-    ], [colors.surface, category.enabled]);
+    ], [colors.surface, colors.border, category.enabled]);
 
     const labelStyle = useMemo(() => [
         styles.label,
@@ -53,7 +54,7 @@ export const CategoryItem = React.memo<CategoryItemProps>(({
     ], [colors.onSurface, category.enabled]);
 
     return (
-        <Surface style={itemStyle} elevation={1}>
+        <Surface style={itemStyle} elevation={0}>
             <CategoryIcon
                 size={40}
                 icon={category.icon}
@@ -85,11 +86,13 @@ export const CategoryItem = React.memo<CategoryItemProps>(({
                         size={24}
                         iconColor={colors.error}
                         onPress={handleDelete}
+                        accessibilityLabel={`Delete ${category.label}`}
                         style={styles.actionButton}
                     />
                 )}
                 <Switch
                     value={category.enabled}
+                    accessibilityLabel={`Enable ${category.label}`}
                     onValueChange={handleToggle}
                     color={type === "income" ? colors.tertiary : colors.primary}
                 />
@@ -98,6 +101,7 @@ export const CategoryItem = React.memo<CategoryItemProps>(({
                     size={24}
                     iconColor={colors.onSurfaceVariant}
                     onPress={handleEdit}
+                    accessibilityLabel={`Edit ${category.label}`}
                     style={styles.actionButton}
                 />
             </View>
@@ -109,19 +113,23 @@ CategoryItem.displayName = 'CategoryItem';
 
 const styles = StyleSheet.create({
     item: {
-        borderRadius: 16,
+        borderRadius: 22,
+        borderWidth: StyleSheet.hairlineWidth,
         marginHorizontal: 16,
         flexDirection: 'row',
+        flexWrap: 'wrap',
         alignItems: 'center',
-        padding: 16,
-        gap: 16,
+        padding: 14,
+        gap: 10,
         minHeight: 76,
     },
     labelContainer: {
         flex: 1,
+        minWidth: 100,
         justifyContent: 'center',
     },
     label: {
+        fontSize: 14,
         fontWeight: '600',
         lineHeight: 22,
     },
@@ -129,7 +137,7 @@ const styles = StyleSheet.create({
         alignSelf: 'flex-start',
         paddingHorizontal: 6,
         paddingVertical: 2,
-        borderRadius: 4,
+        borderRadius: 8,
         marginTop: 4,
     },
     customText: {
@@ -139,6 +147,7 @@ const styles = StyleSheet.create({
         lineHeight: 12,
     },
     actions: {
+        marginLeft: 'auto',
         flexDirection: 'row',
         alignItems: 'center',
         gap: 2,

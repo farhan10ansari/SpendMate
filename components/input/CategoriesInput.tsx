@@ -32,7 +32,7 @@ export default function CategoriesInput({ categories, category, setCategory, col
             gap: 10,
         },
         categoryButtonStyle: {
-            borderRadius: 10,
+            borderRadius: 16,
         },
         categoryButtonLabelStyle: {
             marginVertical: 8,
@@ -59,7 +59,8 @@ export default function CategoriesInput({ categories, category, setCategory, col
                                 compact
                                 key={c.name}
                                 icon={c.icon}
-                                mode={c.name === category ? 'contained' : 'outlined'}
+                                mode={c.name === category ? 'contained-tonal' : 'outlined'}
+                                accessibilityState={{ selected: c.name === category }}
                                 colorType={colorType}
                                 style={styles.categoryButtonStyle}
                                 labelStyle={styles.categoryButtonLabelStyle}

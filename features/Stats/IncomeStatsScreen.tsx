@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import PeriodCard from "./components/PeriodCard";
-import IncomeStats from "./IncomeStats";
+import { HomeActivityStats } from "./components/HomeStats";
 import { ThemedText } from "@/components/base/ThemedText";
 import { useAppTheme } from "@/themes/providers/AppThemeProviders";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
@@ -20,7 +20,7 @@ export default function IncomeStatsScreen() {
     const [isRefreshing, setIsRefreshing] = useState(false);
 
     // Income stats query
-    const { data: incomeStats, refetch } = useQuery({
+    const { data: incomeStats, refetch, isPending } = useQuery({
         queryKey: ['stats', 'incomes', 'stats-in-a-period', incomesPeriod],
         queryFn: () => getIncomeStatsByPeriod(incomesPeriod),
     });
@@ -43,10 +43,10 @@ export default function IncomeStatsScreen() {
             contentContainerStyle={[styles.container, { paddingBottom: insets.bottom + 16 }]}
         >
             <PeriodCard />
-            <IncomeStats incomeStats={incomeStats} />
+            <HomeActivityStats kind="income" stats={incomeStats} isLoading={isPending} />
             <View style={statsStyles.section}>
                 <ThemedText style={[statsStyles.sectionTitle, { color: colors.text }]}>
-                    Breakdowns
+                    Explore your income
                 </ThemedText>
                 <IncomeSourcesBreakdownCard
                     data={incomeStats?.sources}
@@ -62,6 +62,6 @@ export default function IncomeStatsScreen() {
 const styles = StyleSheet.create({
     container: {
         padding: 16,
-        gap: 20,
+        gap: 16,
     }
 });

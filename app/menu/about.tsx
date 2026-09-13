@@ -99,17 +99,19 @@ export default function AboutScreen() {
     const styles = StyleSheet.create({
         container: {
             flex: 1,
-            padding: 18,
+            padding: 16,
         },
         sectionContainer: {
             backgroundColor: colors.surface,
-            borderRadius: 12,
+            borderWidth: StyleSheet.hairlineWidth,
+            borderColor: colors.border,
+            borderRadius: 24,
             padding: 16,
-            marginBottom: 20,
-            elevation: 2,
+            marginBottom: 16,
+            elevation: 0,
             shadowColor: colors.shadow,
             shadowOffset: { width: 0, height: 1 },
-            shadowOpacity: 0.1,
+            shadowOpacity: 0,
             shadowRadius: 2,
         },
         sectionHeader: {
@@ -122,13 +124,13 @@ export default function AboutScreen() {
             marginRight: 12,
         },
         sectionTitle: {
-            fontSize: 18,
+            fontSize: 17,
             fontWeight: "600",
             color: colors.primary,
         },
         descriptionText: {
             color: colors.muted,
-            fontSize: 14,
+            fontSize: 12,
             lineHeight: 20,
             marginBottom: 16,
         },
@@ -159,7 +161,7 @@ export default function AboutScreen() {
             textAlign: "center",
         },
         appDescription: {
-            fontSize: 14,
+            fontSize: 12,
             color: colors.text,
             textAlign: "center",
             opacity: 0.90,
@@ -170,7 +172,7 @@ export default function AboutScreen() {
 
     return (
         <ScreenWrapper
-            background="card"
+            background="background"
             withScrollView
         >
             <View
@@ -362,7 +364,7 @@ function AboutItem({ icon, title, description, onPress, children }: AboutItemPro
 
     const styles = StyleSheet.create({
         itemContainer: {
-            borderRadius: 8,
+            borderRadius: 16,
             overflow: 'hidden',
             marginBottom: 8,
             backgroundColor: colors.inverseOnSurface,
@@ -375,6 +377,9 @@ function AboutItem({ icon, title, description, onPress, children }: AboutItemPro
         },
         iconWrapper: {
             marginTop: 2,
+            padding: 10,
+            borderRadius: 14,
+            backgroundColor: colors.primaryContainer,
         },
         itemContent: {
             flex: 1,
@@ -386,7 +391,7 @@ function AboutItem({ icon, title, description, onPress, children }: AboutItemPro
             marginBottom: 2,
         },
         itemDescription: {
-            fontSize: 14,
+            fontSize: 12,
             color: colors.muted,
             lineHeight: 18,
             marginBottom: children ? 4 : 0,

@@ -36,7 +36,7 @@ export const CategoryList = React.memo<CategoryListProps>(({
       onDelete={onDeleteCategory}
       type={type}
     />
-  ), [onToggleCategory, onEditCategory, onDeleteCategory]);
+  ), [onToggleCategory, onEditCategory, onDeleteCategory, type]);
 
   const keyExtractor = useCallback((item: Category) => `category-${item.name}`, []);
 
@@ -55,16 +55,16 @@ export const CategoryList = React.memo<CategoryListProps>(({
         type="subtitle"
         style={[styles.emptyText, { color: colors.onSurfaceVariant }]}
       >
-        No categories found
+        {type === 'income' ? 'No income sources yet' : 'No categories yet'}
       </ThemedText>
       <ThemedText
         type="default"
         style={[styles.emptySubtext, { color: colors.onSurfaceVariant }]}
       >
-        Create your first category to get started
+        {type === 'income' ? 'Create a source for money coming in.' : 'Create a category to organize your spending.'}
       </ThemedText>
     </View>
-  ), [colors.onSurfaceVariant]);
+  ), [colors.onSurfaceVariant, type]);
 
   return (
     <FlashList

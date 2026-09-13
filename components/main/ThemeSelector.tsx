@@ -14,7 +14,8 @@ const ThemeSelector = () => {
             {themeOptions.map((option) => (
                 <Button
                     key={option.key}
-                    mode={theme === option.key ? "contained" : "outlined"}
+                    mode={theme === option.key ? "contained-tonal" : "outlined"}
+                    accessibilityState={{ selected: theme === option.key }}
                     style={styles.themeButton}
                     onPress={() => {
                         hapticImpact();
@@ -37,11 +38,13 @@ export default ThemeSelector;
 const styles = StyleSheet.create({
     themeButtonsContainer: {
         flexDirection: "row",
+        flexWrap: 'wrap',
         gap: 12,
         marginTop: 8,
     },
     themeButton: {
         flex: 1,
+        minWidth: 100,
+        borderRadius: 18,
     }
 });
-

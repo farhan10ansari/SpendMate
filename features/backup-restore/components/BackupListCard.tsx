@@ -143,7 +143,7 @@ export const BackupListCard = React.memo<BackupListCardProps>(({
   const emptyState = renderEmptyState();
 
   return (
-    <Card mode="elevated" style={styles.card}>
+    <Card mode="contained" style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
       <Card.Title
         title="Saved Backups"
         titleVariant="titleMedium"
@@ -183,6 +183,8 @@ BackupListCard.displayName = 'BackupListCard';
 
 const styles = StyleSheet.create({
   card: {
+    borderRadius: 24,
+    borderWidth: StyleSheet.hairlineWidth,
     overflow: 'hidden',
   },
   content: {

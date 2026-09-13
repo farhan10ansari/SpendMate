@@ -268,19 +268,19 @@ const styles = StyleSheet.create({
   },
   container: {
     flex: 1,
-    padding: 18,
+    padding: 16,
   },
   scrollContentContainer: {
     paddingBottom: 120,
     flexGrow: 1,
   },
   sectionContainer: {
-    borderRadius: 12,
+    borderRadius: 24,
     padding: 16,
-    marginBottom: 20,
-    elevation: 2,
+    marginBottom: 16,
+    elevation: 0,
     shadowOffset: { width: 0, height: 1 },
-    shadowOpacity: 0.1,
+    shadowOpacity: 0,
     shadowRadius: 2,
   },
   sectionHeader: {
@@ -290,7 +290,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   sectionTitle: {
-    fontSize: 18,
+    fontSize: 17,
     fontWeight: "600",
   },
   inputContainer: {
@@ -300,9 +300,9 @@ const styles = StyleSheet.create({
     marginTop: 8,
   },
   warningContainer: {
-    borderRadius: 8,
+    borderRadius: 16,
     padding: 12,
-    marginBottom: 20,
+    marginBottom: 16,
     flexDirection: "row",
     alignItems: "flex-start",
     gap: 8,
@@ -312,7 +312,7 @@ const styles = StyleSheet.create({
   },
   warningText: {
     flex: 1,
-    fontSize: 14,
+    fontSize: 12,
     lineHeight: 20,
   },
   helperText: {

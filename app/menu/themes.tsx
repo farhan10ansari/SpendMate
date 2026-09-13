@@ -14,23 +14,25 @@ export default function ThemesScreen() {
   const dynamicStyles = StyleSheet.create({
     sectionContainer: {
       backgroundColor: colors.surface,
-      borderRadius: 12,
+      borderWidth: StyleSheet.hairlineWidth,
+      borderColor: colors.border,
+      borderRadius: 24,
       padding: 16,
-      marginBottom: 20,
-      elevation: 2,
+      marginBottom: 16,
+      elevation: 0,
       shadowColor: colors.shadow,
       shadowOffset: { width: 0, height: 1 },
-      shadowOpacity: 0.1,
+      shadowOpacity: 0,
       shadowRadius: 2,
     },
     sectionTitle: {
-      fontSize: 18,
+      fontSize: 17,
       fontWeight: "600",
       color: colors.primary,
     },
     descriptionText: {
       color: colors.muted,
-      fontSize: 14,
+      fontSize: 12,
       lineHeight: 20,
       marginBottom: 16,
     },
@@ -38,7 +40,7 @@ export default function ThemesScreen() {
 
   return (
     <ScreenWrapper
-      background="card"
+      background="background"
       withScrollView
     >
       <View
@@ -95,7 +97,7 @@ export default function ThemesScreen() {
 const styles = StyleSheet.create({
   container: {
     flex: 1,
-    padding: 18,
+    padding: 16,
   },
   sectionHeader: {
     flexDirection: "row",
@@ -104,4 +106,3 @@ const styles = StyleSheet.create({
     gap: 12,
   },
 })
-

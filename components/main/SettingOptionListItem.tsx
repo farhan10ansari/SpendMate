@@ -17,16 +17,16 @@ const SettingOptionListItem = ({ option, isSelected, onPress, colors, leftIcon }
       paddingHorizontal: 0,
       paddingVertical: 8,
       backgroundColor: colors.inverseOnSurface,
-      borderRadius: 8,
+      borderRadius: 16,
       marginBottom: 8,
     },
     listItemTitle: {
-      fontSize: 16,
+      fontSize: 14,
       fontWeight: "500",
       color: colors.text,
     },
     listItemDescription: {
-      fontSize: 14,
+      fontSize: 12,
       color: colors.muted,
     },
     comingSoonBadge: {

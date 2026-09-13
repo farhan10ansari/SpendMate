@@ -7,8 +7,9 @@ import { ExpenseStoreProvider } from "@/features/Expense/ExpenseStoreProvider";
 import IncomeForm from "@/features/Income/IncomeForm";
 import { IncomeStoreProvider } from "@/features/Income/IncomeStoreProvider";
 import { useTransactionForm } from "@/hooks/useTransactionForm";
-import { KeyboardAvoidingView, Platform, StyleSheet, View } from "react-native";
+import { Keyboard, KeyboardAvoidingView, Platform, StyleSheet, View, useWindowDimensions } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
+import { TabView } from 'react-native-tab-view';
 
 
 type TransactionType = 'expense' | 'income';
@@ -23,6 +24,7 @@ const TABS = [
 export default function NewTransactionScreen() {
     const { defaultTab } = useLocalSearchParams<{ defaultTab?: TransactionType }>();
     const [activeTab, setActiveTab] = useState<TransactionType>(defaultTab ?? 'expense');
+    const { width } = useWindowDimensions();
 
 
     const {
@@ -32,16 +34,18 @@ export default function NewTransactionScreen() {
 
 
     const handleTabChange = (tabKey: string) => {
+        Keyboard.dismiss();
         setActiveTab(tabKey as TransactionType);
     };
 
 
-    const renderForm = () => {
-        if (activeTab === 'expense') {
+    const renderForm = (tabKey: string) => {
+        if (tabKey === 'expense') {
             return (
                 <ExpenseStoreProvider>
                     <ExpenseForm
                         onSubmit={handleAddExpense}
+                        isActive={activeTab === 'expense'}
                     />
                 </ExpenseStoreProvider>
             );
@@ -52,6 +56,7 @@ export default function NewTransactionScreen() {
             <IncomeStoreProvider>
                 <IncomeForm
                     onSubmit={handleAddIncome}
+                    isActive={activeTab === 'income'}
                 />
             </IncomeStoreProvider>
         );
@@ -79,16 +84,23 @@ export default function NewTransactionScreen() {
                 behavior={Platform.OS === 'ios' ? 'padding' : 'height'}
                 keyboardVerticalOffset={Platform.OS === 'ios' ? 100 : 0}
             >
-                <View style={{ flex: 1 }} collapsable={false}>
+                <TabView
+                    navigationState={{ index: activeTab === 'income' ? 1 : 0, routes: TABS }}
+                    onIndexChange={index => handleTabChange(TABS[index].key)}
+                    initialLayout={{ width }}
+                    renderTabBar={() => null}
+                    keyboardDismissMode="on-drag"
+                    renderScene={({ route }) => (
                     <ScrollView
                         style={styles.container}
                         contentContainerStyle={styles.scrollContentContainer}
                         showsVerticalScrollIndicator={false}
                         keyboardShouldPersistTaps="handled"
                     >
-                        {renderForm()}
+                        {renderForm(route.key)}
                     </ScrollView>
-                </View>
+                    )}
+                />
             </KeyboardAvoidingView>
         </View>
     );

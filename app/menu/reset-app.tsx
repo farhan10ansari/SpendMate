@@ -316,9 +316,9 @@ const createStyles = (colors: ThemeType["colors"]) => StyleSheet.create({
     },
     headerSurface: {
         padding: 24,
-        borderRadius: 16,
+        borderRadius: 26,
         marginBottom: 16,
-        backgroundColor: colors.surface,
+        backgroundColor: colors.errorContainer,
         alignItems: 'center',
     },
     iconContainer: {
@@ -327,20 +327,20 @@ const createStyles = (colors: ThemeType["colors"]) => StyleSheet.create({
     title: {
         textAlign: 'center',
         fontWeight: 'bold',
-        color: colors.onSurface,
+        color: colors.onErrorContainer,
         marginBottom: 8,
     },
     subtitle: {
         textAlign: 'center',
-        color: colors.onSurfaceVariant,
+        color: colors.onErrorContainer,
     },
     warningSurface: {
         padding: 20,
-        borderRadius: 16,
+        borderRadius: 24,
         marginBottom: 16,
         backgroundColor: colors.surface,
         borderWidth: 1,
-        borderColor: colors.error + '20',
+        borderColor: colors.error,
     },
     warningHeader: {
         flexDirection: 'row',
@@ -369,7 +369,7 @@ const createStyles = (colors: ThemeType["colors"]) => StyleSheet.create({
         fontWeight: '500',
     },
     warningList: {
-        gap: 20,
+        gap: 16,
     },
     warningItem: {
         flexDirection: 'row',
@@ -398,7 +398,7 @@ const createStyles = (colors: ThemeType["colors"]) => StyleSheet.create({
         lineHeight: 18,
     },
     infoSurface: {
-        borderRadius: 12,
+        borderRadius: 20,
         marginBottom: 24,
         backgroundColor: colors.primaryContainer,
     },
@@ -411,7 +411,7 @@ const createStyles = (colors: ThemeType["colors"]) => StyleSheet.create({
     },
     resetButton: {
         marginBottom: 16,
-        borderRadius: 8,
+        borderRadius: 16,
     },
     buttonContent: {
         paddingVertical: 8,

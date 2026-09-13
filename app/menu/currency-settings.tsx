@@ -47,7 +47,7 @@ const CurrencySettingsScreen = () => {
   const previewAmount = 9732576.58;
 
   return (
-    <ScreenWrapper background="card" >
+    <ScreenWrapper background="background" >
       <Banner
         visible={bannerVisible}
         actions={[
@@ -69,8 +69,8 @@ const CurrencySettingsScreen = () => {
           title="Amount Formatting Preview"
           description="Preview how amounts will be displayed with your selected currency and locale."
         >
-          <View style={styles.previewContainer}>
-            <Text style={[styles.previewText, { color: colors.onSurface }]}>
+          <View style={[styles.previewContainer, { backgroundColor: colors.primaryContainer, borderRadius: 18 }]}>
+            <Text style={[styles.previewText, { color: colors.onPrimaryContainer }]}>
               {formatCurrency(previewAmount)}
             </Text>
           </View>
@@ -89,7 +89,7 @@ const CurrencySettingsScreen = () => {
               style={[
                 styles.listItem,
                 { backgroundColor: colors.inverseOnSurface },
-                currencyCode === option.code && { backgroundColor: colors.ripplePrimary },
+                currencyCode === option.code && { backgroundColor: colors.primaryContainer },
               ]}
               left={(props) => (
                 <View style={styles.leftIconContainer}>
@@ -157,7 +157,7 @@ const styles = StyleSheet.create({
   listItem: {
     paddingHorizontal: 0,
     paddingVertical: 8,
-    borderRadius: 8,
+    borderRadius: 16,
     marginBottom: 8,
   },
   checkIconContainer: {
@@ -173,13 +173,13 @@ const styles = StyleSheet.create({
     paddingHorizontal: 8,
   },
   symbolText: {
-    fontSize: 16,
+    fontSize: 14,
     fontWeight: "600",
   },
   moreOptionsListItem: {
     paddingHorizontal: 0,
     paddingVertical: 10,
-    borderRadius: 8,
+    borderRadius: 16,
     marginBottom: 8,
     borderWidth: 1,
   },
@@ -195,7 +195,7 @@ const styles = StyleSheet.create({
     paddingHorizontal: 16,
   },
   previewText: {
-    fontSize: 18,
+    fontSize: 26,
     fontWeight: "600",
   },
 });

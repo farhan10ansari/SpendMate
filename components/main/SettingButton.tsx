@@ -21,9 +21,9 @@ export default SettingButton;
 
 const styles = StyleSheet.create({
     button: {
-        borderRadius: 5,
+        borderRadius: 16,
     },
     buttonContent: {
-        height: 50,
+        minHeight: 48,
     },
 });

@@ -52,7 +52,7 @@ export const CreateBackupCard = React.memo<CreateBackupCardProps>(({
   }, []);
 
   return (
-    <Card mode="elevated" style={styles.card}>
+    <Card mode="contained" style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
       <Card.Title
         title="Create New Backup"
         titleVariant="titleMedium"
@@ -111,6 +111,8 @@ CreateBackupCard.displayName = 'CreateBackupCard';
 
 const styles = StyleSheet.create({
   card: {
+    borderRadius: 24,
+    borderWidth: StyleSheet.hairlineWidth,
     overflow: 'hidden',
   },
   content: {

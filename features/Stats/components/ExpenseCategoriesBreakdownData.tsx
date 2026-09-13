@@ -47,7 +47,7 @@ export default function ExpenseCategoryBreakdownCard({
     <Card style={[styles.container, { backgroundColor: colors.surface }]}>
       <Card.Content>
         <ThemedText style={[styles.title, { color: colors.text }]}>{title}</ThemedText>
-        {data.map((item, index) => {
+        {data.map((item) => {
           const cfg = categoryMapping.get(item.category) ?? {
             name: item.category,
             label: item.category,
@@ -60,7 +60,8 @@ export default function ExpenseCategoryBreakdownCard({
           const percentage = grandTotal > 0 ? ((item.total / grandTotal) * 100).toFixed(1) : '0.0';
 
           return (
-            <View key={index} style={styles.item}>
+            <View key={item.category} style={styles.item}>
+              <View style={styles.itemHeader}>
               <View style={styles.leftContainer}>
                 <CategoryIcon
                   size={36}
@@ -77,6 +78,10 @@ export default function ExpenseCategoryBreakdownCard({
                   {percentage}% <ThemedText style={{ color: colors.muted }}>({item.count} txns)</ThemedText>
                 </ThemedText>
               </View>
+              </View>
+              <View style={[styles.track, { backgroundColor: colors.surfaceVariant }]}>
+                <View style={[styles.fill, { backgroundColor: cfg.color, width: `${Math.max(0, Math.min(100, Number(percentage)))}%` }]} />
+              </View>
             </View>
           );
         })}
@@ -86,11 +91,14 @@ export default function ExpenseCategoryBreakdownCard({
 }
 
 const styles = StyleSheet.create({
-  container: { paddingVertical: 6, borderRadius: 12, elevation: 3 },
-  title: { fontSize: 17, fontWeight: 'bold', marginBottom: 12, letterSpacing: 0.5 },
-  item: { flexDirection: 'row', justifyContent: 'space-between', alignItems: 'center', paddingVertical: 8, borderBottomWidth: 0.5, borderBottomColor: '#eee' },
-  leftContainer: { flexDirection: 'row', alignItems: 'center', gap: 2 },
-  categoryText: { fontSize: 15, fontWeight: '600' },
+  container: { paddingVertical: 6, borderRadius: 24, elevation: 0 },
+  title: { fontSize: 17, fontWeight: 'bold', marginBottom: 8, letterSpacing: 0.5 },
+  item: { paddingVertical: 8, gap: 8 },
+  itemHeader: { flexDirection: 'row', flexWrap: 'wrap', justifyContent: 'space-between', alignItems: 'center', gap: 10 },
+  track: { height: 6, borderRadius: 3, overflow: 'hidden' },
+  fill: { height: '100%', borderRadius: 3 },
+  leftContainer: { flexDirection: 'row', alignItems: 'center', gap: 2, flex: 1, minWidth: 120 },
+  categoryText: { fontSize: 14, fontWeight: '600', flexShrink: 1 },
   amountText: { fontSize: 15, fontWeight: 'bold', letterSpacing: 0.5 },
   percentageText: { fontSize: 13, opacity: 0.7, marginTop: 2, textAlign: 'right' },
   noData: { textAlign: 'center', fontStyle: 'italic', paddingVertical: 20, fontSize: 15, opacity: 0.6 },

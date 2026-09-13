@@ -7,6 +7,7 @@ import { Button, ActivityIndicator } from "react-native-paper";
 
 import { ThemedText } from "@/components/base/ThemedText";
 import ExpenseCard from "@/components/main/ExpenseCard";
+import TransactionGroupHeading from '@/components/main/TransactionGroupHeading';
 import { Expense } from "@/lib/types";
 import { getExpenseById, getExpensesByMonthPaginated } from "@/repositories/ExpenseRepo";
 import { useAppTheme } from "@/themes/providers/AppThemeProviders";
@@ -21,6 +22,8 @@ type HeaderItem = {
     type: 'header';
     id: string;
     title: string;
+    total: number;
+    count: number;
 };
 
 export type ExpenseListItem = HeaderItem | Expense;
@@ -105,6 +108,7 @@ export default function ExpensesList({
 
         const items: ExpenseListItem[] = [];
         let previousDayKey: number | null = null;
+        let currentHeader: HeaderItem | undefined;
 
         for (const page of data.pages) {
             for (const expense of page.expenses) {
@@ -114,14 +118,19 @@ export default function ExpensesList({
                     + date.getDate();
 
                 if (dayKey !== previousDayKey) {
-                    items.push({
+                    currentHeader = {
                         type: 'header',
                         id: `day-${dayKey}`,
                         title: getDayHeaderTitle(date),
-                    });
+                        total: 0,
+                        count: 0,
+                    };
+                    items.push(currentHeader);
                     previousDayKey = dayKey;
                 }
 
+                currentHeader!.total += expense.amount;
+                currentHeader!.count++;
                 items.push(expense);
             }
         }
@@ -160,16 +169,7 @@ export default function ExpensesList({
     const renderItem = useCallback(({ item }: { item: ExpenseListItem }) => {
         if (isHeaderItem(item)) {
             return (
-                <View style={styles.dayHeader}>
-                    <ThemedText
-                        type="defaultSemiBold"
-                        fontSize={15}
-                        style={{ color: colors.muted }}
-                    >
-                        {item.title}
-                    </ThemedText>
-                    <View style={[styles.dayHeaderLine, { backgroundColor: colors.border }]} />
-                </View>
+                <TransactionGroupHeading title={item.title} total={formatCurrency(item.total)} count={item.count} />
             );
         }
 
@@ -184,7 +184,7 @@ export default function ExpensesList({
                 dimensions={dimensions}
             />
         );
-    }, [colors.border, colors.muted, handleExpensePress, theme, uses24HourClock, formatCurrency, dimensions]);
+    }, [handleExpensePress, theme, uses24HourClock, formatCurrency, dimensions]);
 
     // Get item type for FlashList optimization
     const getItemType = useCallback((item: ExpenseListItem) => {
@@ -199,14 +199,18 @@ export default function ExpensesList({
         return `expense-${item.id!.toString()}`; // Convert number to string with prefix
     }, []);
 
-    const renderSeparator = useCallback(({ trailingItem }: { trailingItem: ExpenseListItem }) => (
+    const renderSeparator = useCallback(({ leadingItem }: {
+        leadingItem: ExpenseListItem;
+        trailingItem: ExpenseListItem;
+    }) => (
         <View
             style={[
                 styles.itemSeparator,
-                { backgroundColor: isHeaderItem(trailingItem) ? 'transparent' : colors.border }
+                isHeaderItem(leadingItem) && styles.dayHeaderSeparator,
+                { backgroundColor: 'transparent' }
             ]}
         />
-    ), [colors.border]);
+    ), []);
 
     // Total expenses for auto-loading
     const totalExpenses = useMemo(() => (
@@ -265,10 +269,13 @@ export default function ExpensesList({
             }
             ListEmptyComponent={
                 isFetchingNextPage ? null : <View style={styles.emptyContainer}>
-                    <ThemedText type="subtitle">No expenses records found...</ThemedText>
+                    <ThemedText type="subtitle">A fresh start</ThemedText>
+                    <ThemedText color={colors.muted}>Your expenses for this period will appear here.</ThemedText>
                     <Button
                         onPress={() => router.push("/transaction/new")}
                         textColor={colors.primary}
+                        mode="contained-tonal"
+                        icon="plus"
                     >
                         Add Expense
                     </Button>
@@ -282,19 +289,6 @@ export default function ExpensesList({
 }
 
 const styles = StyleSheet.create({
-    dayHeader: {
-        flexDirection: 'row',
-        alignItems: 'center',
-        gap: 10,
-        marginBottom: -8,
-        paddingHorizontal: 10,
-        paddingTop: 12,
-        paddingBottom: 4,
-    },
-    dayHeaderLine: {
-        flex: 1,
-        height: StyleSheet.hairlineWidth,
-    },
     loadingMore: {
         flexDirection: "row",
         alignItems: "center",
@@ -303,7 +297,10 @@ const styles = StyleSheet.create({
     },
     itemSeparator: {
         height: 1,
-        marginVertical: 8,
+        marginVertical: 4,
+    },
+    dayHeaderSeparator: {
+        marginVertical: 2,
     },
     emptyContainer: {
         flex: 1,
@@ -313,7 +310,7 @@ const styles = StyleSheet.create({
         gap: 12,
     },
     contentContainer: {
-        paddingHorizontal: 10,
+        paddingHorizontal: 16,
         paddingBottom: 150,
     },
     fab: {

@@ -8,7 +8,6 @@ import SettingOptionListItem from "@/components/main/SettingOptionListItem";
 import { LANGUAGE_OPTIONS } from "@/lib/constants";
 import SettingButton from "@/components/main/SettingButton";
 import SettingSecureLoginToggle from "@/components/main/SettingSecureLoginToggle";
-import { Icon } from "react-native-paper";
 import SettingSection from "@/components/main/SettingSection";
 import { useNavigation, useRouter } from "expo-router";
 import { uiLog as log } from "@/lib/logger";
@@ -16,53 +15,11 @@ import { useEffect } from "react";
 import SettingDailyReminderSection from "@/components/main/SettingDailyReminderSection";
 
 function SecureLoginSection() {
-  const { colors } = useAppTheme();
-  const styles = StyleSheet.create({
-    sectionContainer: {
-      backgroundColor: colors.surface,
-      borderRadius: 12,
-      padding: 16,
-      marginBottom: 20,
-      elevation: 2,
-      shadowColor: colors.shadow,
-      shadowOffset: { width: 0, height: 1 },
-      shadowOpacity: 0.1,
-      shadowRadius: 2,
-    },
-    sectionHeader: {
-      flexDirection: "row",
-      alignItems: "center",
-      marginBottom: 16,
-      gap: 12,
-    },
-    sectionIcon: {
-      marginRight: 12,
-    },
-    sectionTitle: {
-      fontSize: 18,
-      fontWeight: "600",
-      color: colors.primary,
-    },
-    descriptionText: {
-      color: colors.muted,
-      fontSize: 14,
-      lineHeight: 20,
-      marginBottom: 16,
-    },
-  });
-
   return (
-    <View style={styles.sectionContainer}>
-      <View style={styles.sectionHeader}>
-        <Icon source="fingerprint" size={24} color={colors.primary} />
-        <ThemedText style={styles.sectionTitle}>Secure Login</ThemedText>
-      </View>
-      <ThemedText style={styles.descriptionText}>
-        Use fingerprint, face recognition, or device passcode to secure your app
-        login.
-      </ThemedText>
+    <SettingSection icon="fingerprint" title="Secure Login"
+      description="Use fingerprint, face recognition, or device passcode to secure your app login.">
       <SettingSecureLoginToggle />
-    </View>
+    </SettingSection>
   );
 }
 
@@ -122,7 +79,7 @@ const ComingSoonSection = () => {
       backgroundColor: colors.primaryContainer,
       paddingHorizontal: 8,
       paddingVertical: 4,
-      borderRadius: 12,
+      borderRadius: 24,
       alignSelf: "center",
       marginTop: 8,
     },
@@ -158,7 +115,7 @@ export default function SettingsScreen() {
   const styles = StyleSheet.create({
     container: {
       flex: 1,
-      padding: 18,
+      padding: 16,
     },
   });
 
@@ -167,7 +124,7 @@ export default function SettingsScreen() {
   }, [navigation]);
 
   return (
-    <ScreenWrapper background="card" withScrollView>
+    <ScreenWrapper background="background" withScrollView>
       <View style={styles.container}>
         <HapticsSection
           haptics={haptics}

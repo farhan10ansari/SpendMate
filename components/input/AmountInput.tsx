@@ -5,6 +5,7 @@ import { Pressable, StyleSheet, TextInput } from "react-native";
 import { ColorType } from "@/lib/types";
 import { Icon } from "react-native-paper";
 import { useCurrency } from "@/contexts/CurrencyProvider";
+import { ThemedText } from '@/components/base/ThemedText';
 
 
 export type AmountInputProps = {
@@ -36,7 +37,7 @@ export default function AmountInput({ amount, setAmount, onFocus, onBlur, colorT
             width: '100%',
         },
         input: {
-            color: colors.text,
+            color: colors[colorType],
             backgroundColor: "transparent",
             borderRadius: 10,
             fontSize: 60,
@@ -46,10 +47,11 @@ export default function AmountInput({ amount, setAmount, onFocus, onBlur, colorT
 
     return (
         <Pressable style={styles.inputContainer} onPress={() => inputRef.current?.focus()}>
-            <Icon source="currency-inr" size={24} color={colors.text} />
+            {currencyData.icon ? <Icon source={currencyData.icon} size={24} color={colors[colorType]} /> : <ThemedText color={colors[colorType]} fontSize={22}>{currencyData.symbol}</ThemedText>}
             <TextInput
                 // autoFocus
                 ref={inputRef}
+                accessibilityLabel="Amount"
                 style={styles.input}
                 placeholderTextColor={colors.muted}
                 keyboardType="numeric"

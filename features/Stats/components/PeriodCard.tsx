@@ -1,8 +1,8 @@
-import React from "react";
+import React, { useCallback } from "react";
 import { ThemedText } from "@/components/base/ThemedText";
 import { useAppTheme } from "@/themes/providers/AppThemeProviders";
-import { Pressable, StyleSheet } from "react-native";
-import { Card, Icon } from "react-native-paper";
+import { Pressable, StyleSheet, View } from "react-native";
+import { Icon } from "react-native-paper";
 import { useRouter } from "expo-router";
 import useStatsStore from "@/stores/useStatsStore";
 import { useQueryClient } from "@tanstack/react-query";
@@ -15,44 +15,50 @@ const PeriodCard = () => {
     const period = useStatsStore((state) => state.period);
     const queryClient = useQueryClient();
 
-    const styles = StyleSheet.create({
-        card: {
-            backgroundColor: colors.onSecondary,
-            overflow: 'hidden', // to ensure the android ripple effect doesn't overflow
-        },
-        cardContent: {
-            flexDirection: 'row',
-            alignItems: 'center',
-            justifyContent: 'space-between',
-            paddingVertical: 14,
-            paddingHorizontal: 16,
-        },
-    });
+    const label = [period.primaryLabel, period.secondaryLabel].filter(Boolean).join(' ');
 
-    const handlePress = async () => {
+    const handlePress = useCallback(async () => {
         // Prefetch available periods data so it is ready when screen opens
         await queryClient.prefetchQuery({
             queryKey: ["stats", 'available-periods'],
             queryFn: getAvailablePeriodsWithData,
         });
         router.push("/helper-screens/select-stats-period");
-    };
+    }, [queryClient, router]);
 
     return (
-        <Card style={styles.card}>
+        <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
             <Pressable
                 onPress={handlePress}
-                android_ripple={{ color: colors.ripplePrimary }}
+                accessibilityRole="button"
+                accessibilityLabel={`Select period, currently ${label}`}
+                android_ripple={{ color: colors.ripplePrimary, foreground: true }}
+                style={({ pressed }) => [styles.cardContent, pressed && styles.pressed]}
             >
-                <Card.Content style={styles.cardContent}>
-                    <ThemedText type="defaultSemiBold">
-                        {`${period.primaryLabel} ${period.secondaryLabel ? `${period.secondaryLabel}` : ''}`}
-                    </ThemedText>
-                    <Icon source="chevron-down" size={24} color={colors.primary} />
-                </Card.Content>
+                <View style={[styles.iconBadge, { backgroundColor: colors.primaryContainer }]}>
+                    <Icon source="calendar-range" size={22} color={colors.primary} />
+                </View>
+                <View style={styles.labelContainer}>
+                    <ThemedText color={colors.muted} style={styles.caption}>Viewing period</ThemedText>
+                    <ThemedText style={styles.label}>{label}</ThemedText>
+                </View>
+                <View style={[styles.chevron, { backgroundColor: colors.surfaceVariant }]}>
+                    <Icon source="chevron-down" size={20} color={colors.primary} />
+                </View>
             </Pressable>
-        </Card>
+        </View>
     )
 };
+
+const styles = StyleSheet.create({
+    card: { borderRadius: 22, borderWidth: StyleSheet.hairlineWidth, overflow: 'hidden' },
+    cardContent: { flexDirection: 'row', alignItems: 'center', gap: 12, paddingVertical: 12, paddingHorizontal: 14 },
+    pressed: { opacity: 0.85 },
+    iconBadge: { padding: 10, borderRadius: 14 },
+    labelContainer: { flex: 1, gap: 2 },
+    caption: { fontSize: 10, lineHeight: 15, fontWeight: '500' },
+    label: { fontSize: 15, lineHeight: 22, fontWeight: '700' },
+    chevron: { padding: 6, borderRadius: 12 },
+});
 
 export default PeriodCard;

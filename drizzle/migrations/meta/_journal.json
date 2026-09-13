@@ -8,6 +8,13 @@
       "when": 1762196564829,
       "tag": "0000_minor_titanium_man",
       "breakpoints": true
+    },
+    {
+      "idx": 1,
+      "version": "6",
+      "when": 1789201576657,
+      "tag": "0001_loud_shiva",
+      "breakpoints": true
     }
   ]
 }

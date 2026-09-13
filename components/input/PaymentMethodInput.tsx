@@ -39,6 +39,7 @@ export default function PaymentMethodInput({ paymentMethod, setPaymentMethod }: 
                         compact
                         key={method.name}
                         mode={paymentMethod === method.name ? "contained" : "elevated"}
+                        accessibilityState={{ selected: paymentMethod === method.name }}
                         icon={method.icon}
                         colorType="tertiary"
                         style={styles.buttonStyle}

@@ -7,9 +7,10 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 type ConfirmButtonProps = {
     onPress?: () => void;
     type: 'create' | 'edit';
+    kind?: 'expense' | 'income';
 }
 
-export default function ConfirmButton({ onPress, type }: ConfirmButtonProps) {
+export default function ConfirmButton({ onPress, type, kind = 'expense' }: ConfirmButtonProps) {
     const [show, setShow] = useState(false);
     const timeout = useRef<number | null>(null);
     const keyboard = useKeyboardState();
@@ -44,9 +45,10 @@ export default function ConfirmButton({ onPress, type }: ConfirmButtonProps) {
             {show && (
                 <FAB
                     icon="check"
+                    variant={kind === 'income' ? 'tertiary' : 'primary'}
                     onPress={onPress}
                     style={styles.fab}
-                    label={type === "edit" ? "Update" : undefined}
+                    label={type === "edit" ? "Save changes" : kind === 'income' ? 'Add income' : 'Add expense'}
                 />
             )}
         </Portal>

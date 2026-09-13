@@ -5,7 +5,7 @@ import { useQuery } from "@tanstack/react-query";
 import { useState } from "react";
 import { StyleSheet, View } from "react-native";
 import PeriodCard from "./components/PeriodCard";
-import ExpenseStats from "./ExpenseStats";
+import { HomeActivityStats } from "./components/HomeStats";
 import { ThemedText } from "@/components/base/ThemedText";
 import CategoryBreakdownChart from "./components/CategoryBreakdownChart";
 import { useAppTheme } from "@/themes/providers/AppThemeProviders";
@@ -20,7 +20,7 @@ export default function ExpenseStatsScreen() {
     const [isRefreshing, setIsRefreshing] = useState(false);
 
     // Expense stats query
-    const { data: expenseStats, refetch } = useQuery({
+    const { data: expenseStats, refetch, isPending } = useQuery({
         queryKey: ['stats', 'expenses', 'stats-in-a-period', expensesPeriod],
         queryFn: () => getExpenseStatsByPeriod(expensesPeriod),
     });
@@ -43,10 +43,10 @@ export default function ExpenseStatsScreen() {
             contentContainerStyle={[styles.container, { paddingBottom: insets.bottom + 16 }]}
         >
             <PeriodCard />
-            <ExpenseStats expenseStats={expenseStats} />
+            <HomeActivityStats kind="expense" stats={expenseStats} isLoading={isPending} />
             <View style={statsStyles.section}>
                 <ThemedText style={[statsStyles.sectionTitle, { color: colors.text }]}>
-                    Breakdowns
+                    Explore your spending
                 </ThemedText>
                 <ExpenseCategoryBreakdownCard
                     data={expenseStats?.categories}
@@ -62,6 +62,6 @@ export default function ExpenseStatsScreen() {
 const styles = StyleSheet.create({
     container: {
         padding: 16,
-        gap: 20,
+        gap: 16,
     }
 });

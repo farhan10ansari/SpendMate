@@ -32,8 +32,6 @@ export default function MonthTabsContainer({
         container: {
             backgroundColor: colors.background,
             paddingVertical: 10,
-            borderBottomWidth: 1,
-            borderBottomColor: colors.border,
 
         },
         contentContainer: {

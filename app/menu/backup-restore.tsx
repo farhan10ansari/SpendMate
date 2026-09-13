@@ -108,7 +108,7 @@ export default function BackupRestoreScreen() {
 
 const styles = StyleSheet.create({
   contentContainer: {
-    padding: 12,
-    gap: 12
+    padding: 16,
+    gap: 16
   }
 });

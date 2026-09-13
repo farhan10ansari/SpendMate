@@ -9,6 +9,7 @@ import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { ThemedText } from "@/components/base/ThemedText";
 import IncomeCard from "@/components/main/IncomeCard";
+import TransactionGroupHeading from '@/components/main/TransactionGroupHeading';
 import { Income } from "@/lib/types";
 import { getIncomeById, getIncomesByMonthPaginated } from "@/repositories/IncomeRepo";
 import { useAppTheme } from "@/themes/providers/AppThemeProviders";
@@ -25,6 +26,8 @@ type HeaderItem = {
   type: 'header';
   id: string;
   title: string;
+  total: number;
+  count: number;
 };
 
 type ListItem = HeaderItem | Income;
@@ -74,7 +77,9 @@ export default function IncomesScreen() {
       {
         type: 'header' as const,
         id: `header-${page.month}`,
-        title: page.month
+        title: page.month,
+        total: page.incomes.reduce((sum, income) => sum + income.amount, 0),
+        count: page.incomes.length,
       },
       ...page.incomes
     ]);
@@ -110,13 +115,7 @@ export default function IncomesScreen() {
   const renderItem = useCallback(({ item }: { item: ListItem }) => {
     if (isHeaderItem(item)) {
       return (
-        <ThemedText
-          type="defaultSemiBold"
-          fontSize={20}
-          style={[styles.sectionHeader, { color: colors.muted }]}
-        >
-          {item.title}
-        </ThemedText>
+        <TransactionGroupHeading title={item.title} total={formatCurrency(item.total)} count={item.count} />
       );
     }
 
@@ -124,13 +123,26 @@ export default function IncomesScreen() {
     return (
       <IncomeCard
         income={item}
-        onPress={() => handleIncomeCardPress(item.id!)}
+        onPress={handleIncomeCardPress}
         theme={theme}
         uses24HourClock={uses24HourClock}
         formatCurrency={formatCurrency}
       />
     );
-  }, [colors.muted, handleIncomeCardPress, theme, uses24HourClock, formatCurrency]);
+  }, [handleIncomeCardPress, theme, uses24HourClock, formatCurrency]);
+
+  const renderSeparator = useCallback(({ leadingItem }: {
+    leadingItem: ListItem;
+    trailingItem: ListItem;
+  }) => (
+    <View
+      style={[
+        styles.itemSeparator,
+        isHeaderItem(leadingItem) && styles.sectionHeaderSeparator,
+        { backgroundColor: 'transparent' }
+      ]}
+    />
+  ), []);
 
   // Get item type for FlashList optimization
   const getItemType = useCallback((item: ListItem) => {
@@ -199,21 +211,22 @@ export default function IncomesScreen() {
         }
         ListEmptyComponent={
           isFetchingNextPage ? null : <View style={styles.emptyContainer}>
-            <ThemedText type="subtitle">No income records found...</ThemedText>
+            <ThemedText type="subtitle">Make room for good things</ThemedText>
+            <ThemedText color={colors.muted}>Your income entries will appear here.</ThemedText>
             <Button
               onPress={() => router.navigate({
                 pathname: '/transaction/new',
                 params: { defaultTab: 'income' }
               })}
               textColor={colors.tertiary}
+              mode="contained-tonal"
+              icon="plus"
             >
               Add Income
             </Button>
           </View>
         }
-        ItemSeparatorComponent={() => (
-          <View style={[styles.itemSeparator, { backgroundColor: colors.border }]} />
-        )}
+        ItemSeparatorComponent={renderSeparator}
         contentContainerStyle={styles.contentContainer}
       />
 
@@ -240,12 +253,6 @@ const styles = StyleSheet.create({
   container: {
     flex: 1
   },
-  sectionHeader: {
-    marginTop: 10,
-    marginBottom: -10,
-    paddingHorizontal: 10,
-    paddingVertical: 8,
-  },
   loadingMore: {
     flexDirection: "row",
     alignItems: "center",
@@ -254,7 +261,10 @@ const styles = StyleSheet.create({
   },
   itemSeparator: {
     height: 1,
-    marginVertical: 8,
+    marginVertical: 4,
+  },
+  sectionHeaderSeparator: {
+    marginVertical: 2,
   },
   emptyContainer: {
     flex: 1,
@@ -264,7 +274,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   contentContainer: {
-    paddingHorizontal: 10,
+    paddingHorizontal: 16,
     paddingBottom: 150,
   },
   fab: {

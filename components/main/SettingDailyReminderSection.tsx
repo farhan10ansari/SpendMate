@@ -247,7 +247,7 @@ function DailyReminderSection() {
       title="Daily Reminder"
       description="Choose a time to receive daily reminders to add your expenses."
     >
-      <View style={styles.timeButtonRow}>
+      <View style={[styles.timeButtonRow, { backgroundColor: colors.primaryContainer }]}>
         <View>
           <ThemedText style={[styles.timeLabel, { color: colors.primary }]}>
             Reminder time
@@ -310,7 +310,8 @@ const styles = StyleSheet.create({
     justifyContent: "space-between",
     alignItems: "center",
     marginBottom: 16,
-    paddingHorizontal: 4,
+    padding: 14,
+    borderRadius: 18,
   },
   timeLabel: {
     fontSize: 14,
@@ -332,7 +333,7 @@ const styles = StyleSheet.create({
     elevation: 2,
   },
   switchRow: {
-    marginTop: 16,
+    marginTop: 0,
     alignItems: "center",
   },
 });

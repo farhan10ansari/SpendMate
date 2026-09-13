@@ -28,7 +28,7 @@ const SettingSwitchListItem = ({
         card: {
             alignSelf: "stretch",
             backgroundColor: colors.inverseOnSurface,
-            borderRadius: 8,
+            borderRadius: 16,
             overflow: "hidden",
             marginBottom: 8,
         },
@@ -37,12 +37,12 @@ const SettingSwitchListItem = ({
             paddingVertical: 8,
         },
         listItemTitle: {
-            fontSize: 16,
+            fontSize: 14,
             fontWeight: "500",
             color: colors.text,
         },
         listItemDescription: {
-            fontSize: 14,
+            fontSize: 12,
             color: colors.muted,
         },
     });

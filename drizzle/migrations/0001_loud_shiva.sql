@@ -1,0 +1,2 @@
+CREATE INDEX `expenses_recent_activity_idx` ON `expenses` (`is_trashed`,`date_time`,`id`);--> statement-breakpoint
+CREATE INDEX `incomes_recent_activity_idx` ON `incomes` (`is_trashed`,`date_time`,`id`);

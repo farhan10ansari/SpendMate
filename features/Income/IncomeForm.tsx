@@ -1,6 +1,7 @@
 import { ThemedText } from '@/components/base/ThemedText';
 import { useAppTheme } from '@/themes/providers/AppThemeProviders';
 import React, { useEffect } from 'react';
+import Color from 'color';
 import { StyleSheet, View } from 'react-native';
 import { IncomeData, useIncomeStore } from './IncomeStoreProvider';
 import AmountInput from '@/components/input/AmountInput';
@@ -16,10 +17,11 @@ import { useSnackbarState } from '@/contexts/GlobalSnackbarProvider';
 type IncomeFormProps = {
     onSubmit?: (income: IncomeData) => void;
     type?: 'create' | 'edit';
+    isActive?: boolean;
 }
 
-export default function IncomeForm({ onSubmit, type = "create" }: IncomeFormProps) {
-    const { colors } = useAppTheme();
+export default function IncomeForm({ onSubmit, type = "create", isActive = true }: IncomeFormProps) {
+    const { colors, dark } = useAppTheme();
     const isFocused = useIsFocused()
     const globalSnackbar = useSnackbarState()
 
@@ -44,9 +46,9 @@ export default function IncomeForm({ onSubmit, type = "create" }: IncomeFormProp
             >
 
                 {/* Amount */}
-                <View style={styles.amountContainer}>
-                    <ThemedText type='defaultSemiBold' style={[styles.sectionTitle, { color: colors.muted }]}>
-                        Amount <ThemedText color='red'>*</ThemedText>
+                <View style={[styles.amountContainer, { backgroundColor: dark ? colors.tertiaryContainer : Color(colors.surface).mix(Color(colors.tertiaryContainer), 0.16).hex() }]}>
+                    <ThemedText type='defaultSemiBold' style={[styles.sectionTitle, styles.amountTitle, { color: colors.muted }]}>
+                        Income amount <ThemedText color={colors.error}>*</ThemedText>
                     </ThemedText>
                     <AmountInput
                         amount={income.amount}
@@ -55,9 +57,9 @@ export default function IncomeForm({ onSubmit, type = "create" }: IncomeFormProp
                     />
                 </View>
                 {/* Source */}
-                <View style={styles.inputSection}>
+                <View style={[styles.inputSection, { backgroundColor: colors.surface, borderRadius: 18, padding: 10 }]}>
                     <ThemedText type="defaultSemiBold" style={[styles.sectionTitle, { color: colors.muted }]}>
-                        Source <ThemedText color='red'>*</ThemedText>
+                        Source <ThemedText color={colors.error}>*</ThemedText>
                     </ThemedText>
                     <CategoriesInput
                         categories={sources}
@@ -68,7 +70,7 @@ export default function IncomeForm({ onSubmit, type = "create" }: IncomeFormProp
                     />
                 </View>
                 {/* Description (Notes) */}
-                <View style={styles.inputSection}>
+                <View style={[styles.inputSection, { backgroundColor: colors.surface, borderRadius: 18, padding: 10 }]}>
                     <ThemedText type='defaultSemiBold' style={[styles.sectionTitle, { color: colors.muted }]}>
                         Description
                     </ThemedText>
@@ -80,7 +82,7 @@ export default function IncomeForm({ onSubmit, type = "create" }: IncomeFormProp
                 </View>
 
                 {/* Date & Time */}
-                <View style={styles.inputSection}>
+                <View style={[styles.inputSection, { backgroundColor: colors.surface, borderRadius: 18, padding: 10 }]}>
                     <ThemedText type='defaultSemiBold' style={[styles.sectionTitle, { color: colors.muted }]}>
                         Date & Time
                     </ThemedText>
@@ -99,8 +101,9 @@ export default function IncomeForm({ onSubmit, type = "create" }: IncomeFormProp
                 </View>
             </View>
             {/* Confirm Button */}
-            {isFocused && !globalSnackbar && (
+            {isActive && isFocused && !globalSnackbar && (
                 <ConfirmButton
+                    kind="income"
                     onPress={handleSubmit}
                     type={type}
                 />
@@ -113,26 +116,34 @@ export default function IncomeForm({ onSubmit, type = "create" }: IncomeFormProp
 const styles = StyleSheet.create({
     container: {
         paddingVertical: 10,
-        paddingHorizontal: 20,
+        paddingHorizontal: 16,
         flex: 1,
     },
     sectionTitle: {
         width: '100%',
-        textAlign: 'center',
-        marginBottom: 10
+        textAlign: 'left',
+        marginBottom: 6,
+    fontSize: 12,
+    lineHeight: 18
     },
-    amountContainer: {
+    amountTitle: { textAlign: 'center' },
+  amountContainer: {
+    padding: 12,
+    borderRadius: 20,
+    marginBottom: 4,
         justifyContent: 'center',
         alignItems: 'center',
     },
     inputSection: {
-        marginTop: 20,
+        marginTop: 10,
     },
     datetimeMain: {
+    flexWrap: 'wrap',
         flexDirection: 'row',
         gap: 10,
     },
     datetimeInputContainer: {
+    minWidth: 140,
         flex: 1,
     }
 });

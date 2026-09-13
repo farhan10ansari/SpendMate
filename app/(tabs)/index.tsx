@@ -1,17 +1,18 @@
 import React, { useCallback, useLayoutEffect, useMemo, useState } from 'react';
-import { StyleSheet, View } from 'react-native';
+import { LayoutChangeEvent, StyleSheet, View, useWindowDimensions } from 'react-native';
 import { Button, Icon, IconButton, Menu } from 'react-native-paper';
 import { Href, useNavigation, useRouter } from 'expo-router';
 import { useQuery } from '@tanstack/react-query';
+import { useBottomTabBarHeight } from 'expo-router/js-tabs';
 
 import { ScreenWrapper } from '@/components/main/ScreenWrapper';
 import PeriodCard from '@/features/Stats/components/PeriodCard';
-import FinancialSummaryStats from '@/features/Stats/FinancialOverviewStats';
-import ExpenseStats from '@/features/Stats/ExpenseStats';
-import IncomeStats from '@/features/Stats/IncomeStats';
+import { HomeFinancialSummary, HomeActivityStats } from '@/features/Stats/components/HomeStats';
 
 import { getExpenseStatsByPeriod } from '@/repositories/ExpenseRepo';
 import { getIncomeStatsByPeriod } from '@/repositories/IncomeRepo';
+import { getRecentActivity, mergeRecentActivity } from '@/repositories/RecentActivityRepo';
+import RecentActivity from '@/features/Stats/components/RecentActivity';
 
 import useStatsStore from '@/stores/useStatsStore';
 import usePersistentAppStore from '@/stores/usePersistentAppStore';
@@ -21,19 +22,43 @@ import { useAppTheme } from '@/themes/providers/AppThemeProviders';
 
 export default function HomeScreen() {
   const { colors } = useAppTheme();
+  const tabBarHeight = useBottomTabBarHeight();
+  const { fontScale } = useWindowDimensions();
+  const [statsWidth, setStatsWidth] = useState(0);
+  const columns = Math.min(3, Math.max(1, Math.floor((statsWidth + 16) / (360 * Math.max(1, fontScale) + 16))));
+  const columnWidth = columns === 1 ? '100%' : (statsWidth - (columns - 1) * 16) / columns;
+  const handleStatsLayout = useCallback((event: LayoutChangeEvent) => {
+    setStatsWidth(event.nativeEvent.layout.width);
+  }, []);
   const expensesPeriod = useStatsStore((state) => state.period);
   const [isRefreshing, setIsRefreshing] = useState(false);
   const { hapticImpact } = useHaptics();
 
-  const { data: expenseStats, refetch: refetchExpenseStats } = useQuery({
+  const { data: expenseStats, refetch: refetchExpenseStats, isPending: expensesPending } = useQuery({
     queryKey: ['stats', 'expenses', 'stats-in-a-period', expensesPeriod],
     queryFn: () => getExpenseStatsByPeriod(expensesPeriod),
   });
 
-  const { data: incomeStats, refetch: refetchIncomeStats } = useQuery({
+  const { data: incomeStats, refetch: refetchIncomeStats, isPending: incomesPending } = useQuery({
     queryKey: ['stats', 'incomes', 'stats-in-a-period', expensesPeriod],
     queryFn: () => getIncomeStatsByPeriod(expensesPeriod),
   });
+
+  const recentExpenses = useQuery({
+    queryKey: ['expenses', 'recent-activity', expensesPeriod],
+    queryFn: () => getRecentActivity('expense', expensesPeriod),
+  });
+  const recentIncomes = useQuery({
+    queryKey: ['incomes', 'recent-activity', expensesPeriod],
+    queryFn: () => getRecentActivity('income', expensesPeriod),
+  });
+  const { refetch: refetchRecentExpenses } = recentExpenses;
+  const { refetch: refetchRecentIncomes } = recentIncomes;
+  const recentActivity = useMemo(() => mergeRecentActivity(recentExpenses.data ?? [], recentIncomes.data ?? []), [recentExpenses.data, recentIncomes.data]);
+  const retryRecentActivity = useCallback(() => {
+    void refetchRecentExpenses();
+    void refetchRecentIncomes();
+  }, [refetchRecentExpenses, refetchRecentIncomes]);
 
   const handleRefresh = useCallback(async () => {
     setIsRefreshing(true);
@@ -42,11 +67,13 @@ export default function HomeScreen() {
       await Promise.all([
         refetchExpenseStats(),
         refetchIncomeStats(),
+        refetchRecentExpenses(),
+        refetchRecentIncomes(),
       ]);
     } finally {
       setIsRefreshing(false);
     }
-  }, [hapticImpact, refetchExpenseStats, refetchIncomeStats]);
+  }, [hapticImpact, refetchExpenseStats, refetchIncomeStats, refetchRecentExpenses, refetchRecentIncomes]);
 
   // Setup screen menu with options
   useScreenMenu({ onRefresh: handleRefresh });
@@ -57,18 +84,23 @@ export default function HomeScreen() {
       withScrollView
       isRefreshing={isRefreshing}
       onRefresh={handleRefresh}
-      contentContainerStyle={styles.scrollContainer}
+      contentContainerStyle={[styles.scrollContainer, { paddingBottom: tabBarHeight + 16 }]}
     >
       <PeriodCard />
-      <FinancialSummaryStats expenseStats={expenseStats} incomeStats={incomeStats} />
-      <View style={styles.section}>
-        <ExpenseStats expenseStats={expenseStats} showTitle />
-        <MoreStatsButton routeName="/stats/expenses" color={colors.primary} />
+      <View style={styles.statsGrid} onLayout={handleStatsLayout}>
+        <View style={{ width: columns === 3 ? columnWidth : '100%' }}>
+          <HomeFinancialSummary expenseStats={expenseStats} incomeStats={incomeStats} isLoading={expensesPending || incomesPending} stretch={columns === 3} />
+        </View>
+        <View style={[styles.section, { width: columnWidth }]}>
+          <HomeActivityStats kind="expense" stats={expenseStats} isLoading={expensesPending} />
+          <MoreStatsButton routeName="/stats/expenses" color={colors.primary} />
+        </View>
+        <View style={[styles.section, { width: columnWidth }]}>
+          <HomeActivityStats kind="income" stats={incomeStats} isLoading={incomesPending} />
+          <MoreStatsButton routeName="/stats/incomes" color={colors.tertiary} />
+        </View>
       </View>
-      <View style={styles.section}>
-        <IncomeStats incomeStats={incomeStats} showTitle />
-        <MoreStatsButton routeName="/stats/incomes" color={colors.primary} />
-      </View>
+      <RecentActivity items={recentActivity} isLoading={recentExpenses.isPending || recentIncomes.isPending} isError={recentExpenses.isError || recentIncomes.isError} onRetry={retryRecentActivity} />
     </ScreenWrapper>
   );
 }
@@ -158,9 +190,8 @@ const MoreStatsButton = React.memo(function MoreStatsButton({
 const styles = StyleSheet.create({
   scrollContainer: {
     padding: 16,
-    paddingBottom: 100,
     flexGrow: 1,
-    gap: 20,
+    gap: 16,
   },
   moreStatsButtonContainer: {
     flexDirection: 'row',
@@ -176,5 +207,11 @@ const styles = StyleSheet.create({
   },
   section: {
     gap: 10,
+  },
+  statsGrid: {
+    flexDirection: 'row',
+    flexWrap: 'wrap',
+    alignItems: 'stretch',
+    gap: 16,
   },
 });

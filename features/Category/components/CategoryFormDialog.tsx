@@ -211,6 +211,7 @@ const styles = StyleSheet.create({
     justifyContent: 'center',
   },
   dialog: {
+    borderRadius: 24,
     marginHorizontal: 20,
   },
   title: {
@@ -222,6 +223,7 @@ const styles = StyleSheet.create({
     gap: 12,
   },
   textInput: {
+    borderRadius: 16,
     marginBottom: 4,
   },
   alert: {

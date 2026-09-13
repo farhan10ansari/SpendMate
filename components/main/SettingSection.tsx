@@ -15,13 +15,15 @@ const SettingSection = ({ icon, title, description, children }: SettingSectionPr
     const styles = StyleSheet.create({
         sectionContainer: {
             backgroundColor: colors.surface,
-            borderRadius: 12,
+            borderWidth: StyleSheet.hairlineWidth,
+            borderColor: colors.border,
+            borderRadius: 24,
             padding: 16,
-            marginBottom: 20,
-            elevation: 2,
+            marginBottom: 16,
+            elevation: 0,
             shadowColor: colors.shadow,
             shadowOffset: { width: 0, height: 1 },
-            shadowOpacity: 0.1,
+            shadowOpacity: 0,
             shadowRadius: 2,
         },
         sectionHeader: {
@@ -31,13 +33,14 @@ const SettingSection = ({ icon, title, description, children }: SettingSectionPr
             gap: 12,
         },
         sectionTitle: {
-            fontSize: 18,
+            flex: 1,
+            fontSize: 17,
             fontWeight: "600",
             color: colors.primary,
         },
         descriptionText: {
             color: colors.muted,
-            fontSize: 14,
+            fontSize: 12,
             lineHeight: 20,
             marginBottom: 16,
         },
@@ -46,11 +49,13 @@ const SettingSection = ({ icon, title, description, children }: SettingSectionPr
     return (
         <View style={styles.sectionContainer}>
             <View style={styles.sectionHeader}>
+                <View style={{ padding: 10, borderRadius: 14, backgroundColor: colors.primaryContainer }}>
                 <Icon
                     source={icon}
-                    size={24}
+                    size={22}
                     color={colors.primary}
                 />
+                </View>
                 <ThemedText style={styles.sectionTitle}>
                     {title}
                 </ThemedText>

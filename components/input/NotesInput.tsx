@@ -16,24 +16,28 @@ export default function NotesInput({ note, setNote, onFocus, onBlur, colorType =
 
     const styles = StyleSheet.create({
         notesInput: {
-            backgroundColor: colors.background,
+            backgroundColor: colors.surfaceVariant,
             padding: 10,
+            minHeight: 64,
+            textAlignVertical: 'top',
+            fontSize: 14,
             color: colors.text,
-            borderRadius: 10,
-            borderColor: colors[colorType],
-            borderWidth: 1,
+            borderRadius: 16,
+            borderColor: colors.border,
+            borderWidth: StyleSheet.hairlineWidth,
         },
     });
 
     return (
         <TextInput
             value={note}
+            accessibilityLabel="Notes"
             onChangeText={setNote}
             style={styles.notesInput}
             placeholder="Add a note"
             placeholderTextColor={colors.muted}
             multiline
-            numberOfLines={4}
+            numberOfLines={2}
             cursorColor={colors[colorType]}
             onFocus={onFocus}
             onBlur={onBlur}

@@ -14,36 +14,31 @@ export default function MonthTab({ month, count, isSelected, onPress }: MonthTab
 
     const styles = StyleSheet.create({
         tabWrapper: {
-            borderRadius: 16,
+            borderRadius: 18,
             overflow: 'hidden',
             marginRight: 8,
         },
         tabContainer: {
-            paddingHorizontal: 12,
-            paddingVertical: 6,
-            borderRadius: 16, // Add borderRadius here too
-            backgroundColor: isSelected ? colors.primary : colors.surface,
-            borderWidth: 1,
-            borderColor: isSelected ? colors.primary : colors.outline,
+            paddingHorizontal: 16,
+            paddingVertical: 10,
+            borderRadius: 18,
+            backgroundColor: isSelected ? colors.primaryContainer : colors.surface,
+            borderWidth: StyleSheet.hairlineWidth,
+            borderColor: isSelected ? colors.primary : colors.border,
             minWidth: 75,
             alignItems: 'center',
-            elevation: isSelected ? 3 : 1,
-            shadowColor: colors.shadow,
-            shadowOffset: { width: 0, height: isSelected ? 2 : 1 },
-            shadowOpacity: isSelected ? 0.25 : 0.1,
-            shadowRadius: isSelected ? 3 : 2,
         },
         tabText: {
             fontSize: 12,
-            fontWeight: isSelected ? '600' : '500',
-            color: isSelected ? colors.onPrimary : colors.onSurface,
-            lineHeight: 14,
+            fontWeight: isSelected ? '700' : '500',
+            color: isSelected ? colors.onPrimaryContainer : colors.onSurface,
+            lineHeight: 18,
             width: '100%',
             textAlign: 'center',
         },
         countText: {
             fontSize: 10,
-            color: isSelected ? colors.onPrimary : colors.onSurfaceVariant,
+            color: isSelected ? colors.onPrimaryContainer : colors.muted,
             marginTop: 2,
             lineHeight: 12,
             opacity: isSelected ? 0.9 : 0.7,
@@ -55,6 +50,8 @@ export default function MonthTab({ month, count, isSelected, onPress }: MonthTab
             <Pressable
                 style={styles.tabContainer}
                 onPress={onPress}
+                accessibilityRole="button"
+                accessibilityState={{ selected: isSelected }}
                 android_ripple={{
                     color: colors.ripplePrimary,
                     borderless: false,
@@ -65,7 +62,7 @@ export default function MonthTab({ month, count, isSelected, onPress }: MonthTab
                 </ThemedText>
                 {count !== undefined && (
                     <ThemedText style={styles.countText}>
-                        {count} items
+                        {count} {count === 1 ? 'entry' : 'entries'}
                     </ThemedText>
                 )}
             </Pressable>

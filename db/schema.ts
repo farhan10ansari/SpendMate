@@ -1,5 +1,5 @@
 import { InferInsertModel, InferSelectModel, sql } from 'drizzle-orm';
-import { integer, primaryKey, real, sqliteTable, text } from 'drizzle-orm/sqlite-core';
+import { index, integer, primaryKey, real, sqliteTable, text } from 'drizzle-orm/sqlite-core';
 
 
 /**
@@ -34,7 +34,7 @@ export const expensesSchema = sqliteTable('expenses', {
     .notNull()
     .default(sql`(strftime('%s', 'now'))`)
     .$onUpdate(() => new Date()),
-});
+}, (table) => [index('expenses_recent_activity_idx').on(table.isTrashed, table.dateTime, table.id)]);
 
 export type ExpenseDB = InferInsertModel<typeof expensesSchema>;
 export type ExpenseRes = InferSelectModel<typeof expensesSchema>;
@@ -70,7 +70,7 @@ export const incomesSchema = sqliteTable('incomes', {
     .notNull()
     .default(sql`(strftime('%s', 'now'))`)
     .$onUpdate(() => new Date()),
-});
+}, (table) => [index('incomes_recent_activity_idx').on(table.isTrashed, table.dateTime, table.id)]);
 
 export type IncomeDB = InferInsertModel<typeof incomesSchema>;
 export type IncomeRes = InferSelectModel<typeof incomesSchema>;
