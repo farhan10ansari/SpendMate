@@ -4,6 +4,7 @@ import { create } from 'zustand';
 import { createJSONStorage, persist, StateStorage } from "zustand/middleware";
 import { getLocales } from 'expo-localization';
 import createDeepMerge from '@fastify/deepmerge'
+import type { ThemeCollectionId } from '@/themes/collections';
 const deepMerge = createDeepMerge({ all: true })
 
 const localeDate = getLocales()[0]
@@ -42,6 +43,8 @@ type AppSettings = {
 };
 
 type PersistentAppStore = {
+    themeCollection: ThemeCollectionId;
+    setThemeCollection: (collection: ThemeCollectionId) => void;
     theme: "light" | "dark" | "system";
     setTheme: (theme: "light" | "dark" | "system") => void;
 
@@ -91,6 +94,8 @@ const usePersistentAppStore = create<PersistentAppStore>()(persist(
     (set, get) => ({
         // Theme management
         theme: "system",
+        themeCollection: "mint",
+        setThemeCollection: (themeCollection) => set({ themeCollection }),
         setTheme: (theme) => set({ theme }),
 
         // App settings management
@@ -121,6 +126,7 @@ const usePersistentAppStore = create<PersistentAppStore>()(persist(
         isDataSeeded: (key) => get().seededKeys.includes(key),
         resetPersistentStore: () => set({
             theme: "system",
+            themeCollection: "mint",
             settings: defaultSettings,
             uiFlags: defaultUIFlags,
             seededKeys: [],

@@ -3,7 +3,8 @@ import { DarkTheme, DefaultTheme, ThemeProvider } from "expo-router/react-naviga
 import { createContext, useContext, useEffect, useMemo } from "react";
 import { Platform, useColorScheme } from "react-native";
 import { PaperProvider } from "react-native-paper";
-import { customDarkTheme, customLightTheme } from "../theme";
+import { customLightTheme } from "../theme";
+import { getThemeCollection } from '../collections';
 import * as NavigationBar from 'expo-navigation-bar';
 
 const ThemeContext = createContext(customLightTheme);
@@ -11,13 +12,15 @@ const ThemeContext = createContext(customLightTheme);
 function AppThemeProvider({ children }: { children: React.ReactNode }) {
     const colorScheme = useColorScheme();
     const appliedTheme = usePersistentAppStore((state) => state.theme);
+    const collectionId = usePersistentAppStore((state) => state.themeCollection);
 
     const theme = useMemo(() => {
+        const collection = getThemeCollection(collectionId);
         if (appliedTheme === "system") {
-            return colorScheme === 'dark' ? customDarkTheme : customLightTheme;
+            return colorScheme === 'dark' ? collection.dark : collection.light;
         }
-        return appliedTheme === "dark" ? customDarkTheme : customLightTheme;
-    }, [appliedTheme, colorScheme]);
+        return appliedTheme === "dark" ? collection.dark : collection.light;
+    }, [appliedTheme, colorScheme, collectionId]);
 
     // ✅ Memoize context value to prevent provider re-renders
     const contextValue = useMemo(() => theme, [theme]);
