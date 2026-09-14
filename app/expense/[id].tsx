@@ -1,7 +1,8 @@
 import React from "react";
 import { ThemedText } from "@/components/base/ThemedText";
 import { ThemedView } from "@/components/base/ThemedView";
-import CustomChip from "@/components/ui/CustomChip";
+import TransactionDetails from "@/components/main/TransactionDetails";
+import { useCurrency } from "@/contexts/CurrencyProvider";
 import { useLocalization } from "@/hooks/useLocalization";
 import { paymentMethodsMapping } from "@/lib/constants";
 import { extractDateLabel, extractTimeString } from "@/lib/functions";
@@ -9,9 +10,8 @@ import { softDeleteExpenseById, getExpenseById } from "@/repositories/ExpenseRep
 import { useAppTheme } from "@/themes/providers/AppThemeProviders";
 import { useQuery, useQueryClient } from "@tanstack/react-query";
 import { useLocalSearchParams, useNavigation, useRouter } from "expo-router";
-import { StyleSheet, View } from "react-native";
-import { Button, Icon } from "react-native-paper";
-import { ScrollView as GestureScrollView } from "react-native-gesture-handler";
+import { StyleSheet } from "react-native";
+import { ActivityIndicator } from "react-native-paper";
 import { tryCatch } from "@/lib/try-catch";
 import FormSheetHeader from "@/components/main/FormSheetHeader";
 import { useHaptics } from "@/contexts/HapticsProvider";
@@ -22,6 +22,7 @@ import { useConfirmation } from "@/components/main/ConfirmationDialog";
 
 export default function ExpenseInfoScreen() {
     const { colors } = useAppTheme();
+    const { formatCurrency, currencyCode } = useCurrency();
     const { uses24HourClock } = useLocalization();
     const navigation = useNavigation();
     const queryClient = useQueryClient();
@@ -35,7 +36,7 @@ export default function ExpenseInfoScreen() {
     const insets = useSafeAreaInsets();
     const { hapticImpact, hapticNotify } = useHaptics()
 
-    const { data: expense, isError, error } = useQuery({
+    const { data: expense, isPending, isError, error } = useQuery({
         queryKey: ['expense', id],
         queryFn: async () => getExpenseById(id),
         enabled: !!id,
@@ -57,31 +58,6 @@ export default function ExpenseInfoScreen() {
             marginBottom: 20,
             textAlign: 'center',
             color: colors.primary
-        },
-        amountContentContainer: {
-            flexDirection: 'row',
-            alignItems: 'center',
-            gap: 0,
-        },
-        buttonContainer: {
-            paddingVertical: 30,
-            flexDirection: 'row',
-            justifyContent: 'center',
-            gap: 10,
-        },
-        button: {
-            width: '45%',
-            maxWidth: 200,
-        },
-        editButton: {
-        },
-        editBUttonText: {
-        },
-        deleteButton: {
-            backgroundColor: colors.error,
-        },
-        deleteButtonText: {
-            color: colors.onError,
         },
     });
 
@@ -148,162 +124,37 @@ export default function ExpenseInfoScreen() {
 
     const timeString = expense?.dateTime ? extractTimeString(expense?.dateTime, uses24HourClock) : "";
     const dateLabel = expense?.dateTime ? extractDateLabel(expense?.dateTime) : ""
-    const formattedDateTime = expense?.dateTime ? `${dateLabel} at ${timeString}` : "Not Provided";
     const categoryDef = expense?.category ? categoryMapping.get(expense.category) : null;
 
 
     return (
         <ThemedView style={styles.container}>
-            <FormSheetHeader
-                title="Expense Info"
-                onClose={() => navigation.goBack()}
-            />
-            {
-                !expense?.isTrashed ? (
-                    <View style={styles.mainContainer}>
-                        <View>
-                            {/* Amount */}
-                            <InfoRow
-                                label="Amount"
-                                content={
-                                    <View style={styles.amountContentContainer}>
-                                        <Icon source="currency-inr" size={24} color={colors.primary} />
-                                        <ThemedText type="defaultSemiBold" color={colors.primary} fontSize={24}>
-                                            {expense?.amount ? expense.amount.toLocaleString() : "Not Provided"}
-                                        </ThemedText>
-                                    </View>
-                                }
-                            />
-                            {/* Category */}
-                            <InfoRow
-                                label="Category"
-                                content={expense?.category ?
-                                    <CustomChip
-                                        size="default"
-                                        variant={categoryDef?.color}
-                                        icon={categoryDef?.icon ?? undefined}
-                                        label={categoryDef?.label ?? "Unknown Category"}
-                                    /> : "Not Provided"}
-                            />
-                            {/* Notes */}
-                            <InfoRow
-                                label="Notes"
-                                content={expense?.description ? <ThemedText>
-                                    {expense?.description}
-                                </ThemedText> : "Not Provided"}
-                                layout={expense?.description ? "vertical" : "horizontal"}
-                                scrollable
-                                height={100}
-                            />
-
-                            {/* Payment Method */}
-                            <InfoRow label="Payment Method" content={expense?.paymentMethod ?
-                                <CustomChip
-                                    size="default"
-                                    variant="tertiary"
-                                    icon={paymentMethodsMapping?.[expense.paymentMethod]?.icon}
-                                    label={paymentMethodsMapping?.[expense.paymentMethod]?.label}
-                                /> : "Not Provided"
-                            } />
-                            {/* Date & Time */}
-                            <InfoRow label="Date & Time" content={formattedDateTime} />
-                            {/* Action */}
-                            <View style={styles.buttonContainer}>
-                                <Button
-                                    mode="elevated"
-                                    style={[styles.button, styles.editButton]}
-                                    labelStyle={styles.editBUttonText}
-                                    rippleColor={colors.ripplePrimary}
-                                    onPress={handleEdit}
-                                >
-                                    Edit
-                                </Button>
-                                <Button
-                                    mode="elevated"
-                                    style={[styles.button, styles.deleteButton]}
-                                    labelStyle={styles.deleteButtonText}
-                                    onPress={handleShowDeleteConfirmation}
-                                >
-                                    Delete
-                                </Button>
-                            </View>
-                        </View>
-                    </View>
-                ) : (
-                    <ThemedView style={[styles.mainContainer, { minHeight: 200, paddingTop: 40 }]}>
-                        <ThemedText type="title" style={styles.title} color={colors.error}>Expense Not Found</ThemedText>
-                        <ThemedText centered>This expense has been deleted.</ThemedText>
-                    </ThemedView>
-                )
-            }
+            <FormSheetHeader title="Expense details" onClose={() => navigation.goBack()} />
+            {isPending ? (
+                <ThemedView style={[styles.mainContainer, { paddingVertical: 32 }]}>
+                    <ActivityIndicator accessibilityLabel="Loading expense" />
+                </ThemedView>
+            ) : expense && !expense.isTrashed ? (
+                <TransactionDetails
+                    kind="expense"
+                    amount={formatCurrency(expense.amount)}
+                    category={categoryDef?.label ?? "Unknown category"}
+                    categoryIcon={categoryDef?.icon}
+                    date={dateLabel || 'Not provided'}
+                    time={timeString || 'Not provided'}
+                    currency={currencyCode}
+                    notes={expense.description}
+                    paymentMethod={expense.paymentMethod ? paymentMethodsMapping[expense.paymentMethod]?.label : undefined}
+                    paymentIcon={expense.paymentMethod ? paymentMethodsMapping[expense.paymentMethod]?.icon : undefined}
+                    onEdit={handleEdit}
+                    onDelete={handleShowDeleteConfirmation}
+                />
+            ) : (
+                <ThemedView style={[styles.mainContainer, { minHeight: 200, paddingTop: 40 }]}>
+                    <ThemedText type="title" style={styles.title} color={colors.error}>Expense Not Found</ThemedText>
+                    <ThemedText centered>This expense is no longer available.</ThemedText>
+                </ThemedView>
+            )}
         </ThemedView>
     );
 }
-
-
-const InfoRow = ({ label, content, layout = "horizontal", scrollable = false, height }: {
-    label: string,
-    content: React.ReactNode | string,
-    layout?: "horizontal" | "vertical",
-    scrollable?: boolean,
-    height?: number
-}) => {
-    const { colors } = useAppTheme();
-    const styles = StyleSheet.create({
-        infoRow: {
-            flexDirection: layout === "vertical" ? "column" : 'row',
-            justifyContent: 'space-between',
-            paddingVertical: 10,
-            borderBottomWidth: 1,
-            borderColor: colors.border,
-        },
-        label: {
-            fontSize: 16,
-            fontWeight: '600',
-            width: layout === "vertical" ? "100%" : '50%', // Adjust width as needed
-        },
-        textContent: {
-            color: colors.text,
-            width: layout === "vertical" ? "100%" : '50%',
-            textAlign: layout === "vertical" ? "left" : "right",
-        },
-        contentContainer: {
-            flexDirection: "row",
-            width: layout === "vertical" ? "100%" : '50%',
-            justifyContent: layout === "vertical" ? 'flex-start' : 'flex-end',
-        },
-        scrollableContentContainer: {
-            maxHeight: height
-        },
-
-
-    });
-
-    const isStringContent = typeof content === 'string';
-
-    return (
-        <View style={styles.infoRow}>
-            <ThemedText style={styles.label} color={colors.text}>{label}:</ThemedText>
-            {
-                isStringContent ? (
-                    <ThemedText style={styles.textContent}>
-                        {content}
-                    </ThemedText>
-                ) : scrollable ? (
-                    // Using React Native Gesture handler ScrollView to fix formsheet close on scroll
-                    <GestureScrollView
-                        keyboardShouldPersistTaps="handled"
-                        style={styles.scrollableContentContainer}
-                    >
-                        {content}
-                    </GestureScrollView>
-                )
-                    : (
-                        <View style={styles.contentContainer}>
-                            {content}
-                        </View>
-                    )
-            }
-        </View>
-    )
-};

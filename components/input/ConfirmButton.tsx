@@ -2,7 +2,8 @@ import { useEffect, useState } from "react";
 import { StyleSheet } from "react-native";
 import { useReanimatedKeyboardAnimation } from "react-native-keyboard-controller";
 import Animated, { useAnimatedStyle } from "react-native-reanimated";
-import { FAB, Portal } from "react-native-paper";
+import { Button, FAB, Portal } from "react-native-paper";
+import { useAppTheme } from "@/themes/providers/AppThemeProviders";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 type ConfirmButtonProps = {
@@ -15,6 +16,7 @@ export default function ConfirmButton({ onPress, type, kind = 'expense' }: Confi
     const [show, setShow] = useState(false);
     const { height } = useReanimatedKeyboardAnimation();
     const insets = useSafeAreaInsets();
+    const { colors } = useAppTheme();
     const bottomInset = insets.bottom;
     const keyboardStyle = useAnimatedStyle(() => ({
         // Keyboard height is negative while open. Keep the existing safe-area
@@ -37,12 +39,28 @@ export default function ConfirmButton({ onPress, type, kind = 'expense' }: Confi
         <Portal>
             {show && (
                 <Animated.View style={[styles.anchor, { bottom: bottomInset + 16 }, keyboardStyle]}>
+                    {type === 'create' ? (
+                        <Button
+                            mode="contained"
+                            compact
+                            icon="check"
+                            onPress={onPress}
+                            buttonColor={kind === 'income' ? colors.tertiaryContainer : colors.primaryContainer}
+                            textColor={kind === 'income' ? colors.onTertiaryContainer : colors.onPrimaryContainer}
+                            style={styles.compactFab}
+                            contentStyle={styles.compactContent}
+                            labelStyle={styles.compactLabel}
+                        >
+                            {kind === 'income' ? 'Add income' : 'Add expense'}
+                        </Button>
+                    ) : (
                     <FAB
                         icon="check"
                         variant={kind === 'income' ? 'tertiary' : 'primary'}
                         onPress={onPress}
                         label={type === "edit" ? "Save changes" : kind === 'income' ? 'Add income' : 'Add expense'}
                     />
+                    )}
                 </Animated.View>
             )}
         </Portal>
@@ -50,6 +68,11 @@ export default function ConfirmButton({ onPress, type, kind = 'expense' }: Confi
 }
 
 const styles = StyleSheet.create({
+    compactFab: {
+        borderRadius: 12,
+    },
+    compactContent: { height: 40, paddingHorizontal: 2 },
+    compactLabel: { marginHorizontal: 8, marginVertical: 0 },
     anchor: {
         position: 'absolute',
         right: 16,

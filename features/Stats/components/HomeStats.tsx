@@ -1,5 +1,6 @@
-import React, { useState } from 'react';
-import { StyleSheet, View, useWindowDimensions } from 'react-native';
+import React, { useEffect, useState } from 'react';
+import Animated, { Easing, useAnimatedStyle, useSharedValue, withTiming } from 'react-native-reanimated';
+import { Animated as NativeAnimated, Easing as NativeEasing, StyleSheet, View, useWindowDimensions } from 'react-native';
 import { Button, Dialog, Icon, IconButton, Portal } from 'react-native-paper';
 import { LinearGradient } from 'expo-linear-gradient';
 import Color from 'color';
@@ -18,12 +19,10 @@ export function HomeFinancialSummary({ expenseStats, incomeStats, isLoading, str
   stretch?: boolean;
 }) {
   const { colors } = useAppTheme();
-  const { formatCurrency } = useCurrency();
   const showNegative = usePersistentAppStore(s => s.uiFlags.showNegativeStats);
   const [showInfo, setShowInfo] = useState(false);
   const summary = expenseStats && incomeStats ? getFinancialSummary(expenseStats, incomeStats) : null;
   const ready = !isLoading && summary !== null;
-  if (ready && !showNegative && summary.netIncome < 0) return null;
   const negative = ready && summary.netIncome < 0;
   const accent = negative ? colors.error : colors.primary;
   const foreground = negative ? colors.onErrorContainer : colors.onPrimaryContainer;
@@ -31,6 +30,22 @@ export function HomeFinancialSummary({ expenseStats, incomeStats, isLoading, str
   const hasIncome = (incomeStats?.total ?? 0) > 0;
   const rate = summary?.savingsRate ?? 0;
   const progress = Math.max(0, Math.min(100, rate));
+  const reveal = useSharedValue(0);
+  const meter = useSharedValue(0);
+  const targetProgress = ready && hasIncome ? progress : 0;
+
+  useEffect(() => {
+    reveal.value = withTiming(ready ? 1 : 0, { duration: 450, easing: Easing.out(Easing.cubic) });
+    meter.value = withTiming(targetProgress, { duration: 800, easing: Easing.out(Easing.cubic) });
+  }, [ready, targetProgress, reveal, meter]);
+
+  const valueAnimation = useAnimatedStyle(() => ({
+    opacity: 0.4 + reveal.value * 0.6,
+    transform: [{ translateY: (1 - reveal.value) * 8 }],
+  }));
+  const meterAnimation = useAnimatedStyle(() => ({ width: `${meter.value}%` }));
+
+  if (ready && !showNegative && summary.netIncome < 0) return null;
 
   return (
     <>
@@ -44,7 +59,9 @@ export function HomeFinancialSummary({ expenseStats, incomeStats, isLoading, str
           <IconButton icon="information-outline" size={20} iconColor={foreground} onPress={() => setShowInfo(true)} accessibilityLabel="About net income and savings rate" style={styles.infoButton} />
         </View>
         <ThemedText color={foreground} style={styles.heroLabel}>Net income</ThemedText>
-        <ThemedText color={foreground} style={styles.heroValue}>{ready ? formatCurrency(summary.netIncome) : '—'}</ThemedText>
+        <Animated.View style={valueAnimation}>
+          {ready ? <AnimatedNetIncome value={summary.netIncome} color={foreground} /> : <ThemedText color={foreground} style={styles.heroValue}>—</ThemedText>}
+        </Animated.View>
         <ThemedText color={foreground} style={styles.caption}>
           {!ready ? 'Your summary is on its way' : negative ? 'Spending is ahead of recorded income' : (incomeStats?.count ?? 0) === 0 ? 'Your next chapter starts with an entry' : 'What’s left after your expenses'}
         </ThemedText>
@@ -56,7 +73,7 @@ export function HomeFinancialSummary({ expenseStats, incomeStats, isLoading, str
             <ThemedText style={[styles.savingsValue, { color: accent }]}>{ready && hasIncome ? `${rate}%` : '—'}</ThemedText>
           </View>
           <View accessible accessibilityRole="progressbar" accessibilityLabel="Savings rate, visual scale from zero to one hundred percent" accessibilityValue={ready && hasIncome ? { min: 0, max: 100, now: progress, text: `${rate}%` } : { text: 'Not available' }} style={[styles.track, { backgroundColor: Color(accent).alpha(0.12).string() }]}>
-            <View style={[styles.fill, { backgroundColor: accent, width: `${ready && hasIncome ? progress : 0}%` }]} />
+            <Animated.View style={[styles.fill, { backgroundColor: accent }, meterAnimation]} />
           </View>
           <ThemedText color={colors.muted} style={styles.small}>{ready && !hasIncome ? 'Add income to see your savings rate' : 'The share of income left after spending'}</ThemedText>
         </View>
@@ -72,6 +89,33 @@ export function HomeFinancialSummary({ expenseStats, incomeStats, isLoading, str
         </Dialog>
       </Portal>
     </>
+  );
+}
+
+function AnimatedNetIncome({ value, color }: { value: number; color: string }) {
+  const { formatCurrency } = useCurrency();
+  const [animatedValue] = useState(() => new NativeAnimated.Value(0));
+  const [displayValue, setDisplayValue] = useState(0);
+
+  useEffect(() => {
+    const listener = animatedValue.addListener(({ value: nextValue }) => setDisplayValue(nextValue));
+    const animation = NativeAnimated.timing(animatedValue, {
+      toValue: value,
+      duration: 1000,
+      easing: NativeEasing.out(NativeEasing.cubic),
+      useNativeDriver: false,
+    });
+    animation.start(({ finished }) => { if (finished) setDisplayValue(value); });
+    return () => {
+      animation.stop();
+      animatedValue.removeListener(listener);
+    };
+  }, [value, animatedValue]);
+
+  return (
+    <View accessible accessibilityLabel={`Net income ${formatCurrency(value)}`}>
+      <ThemedText accessible={false} color={color} style={styles.heroValue}>{formatCurrency(displayValue)}</ThemedText>
+    </View>
   );
 }
 

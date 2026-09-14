@@ -1,4 +1,3 @@
-import { useCurrency } from '@/contexts/CurrencyProvider';
 import { useHaptics } from '@/contexts/HapticsProvider';
 import usePreFetchData from '@/hooks/usePreFetchData';
 import { useAppTheme } from '@/themes/providers/AppThemeProviders';
@@ -11,7 +10,6 @@ function TabLayout() {
   const router = useRouter();
   const { colors } = useAppTheme();
   const { hapticSelect } = useHaptics();
-  const { currencyData } = useCurrency();
 
   // Pre-fetch data for different tabs
   usePreFetchData();
@@ -22,18 +20,22 @@ function TabLayout() {
   }, [hapticSelect, router]);
 
   const screenOptions = useMemo(() => ({
-    tabBarStyle: styles.tabBar,
+    tabBarStyle: [styles.tabBar, { backgroundColor: colors.surface, borderColor: colors.outlineVariant, shadowColor: colors.shadow }],
     tabBarItemStyle: styles.tabBarItem,
+    tabBarActiveTintColor: colors.primary,
+    tabBarInactiveTintColor: colors.onSurfaceVariant,
+    tabBarLabelPosition: 'below-icon' as const,
+    tabBarLabelStyle: styles.tabLabel,
+    tabBarHideOnKeyboard: true,
     headerStyle: {
       backgroundColor: colors.background,
     },
     headerShadowVisible: false,
-  }), [colors.background]);
+  }), [colors]);
 
   const customTabButtonProps = useMemo(() => ({
     onPress: handleNavigateToNewTransaction,
-    borderColor: colors.border,
-  }), [handleNavigateToNewTransaction, colors]);
+  }), [handleNavigateToNewTransaction]);
 
   const renderCustomTabButton = useCallback(() => (
     <CustomTabButton {...customTabButtonProps} />
@@ -45,14 +47,14 @@ function TabLayout() {
         name="index"
         options={{
           title: 'Home',
-          tabBarIcon: ({ color }) => <Icon size={28} source="home" color={String(color)} />,
+          tabBarIcon: ({ focused }) => <TabIcon focused={focused} icon={focused ? 'home' : 'home-outline'} />,
         }}
       />
       <Tabs.Screen
         name="expenses"
         options={{
           title: 'Expenses',
-          tabBarIcon: ({ color }) => <Icon size={28} source={currencyData.icon ? currencyData.icon : "currency-usd"} color={String(color)} />,
+          tabBarIcon: ({ focused }) => <TabIcon focused={focused} icon={focused ? 'receipt-text' : 'receipt-text-outline'} />,
         }}
       />
       <Tabs.Screen
@@ -67,14 +69,14 @@ function TabLayout() {
         name="incomes"
         options={{
           title: 'Incomes',
-          tabBarIcon: ({ color }) => <Icon size={28} source="cash" color={String(color)} />,
+          tabBarIcon: ({ focused }) => <TabIcon focused={focused} icon={focused ? 'wallet' : 'wallet-outline'} />,
         }}
       />
       <Tabs.Screen
         name="menu"
         options={{
           title: 'Menu',
-          tabBarIcon: ({ color }) => <Icon size={28} source="menu" color={String(color)} />,
+          tabBarIcon: ({ focused }) => <TabIcon focused={focused} icon={focused ? 'view-grid' : 'view-grid-outline'} />,
         }}
       />
     </Tabs>
@@ -87,35 +89,62 @@ export default TabLayout;
 
 const styles = StyleSheet.create({
   tabBar: {
-    borderTopEndRadius: 24,
-    borderTopStartRadius: 24,
+    borderTopEndRadius: 28,
+    borderTopStartRadius: 28,
+    borderTopWidth: StyleSheet.hairlineWidth,
     position: 'absolute',
+    paddingTop: 7,
+    elevation: 8,
+    shadowOffset: { width: 0, height: -3 },
+    shadowOpacity: 0.08,
+    shadowRadius: 12,
   },
   tabBarItem: {
     backgroundColor: 'transparent',
   },
+  tabLabel: { fontSize: 10, fontWeight: '600', marginTop: 3 },
+  iconPill: { width: 48, height: 28, borderRadius: 14, alignItems: 'center', justifyContent: 'center' },
   customTabButtonContainer: {
     flex: 1,
     justifyContent: 'center',
     alignItems: 'center',
   },
   customTabButtonIcon: {
-    borderWidth: 1,
-    elevation: 5,
-    top: -12,
+    borderWidth: 4,
+    borderRadius: 20,
+    width: 56,
+    height: 56,
+    margin: 0,
+    elevation: 0,
+    top: -10,
   },
 });
 
-const CustomTabButton = React.memo(({ onPress, borderColor }: { onPress: () => void, borderColor: string }) => (
+function TabIcon({ focused, icon }: { focused: boolean; icon: string }) {
+  const { colors } = useAppTheme();
+  return (
+    <View style={[styles.iconPill, { backgroundColor: focused ? colors.primaryContainer : 'transparent' }]}>
+      <Icon source={icon} size={22} color={focused ? colors.onPrimaryContainer : colors.onSurfaceVariant} />
+    </View>
+  );
+}
+
+const CustomTabButton = React.memo(({ onPress }: { onPress: () => void }) => {
+  const { colors } = useAppTheme();
+  return (
   <View style={styles.customTabButtonContainer}>
     <IconButton
       icon="plus"
       mode='contained'
-      size={48}
-      style={[styles.customTabButtonIcon, { borderColor }]}
+      size={30}
+      containerColor={colors.primary}
+      iconColor={colors.onPrimary}
+      accessibilityLabel="Add expense or income"
+      style={[styles.customTabButtonIcon, { borderColor: colors.surface }]}
       onPress={onPress}
     />
   </View>
-));
+  );
+});
 
 CustomTabButton.displayName = 'CustomTabButton';

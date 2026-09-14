@@ -13,6 +13,7 @@ import { validateExpenseData, validateIncomeData } from "@/lib/validations";
 import { Expense, Income } from "@/lib/types";
 import { CustomSnackbarProps } from "@/components/ui/CustomSnackbar";
 import { useKeyboardState } from "react-native-keyboard-controller";
+import { useCurrency } from "@/contexts/CurrencyProvider";
 
 export function useTransactionForm() {
     const navigation = useNavigation();
@@ -21,6 +22,8 @@ export function useTransactionForm() {
     const { hapticNotify } = useHaptics();
     const { showSnackbar } = useSnackbar();
     const keyboard = useKeyboardState();
+    const { currencyData, formatCurrency } = useCurrency();
+    const amountValidationOptions = { decimalPlaces: currencyData.decimalPlaces, formatCurrency };
 
 
     const showErrorSnackbar = (message: string, position: CustomSnackbarProps["position"] = "bottom") => {
@@ -73,7 +76,7 @@ export function useTransactionForm() {
     };
 
     const handleAddExpense = async (expense: ExpenseData) => {
-        const validation = validateExpenseData(expense);
+        const validation = validateExpenseData(expense, amountValidationOptions);
         if (!validation.isValid) {
             hapticNotify('warning');
             showErrorSnackbar(validation.errorMessage!);
@@ -105,7 +108,7 @@ export function useTransactionForm() {
     };
 
     const handleAddIncome = async (income: IncomeData) => {
-        const validation = validateIncomeData(income);
+        const validation = validateIncomeData(income, amountValidationOptions);
         if (!validation.isValid) {
             hapticNotify('warning');
             showErrorSnackbar(validation.errorMessage!);
@@ -138,7 +141,7 @@ export function useTransactionForm() {
     };
 
     const handleUpdateExpense = async (id: string, existingExpense: Expense, updatedExpense: ExpenseData) => {
-        const validation = validateExpenseData(updatedExpense);
+        const validation = validateExpenseData(updatedExpense, amountValidationOptions);
         if (!validation.isValid) {
             hapticNotify('warning');
             showErrorSnackbar(validation.errorMessage!);
@@ -177,7 +180,7 @@ export function useTransactionForm() {
     };
 
     const handleUpdateIncome = async (id: string, existingIncome: Income, updatedIncome: IncomeData) => {
-        const validation = validateIncomeData(updatedIncome);
+        const validation = validateIncomeData(updatedIncome, amountValidationOptions);
         if (!validation.isValid) {
             hapticNotify('warning');
             showErrorSnackbar(validation.errorMessage!);
