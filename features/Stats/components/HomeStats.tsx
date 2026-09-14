@@ -7,6 +7,7 @@ import Color from 'color';
 import { ThemedText } from '@/components/base/ThemedText';
 import { useAppTheme } from '@/themes/providers/AppThemeProviders';
 import { useCurrency } from '@/contexts/CurrencyProvider';
+import { useLocalAuth } from '@/contexts/LocalAuthProvider';
 import { useExpenseCategoryMapping, useIncomeSourceMapping } from '@/contexts/CategoryDataProvider';
 import usePersistentAppStore from '@/stores/usePersistentAppStore';
 import { getFinancialSummary } from '@/lib/helpers';
@@ -19,10 +20,11 @@ export function HomeFinancialSummary({ expenseStats, incomeStats, isLoading, str
   stretch?: boolean;
 }) {
   const { colors } = useAppTheme();
+  const { isAuthenticated } = useLocalAuth();
   const showNegative = usePersistentAppStore(s => s.uiFlags.showNegativeStats);
   const [showInfo, setShowInfo] = useState(false);
   const summary = expenseStats && incomeStats ? getFinancialSummary(expenseStats, incomeStats) : null;
-  const ready = !isLoading && summary !== null;
+  const ready = isAuthenticated && !isLoading && summary !== null;
   const negative = ready && summary.netIncome < 0;
   const accent = negative ? colors.error : colors.primary;
   const foreground = negative ? colors.onErrorContainer : colors.onPrimaryContainer;
@@ -35,6 +37,12 @@ export function HomeFinancialSummary({ expenseStats, incomeStats, isLoading, str
   const targetProgress = ready && hasIncome ? progress : 0;
 
   useEffect(() => {
+    // Stay at the start while the login overlay is covering the home screen.
+    if (!ready) {
+      reveal.value = 0;
+      meter.value = 0;
+      return;
+    }
     reveal.value = withTiming(ready ? 1 : 0, { duration: 450, easing: Easing.out(Easing.cubic) });
     meter.value = withTiming(targetProgress, { duration: 800, easing: Easing.out(Easing.cubic) });
   }, [ready, targetProgress, reveal, meter]);

@@ -55,7 +55,7 @@ export default function TransactionDetails({
                 <DetailField icon="calendar-outline" label="Date" value={date} />
                 <DetailField icon="clock-outline" label="Time" value={time} />
                 {kind === 'expense' && <DetailField icon={paymentIcon || 'wallet-outline'} label="Payment method" value={paymentMethod || 'Not provided'} />}
-                <DetailField icon="currency-sign" label="Display currency" value={currency} />
+                <DetailField icon="currency-sign" label="Currency" value={currency} />
             </View>
 
             <View style={[styles.notes, { backgroundColor: colors.surface, borderColor: colors.outlineVariant }]}>
