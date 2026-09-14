@@ -83,6 +83,7 @@ export default function MainLayout() {
         options={{
           title: 'Expense Details',
           ...formSheetFitContent,
+          freezeOnBlur: true,
         }}
       />
 
@@ -99,6 +100,7 @@ export default function MainLayout() {
         options={{
           title: 'Income Details',
           ...formSheetFitContent,
+          freezeOnBlur: true,
         }}
       />
 
