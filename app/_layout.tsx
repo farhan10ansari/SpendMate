@@ -24,6 +24,10 @@ import { LocalAuthProvider } from '@/contexts/LocalAuthProvider';
 import { uiLog as log } from '@/lib/logger';
 import { CurrencyProvider } from '@/contexts/CurrencyProvider';
 import { KeyboardProvider } from 'react-native-keyboard-controller';
+import { CalendarQueryRefresh } from '@/hooks/useCalendarQueryRefresh';
+import { en, registerTranslation } from 'react-native-paper-dates';
+
+registerTranslation('en', en);
 
 
 const queryClient = new QueryClient({
@@ -100,6 +104,7 @@ export default function RootLayout() {
     <GestureHandlerRootView style={{ flex: 1 }}>
       <KeyboardProvider>
         <QueryClientProvider client={queryClient}>
+          <CalendarQueryRefresh />
           <AppThemeProvider>
             <HapticsProvider>
               <CurrencyProvider>

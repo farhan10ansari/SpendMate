@@ -9,6 +9,8 @@ import { useHaptics } from '@/contexts/HapticsProvider';
 import { useRouter } from 'expo-router';
 import { useAppTheme } from '@/themes/providers/AppThemeProviders';
 
+const viewabilityConfig = { itemVisiblePercentThreshold: 60 };
+
 export default function OnboardingScreen() {
   return <OnboardingSteps />;
 }
@@ -23,7 +25,6 @@ export function OnboardingSteps() {
   const { hapticNotify, hapticImpact } = useHaptics();
   const router = useRouter();
   const lastStep = index === data.length - 1;
-  const viewabilityConfig = useRef({ itemVisiblePercentThreshold: 60 }).current;
   const onViewableItemsChanged = useCallback(({ viewableItems }: { viewableItems: ViewToken[] }) => {
     const visibleIndex = viewableItems[0]?.index;
     if (visibleIndex != null) setIndex(visibleIndex);

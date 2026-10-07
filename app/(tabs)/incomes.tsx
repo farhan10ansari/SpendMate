@@ -12,7 +12,7 @@ import { ThemedText } from "@/components/base/ThemedText";
 import IncomeCard from "@/components/main/IncomeCard";
 import TransactionGroupHeading from '@/components/main/TransactionGroupHeading';
 import { Income } from "@/lib/types";
-import { getIncomeById, getIncomesByMonthPaginated } from "@/repositories/IncomeRepo";
+import { getIncomeById, getIncomesByMonthCursor } from "@/repositories/IncomeRepo";
 import { useAppTheme } from "@/themes/providers/AppThemeProviders";
 import { useHaptics } from "@/contexts/HapticsProvider";
 import { ScreenWrapper } from "@/components/main/ScreenWrapper";
@@ -67,10 +67,10 @@ export default function IncomesScreen() {
     error,
     refetch
   } = useInfiniteQuery({
-    queryKey: ["incomes"],
-    queryFn: ({ pageParam = 0 }) => getIncomesByMonthPaginated({ offsetMonth: pageParam }),
-    initialPageParam: 0,
-    getNextPageParam: (lastPage) => lastPage.hasMore ? lastPage.offsetMonth + 1 : undefined,
+    queryKey: ["incomes", "all", "month-cursor"],
+    queryFn: ({ pageParam }) => getIncomesByMonthCursor(pageParam),
+    initialPageParam: null as string | null,
+    getNextPageParam: (lastPage) => lastPage.nextMonthCursor ?? undefined,
   });
 
   const listData = useMemo((): ListItem[] => {

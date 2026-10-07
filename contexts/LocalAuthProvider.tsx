@@ -28,10 +28,13 @@ const lockAfterMs = 5 * 60 * 1000; // 5 minutes
 export const LocalAuthProvider = ({ children }: { children: React.ReactNode }) => {
   const biometricLogin = usePersistentAppStore(state => state.settings.biometricLogin);
   const updateSettings = usePersistentAppStore(state => state.updateSettings);
-  const [isAuthenticated, setIsAuthenticated] = useState(biometricLogin ? false : true);
+  // Disabled login is derived below; never treat late preference hydration as
+  // proof of authentication when secure login turns out to be enabled.
+  const [hasAuthenticated, setIsAuthenticated] = useState(false);
+  const isAuthenticated = !biometricLogin || hasAuthenticated;
   const [isAuthenticating, setIsAuthenticating] = useState(false);
   const { showSnackbar } = useSnackbar()
-  const { hapticImpact, hapticNotify } = useHaptics()
+  const { hapticImpact } = useHaptics()
 
   const appState = useRef(AppState.currentState);
   const lastBackgroundAtRef = useRef<number | null>(null);
@@ -40,13 +43,17 @@ export const LocalAuthProvider = ({ children }: { children: React.ReactNode }) =
   const {
     data: securityLevel,
     isLoading,
-    error,
     isError,
     refetch
   } = useQuery({
     queryKey: ['security', 'supportedAuthTypes'],
     queryFn: async () => {
       const types = await getEnrolledLevelAsync();
+      if (types === SecurityLevel.NONE && usePersistentAppStore.getState().settings.biometricLogin) {
+        updateSettings('biometricLogin', false);
+        ToastAndroid.show('Device security removed. Disabling biometric login.', ToastAndroid.LONG);
+        log.warn('LocalAuth: device security removed, disabling biometric login');
+      }
       log.debug("LocalAuth: fetched security level", { level: types });
       return types;
     },
@@ -62,10 +69,18 @@ export const LocalAuthProvider = ({ children }: { children: React.ReactNode }) =
     });
   }, [showSnackbar]);
 
-  const handleAuthentication = useCallback(async () => {
+  const performAuthentication = useCallback(async (checkedLevel?: SecurityLevel) => {
+    if (tempAuthRef.current) return;
+    tempAuthRef.current = true;
     try {
       log.debug("LocalAuth: authentication start");
-      tempAuthRef.current = true;
+      // Re-check native security before prompting; it may change while locked.
+      const level = checkedLevel ?? await getEnrolledLevelAsync();
+      if (level === SecurityLevel.NONE) {
+        updateSettings('biometricLogin', false);
+        ToastAndroid.show('Device security removed. Disabling biometric login.', ToastAndroid.LONG);
+        return;
+      }
       setIsAuthenticating(true);
       const authResult = await authenticateAsync({
         promptMessage: 'Authenticate to access your expense manager',
@@ -112,7 +127,10 @@ export const LocalAuthProvider = ({ children }: { children: React.ReactNode }) =
       setTimeout(() => { tempAuthRef.current = false; }, 1000);
       log.debug("LocalAuth: authentication finished");
     }
-  }, []);
+  }, [updateSettings]);
+
+  // Do not forward a button's press event as a native security level.
+  const handleAuthentication = useCallback(() => performAuthentication(), [performAuthentication]);
 
   const handleBiometricLoginToggle = useCallback(async (enabled: boolean, showSuccessSnackbar: boolean = true) => {
     if (enabled) {
@@ -126,6 +144,7 @@ export const LocalAuthProvider = ({ children }: { children: React.ReactNode }) =
         });
 
         if (authResult.success) {
+          setIsAuthenticated(true);
           updateSettings('biometricLogin', true);
           if (showSuccessSnackbar) {
             handleShowSnackbar('Secure login enabled', 'success');
@@ -150,7 +169,7 @@ export const LocalAuthProvider = ({ children }: { children: React.ReactNode }) =
       }
       log.info("LocalAuth: secure login disabled");
     }
-  }, [updateSettings, refetch, handleShowSnackbar]);
+  }, [updateSettings, refetch, handleShowSnackbar, hapticImpact]);
 
   useEffect(() => {
     const sub = AppState.addEventListener('change', (next) => {
@@ -186,26 +205,28 @@ export const LocalAuthProvider = ({ children }: { children: React.ReactNode }) =
 
   useEffect(() => {
     if (isAuthenticated) return;
-    if (!biometricLogin) {
-      setIsAuthenticated(true);
-      return;
-    }
     if (isLoading) return;
     if (isError) return;
     if (securityLevel === undefined) return;
-    if (securityLevel === SecurityLevel.NONE) {
-      setIsAuthenticated(true)
-      ToastAndroid.show(
-        'Device security removed. Disabling biometric login.',
-        ToastAndroid.LONG
-      );
-      updateSettings('biometricLogin', false);
-      log.warn("LocalAuth: device security removed, disabling biometric login");
-    } else if (isSupportedAuthType(securityLevel)) {
-      log.debug("LocalAuth: triggering authentication");
-      handleAuthentication();
+    if (isSupportedAuthType(securityLevel)) {
+      // Native capability can change independently of React's cached result.
+      // Start the prompt from its asynchronous result, not a render-time effect.
+      let cancelled = false;
+      getEnrolledLevelAsync().then(level => {
+        if (cancelled) return;
+        if (level === SecurityLevel.NONE) {
+          updateSettings('biometricLogin', false);
+          ToastAndroid.show('Device security removed. Disabling biometric login.', ToastAndroid.LONG);
+        } else if (isSupportedAuthType(level)) {
+          void performAuthentication(level);
+        }
+      }).catch(error => {
+        log.error('LocalAuth: security recheck failed', { error: String(error) });
+        // Keep the overlay locked; the user can retry authentication manually.
+      });
+      return () => { cancelled = true; };
     }
-  }, [isAuthenticated, securityLevel, isLoading, isError, error, biometricLogin, handleAuthentication, updateSettings]);
+  }, [isAuthenticated, securityLevel, isLoading, isError, performAuthentication, updateSettings]);
 
   const authContextValue: LocalAuthContextType = useMemo(() => ({
     biometricLogin,

@@ -1,5 +1,5 @@
 import React, { createContext, useContext, useState, useCallback, useEffect, ReactNode, useMemo } from 'react';
-import { useSegments } from 'expo-router';
+import { useNavigationContainerRef } from 'expo-router';
 import CustomSnackbar, { CustomSnackbarProps } from '@/components/ui/CustomSnackbar';
 import { IconSource } from 'react-native-paper/lib/typescript/components/Icon';
 
@@ -33,15 +33,13 @@ const GlobalSnackbarStateContext = createContext<GlobalSnackbarStateContextValue
 
 export const GlobalSnackbarProvider: React.FC<GlobalSnackbarProviderProps> = ({ children }) => {
     const [globalSnackbar, setGlobalSnackbar] = useState<GlobalSnackbarProps | null>(null);
-    const segments = useSegments();
+    const navigation = useNavigationContainerRef();
 
     const onDismiss = useCallback(() => {
         setGlobalSnackbar(null);
     }, []);
 
-    useEffect(() => {
-        onDismiss();
-    }, [segments, onDismiss]);
+    useEffect(() => navigation.addListener('state', onDismiss), [navigation, onDismiss]);
 
     const showSnackbar = useCallback((snackbarConfig: GlobalSnackbarProps, delay?: number) => {
         if (!delay) {

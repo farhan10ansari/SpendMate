@@ -1,9 +1,9 @@
 import db from '@/db/client';
 import { IncomeRes, incomesSchema } from '@/db/schema';
 import { and, asc, desc, eq, gte, lt, lte, sql } from 'drizzle-orm';
-import { subMonths, startOfMonth, endOfMonth, format } from 'date-fns';
+import { startOfMonth, addMonths, parseISO, format } from 'date-fns';
 import { StatsPeriod, PeriodIncomeStats } from '@/lib/types';
-import { getPeriodStartEnd } from './lib/helpers';
+import { getPeriodStartEnd, getAverageDayCount } from './lib/helpers';
 import { dbLog as log } from '@/lib/logger';
 
 export interface NewIncome {
@@ -44,64 +44,50 @@ export const addIncome = async (income: NewIncome) => {
   }
 };
 
-// Get paginated incomes
-export const getIncomesByMonthPaginated = async ({
-  offsetMonth = 0,
-}: {
-  offsetMonth: number;
-}): Promise<{
+// Refreshing the null first cursor re-discovers the latest active income month.
+export const getIncomesByMonthCursor = async (monthCursor: string | null): Promise<{
   incomes: IncomeRes[];
-  hasMore: boolean;
-  offsetMonth: number;
   month: string;
+  nextMonthCursor: string | null;
 }> => {
-  try {
-    const now = new Date();
-    const requestedTarget = subMonths(now, offsetMonth);
-    const requestedStart = startOfMonth(requestedTarget);
-    const requestedEnd = endOfMonth(requestedTarget);
-    const monthLabel = format(requestedStart, 'MMMM yyyy');
-
-    log.debug("getIncomesByMonthPaginated: start", { offsetMonth, month: monthLabel });
-
-    // 1) Fetch only that month's incomes
-    const incomes = await db
-      .select()
+  let monthDate: Date;
+  if (monthCursor === null) {
+    const [latest] = await db
+      .select({ dateTime: incomesSchema.dateTime })
       .from(incomesSchema)
-      .where(
-        and(
-          eq(incomesSchema.isTrashed, false),
-          gte(incomesSchema.dateTime, requestedStart),
-          lte(incomesSchema.dateTime, requestedEnd),
-        )
-      )
-      .orderBy(desc(incomesSchema.dateTime));
-
-    // 2) Compute hasMore by seeing if any record is older than this month's start
-    const olderAny = await db
-      .select({ id: incomesSchema.id })
-      .from(incomesSchema)
-      .where(
-        and(
-          eq(incomesSchema.isTrashed, false),
-          lt(incomesSchema.dateTime, requestedStart),
-        )
-      )
+      .where(eq(incomesSchema.isTrashed, false))
+      .orderBy(desc(incomesSchema.dateTime), desc(incomesSchema.id))
       .limit(1);
-
-    const result = {
-      incomes,
-      hasMore: olderAny.length > 0,
-      offsetMonth, // always return the requested offset
-      month: monthLabel,
-    };
-
-    log.debug("getIncomesByMonthPaginated: done", { count: incomes.length, hasMore: result.hasMore });
-    return result;
-  } catch (err) {
-    log.error("getIncomesByMonthPaginated: failed", { offsetMonth, error: String(err) });
-    throw err;
+    if (!latest) return { incomes: [], month: '', nextMonthCursor: null };
+    monthDate = latest.dateTime;
+  } else {
+    monthDate = parseISO(`${monthCursor}-01`);
   }
+
+  const monthStart = startOfMonth(monthDate);
+  const nextMonthStart = addMonths(monthStart, 1);
+  const [incomes, older] = await Promise.all([
+    db.select().from(incomesSchema)
+      .where(and(
+        eq(incomesSchema.isTrashed, false),
+        gte(incomesSchema.dateTime, monthStart),
+        lt(incomesSchema.dateTime, nextMonthStart),
+      ))
+      .orderBy(desc(incomesSchema.dateTime), desc(incomesSchema.id)),
+    db.select({ dateTime: incomesSchema.dateTime }).from(incomesSchema)
+      .where(and(
+        eq(incomesSchema.isTrashed, false),
+        lt(incomesSchema.dateTime, monthStart),
+      ))
+      .orderBy(desc(incomesSchema.dateTime), desc(incomesSchema.id))
+      .limit(1),
+  ]);
+
+  return {
+    incomes,
+    month: format(monthStart, 'MMMM yyyy'),
+    nextMonthCursor: older[0] ? format(older[0].dateTime, 'yyyy-MM') : null,
+  };
 };
 
 // Get a single income by ID
@@ -225,8 +211,8 @@ export const getIncomeStatsByPeriod = async (
     log.debug("getIncomeStatsByPeriod: start", { period });
 
     // 1. Get period start & end dates, calculate days in period
-    const { start, end } = getPeriodStartEnd(period);
-    const msPerDay = 1000 * 60 * 60 * 24;
+    const now = new Date();
+    const { start, end } = getPeriodStartEnd(period, now);
 
     let startDate = start
     let endDate = end
@@ -264,19 +250,7 @@ export const getIncomeStatsByPeriod = async (
     if (startDate) whereConditions.push(gte(incomesSchema.dateTime, startDate));
     if (endDate) whereConditions.push(lte(incomesSchema.dateTime, endDate));
 
-    // Calculate the total days in the period (inclusive)
-    let days: number;
-    if (startDate && endDate) {
-      const now = new Date();
-      const isCurrentRollingPeriod =
-        (period.type === "week" || period.type === "month" || period.type === "year") &&
-        (period.offset ?? 0) === 0 &&
-        endDate.getTime() > now.getTime();
-      const effectiveEndDate = isCurrentRollingPeriod ? now : endDate;
-      days = Math.floor((effectiveEndDate.getTime() - startDate.getTime()) / msPerDay) + 1;
-    } else {
-      days = 0
-    }
+    const days = getAverageDayCount(period, startDate, endDate, now);
 
     // 2. Fetch total, count, max, min in one query using both start and end dates
     const [row] = await db

@@ -11,11 +11,14 @@ import { useRouter } from 'expo-router';
 import { getAvailablePeriodsWithData } from '@/repositories/CommonRepo';
 import { useHaptics } from '@/contexts/HapticsProvider';
 import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { areStatsPeriodsEqual } from '@/repositories/lib/helpers';
 
 const quickPeriods: StatsPeriodOption[] = [
   { primaryLabel: 'Today', type: 'today' },
   { primaryLabel: 'This', secondaryLabel: 'Week', type: 'week', offset: 0 },
   { primaryLabel: 'Last', secondaryLabel: 'Week', type: 'week', offset: 1 },
+  { primaryLabel: 'This', secondaryLabel: 'Month', type: 'month', offset: 0 },
+  { primaryLabel: 'This', secondaryLabel: 'Year', type: 'year', offset: 0 },
   { primaryLabel: 'All Time', type: 'all-time' },
 ];
 
@@ -28,7 +31,7 @@ export default function SelectStatsPeriodScreen() {
   const { height } = useWindowDimensions();
   const insets = useSafeAreaInsets();
   const { data, isPending, isError, refetch } = useQuery({
-    queryKey: ['stats', 'available-periods'],
+    queryKey: ['stats', 'available-periods', 'calendar-months'],
     queryFn: getAvailablePeriodsWithData,
   });
   const handleSelect = useCallback((option: StatsPeriodOption) => {
@@ -70,7 +73,7 @@ function PeriodSection({ title, icon, periods, selected, onSelect }: {
 }) {
   const { colors } = useAppTheme();
   const renderItem = useCallback(({ item }: { item: StatsPeriodOption }) => {
-    const active = selected.type === item.type && (selected.offset ?? 0) === (item.offset ?? 0);
+    const active = areStatsPeriodsEqual(selected, item);
     return (
       <View style={[styles.option, { backgroundColor: active ? colors.primaryContainer : colors.surface, borderColor: active ? colors.primary : colors.border }]}>
         <Pressable style={({ pressed }) => [styles.optionContent, pressed && styles.pressed]}
@@ -86,7 +89,7 @@ function PeriodSection({ title, icon, periods, selected, onSelect }: {
         </Pressable>
       </View>
     );
-  }, [selected.type, selected.offset, colors, icon, onSelect]);
+  }, [selected, colors, icon, onSelect]);
   return (
     <View style={styles.section}>
       <View style={styles.sectionHeading}>
@@ -94,7 +97,7 @@ function PeriodSection({ title, icon, periods, selected, onSelect }: {
         <ThemedText style={styles.sectionTitle}>{title}</ThemedText>
         <View style={[styles.line, { backgroundColor: colors.border }]} />
       </View>
-      <FlatList horizontal data={periods} renderItem={renderItem} keyExtractor={item => `${item.type}-${item.offset ?? 0}`}
+      <FlatList horizontal data={periods} renderItem={renderItem} keyExtractor={item => `${item.type}-${item.calendarKey ?? item.offset ?? 0}`}
         extraData={selected} showsHorizontalScrollIndicator={false} contentContainerStyle={styles.options} />
     </View>
   );

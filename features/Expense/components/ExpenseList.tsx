@@ -9,7 +9,7 @@ import { ThemedText } from "@/components/base/ThemedText";
 import ExpenseCard from "@/components/main/ExpenseCard";
 import TransactionGroupHeading from '@/components/main/TransactionGroupHeading';
 import { Expense } from "@/lib/types";
-import { getExpenseById, getExpensesByMonthPaginated } from "@/repositories/ExpenseRepo";
+import { getExpenseById, getExpensesByMonthCursor } from "@/repositories/ExpenseRepo";
 import { useAppTheme } from "@/themes/providers/AppThemeProviders";
 import { useHaptics } from "@/contexts/HapticsProvider";
 import ErrorState from "@/components/main/ErrorState";
@@ -47,13 +47,13 @@ const getDayHeaderTitle = (date: Date) => {
 };
 
 type ExpensesListProps = {
-    selectedOffsetMonth: number | null;
+    selectedMonthKey: string | null;
     onScroll?: (event: any) => void;
     scrollRef?: React.Ref<FlashListRef<ExpenseListItem>>;
 }
 
 export default function ExpensesList({
-    selectedOffsetMonth,
+    selectedMonthKey,
     onScroll,
     scrollRef
 }: ExpensesListProps) {
@@ -67,9 +67,9 @@ export default function ExpensesList({
     const dimensions = useWindowDimensions()
     const { colors } = theme;
 
-    const queryKey = selectedOffsetMonth === null
-        ? ["expenses", "all"]
-        : ["expenses", "month", selectedOffsetMonth];
+    const queryKey = selectedMonthKey === null
+        ? ["expenses", "all", "month-cursor"]
+        : ["expenses", "month", selectedMonthKey];
 
     const {
         data,
@@ -82,23 +82,21 @@ export default function ExpensesList({
         error
     } = useInfiniteQuery({
         queryKey,
-        queryFn: ({ pageParam = 0 }) => {
-            if (selectedOffsetMonth === null) {
-                // For "All", start from current month and go backwards
-                return getExpensesByMonthPaginated({ offsetMonth: pageParam });
+        queryFn: ({ pageParam }) => {
+            if (selectedMonthKey === null) {
+                return getExpensesByMonthCursor(pageParam);
             } else {
                 // For specific month, only fetch that month
-                return getExpensesByMonthPaginated({ offsetMonth: selectedOffsetMonth });
+                return getExpensesByMonthCursor(selectedMonthKey, false);
             }
         },
-        initialPageParam: selectedOffsetMonth ?? 0,
+        initialPageParam: null as string | null,
         getNextPageParam: (last) => {
-            if (selectedOffsetMonth !== null) {
+            if (selectedMonthKey !== null) {
                 // For specific month, no pagination needed
                 return undefined;
             }
-            // For "All", continue with next month
-            return last.hasMore ? last.offsetMonth + 1 : undefined;
+            return last.nextMonthCursor ?? undefined;
         },
         enabled: true,
     });
@@ -161,10 +159,10 @@ export default function ExpensesList({
     }, [hapticImpact, refetch, queryClient]);
 
     const handleEndReached = useCallback(() => {
-        if (hasNextPage && !isFetchingNextPage && selectedOffsetMonth === null) {
+        if (hasNextPage && !isFetchingNextPage && selectedMonthKey === null) {
             fetchNextPage();
         }
-    }, [hasNextPage, isFetchingNextPage, fetchNextPage, selectedOffsetMonth]);
+    }, [hasNextPage, isFetchingNextPage, fetchNextPage, selectedMonthKey]);
 
     const renderItem = useCallback(({ item }: { item: ExpenseListItem }) => {
         if (isHeaderItem(item)) {

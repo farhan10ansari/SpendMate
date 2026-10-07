@@ -1,4 +1,5 @@
-import { useCallback, useEffect, useMemo, useState } from 'react';
+import { useCallback, useMemo, useState } from 'react';
+import { useQuery } from '@tanstack/react-query';
 import usePersistentAppStore from '@/stores/usePersistentAppStore';
 import db from '@/db/client';
 import { BackupService } from './backup-service';
@@ -10,6 +11,8 @@ import { BackupMetadata } from '@/lib/types';
 import { log } from '@/lib/logger';
 import { useHaptics } from '@/contexts/HapticsProvider';
 
+const emptyBackups: BackupMetadata[] = [];
+
 export function useBackupManager() {
   const { showSnackbar } = useSnackbar();
   const { getBackupData, restoreBackupData } = useBackupData();
@@ -19,39 +22,32 @@ export function useBackupManager() {
 
   const [processing, setProcessing] = useState(false);
   const [refreshing, setRefreshing] = useState(false);
-  const [refreshingBackups, setRefreshingBackups] = useState(false);
-  const [backups, setBackups] = useState<BackupMetadata[]>([]);
 
   // Memoize backupService to prevent recreation on every render
   const backupService = useMemo(() => new BackupService(db), []);
 
-  const handleRefreshBackups = useCallback(async (initialRefresh?: boolean) => {
-    if (!backupFolderUri || Platform.OS !== 'android') {
-      log.debug('Clearing backups list - no folder URI or not Android');
-      setBackups([]);
-      return;
-    }
-    if (!initialRefresh) hapticImpact();
-
-    try {
-      log.info('Loading backups from folder:', backupFolderUri);
-      setRefreshingBackups(true);
-      const backupList = await backupService.listBackups(backupFolderUri);
-      setBackups(backupList);
-      log.info(`Successfully loaded ${backupList.length} backup(s)`);
-    } catch (error) {
-      const errorMsg = getErrorMessage(error);
-      log.error('Failed to load backups:', errorMsg);
-      showSnackbar({
-        message: 'Failed to load backups. Please try again.',
-        duration: 2000,
-        type: 'error',
-      });
-      setBackups([]);
-    } finally {
-      setRefreshingBackups(false);
-    }
-  }, [backupFolderUri, backupService, showSnackbar, hapticImpact]);
+  const { data, isFetching: refreshingBackups, refetch } = useQuery({
+    queryKey: ['backups', 'list', backupFolderUri],
+    enabled: Platform.OS === 'android' && Boolean(backupFolderUri),
+    staleTime: 0,
+    retry: false,
+    queryFn: async () => {
+      if (!backupFolderUri || Platform.OS !== 'android') return emptyBackups;
+      try {
+        return await backupService.listBackups(backupFolderUri);
+      } catch (error) {
+        log.error('Failed to load backups:', getErrorMessage(error));
+        showSnackbar({ message: 'Failed to load backups. Please try again.', duration: 2000, type: 'error' });
+        throw error;
+      }
+    },
+  });
+  const backups = data ?? emptyBackups;
+  const handleRefreshBackups = useCallback(async () => {
+    if (!backupFolderUri || Platform.OS !== 'android') return;
+    hapticImpact();
+    await refetch();
+  }, [backupFolderUri, hapticImpact, refetch]);
 
   const handleSelectBackupFolder = useCallback(async () => {
     if (Platform.OS !== 'android') {
@@ -71,7 +67,8 @@ export function useBackupManager() {
       if (folderUri) {
         updatesettings("backupFolderUri", folderUri);
         log.info('Backup folder selected and saved:', folderUri);
-        await handleRefreshBackups();
+        // The new folder's query loads automatically; do not refresh the old URI.
+        if (folderUri === backupFolderUri) await handleRefreshBackups();
         hapticNotify('success');
         showSnackbar({
           message: 'Backup folder selected successfully',
@@ -97,7 +94,7 @@ export function useBackupManager() {
 
       return null;
     }
-  }, [backupService, handleRefreshBackups, showSnackbar, updatesettings, hapticNotify]);
+  }, [backupService, backupFolderUri, handleRefreshBackups, showSnackbar, updatesettings, hapticNotify]);
 
   const handleCreateBackup = useCallback(async (customName: string) => {
     if (!backupFolderUri || Platform.OS !== 'android') {
@@ -299,10 +296,6 @@ export function useBackupManager() {
       setRefreshing(false);
     }
   }, [handleRefreshBackups]);
-
-  useEffect(() => {
-    handleRefreshBackups(true);
-  }, [backupFolderUri, handleRefreshBackups]);
 
   // Memoize the return object to prevent unnecessary re-renders
   return useMemo(() => ({

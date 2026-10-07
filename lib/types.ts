@@ -46,13 +46,12 @@ export type PeriodType = "today" | "week" | "month" | "year" | "all-time";
 export type StatsPeriod = {
   type: PeriodType;
   offset?: number; // offset from current period, 0 = current, 1 = previous, etc.
+  calendarKey?: string; // fixed month (yyyy-MM) or year (yyyy); takes precedence over offset
 };
 
-export type StatsPeriodOption = {
+export type StatsPeriodOption = StatsPeriod & {
   primaryLabel: string;
   secondaryLabel?: string;
-  type: PeriodType;
-  offset?: number;
 };
 
 export interface ExpenseCategoryStat {

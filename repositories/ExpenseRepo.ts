@@ -1,9 +1,10 @@
 import db from '@/db/client';
 import { ExpenseDB, ExpenseRes, expensesSchema } from '@/db/schema';
 import { and, desc, eq, gte, sql, lte, lt, asc } from 'drizzle-orm';
-import { getPeriodStartEnd } from './lib/helpers';
+import { getPeriodStartEnd, getAverageDayCount } from './lib/helpers';
+import { getTransactionMonths } from './lib/transactionMonths';
 import { StatsPeriod, PeriodExpenseStats } from '@/lib/types';
-import { startOfMonth, endOfMonth, subMonths, format, differenceInMonths } from 'date-fns';
+import { startOfMonth, format, addMonths, parseISO } from 'date-fns';
 import { dbLog as log } from "@/lib/logger";
 
 type CreateExpenseData = Omit<ExpenseDB, 'id' | 'isTrashed'>;
@@ -40,134 +41,68 @@ export const addExpense = async (expense: CreateExpenseData) => {
   }
 };
 
-// Get paginated expenses
-export const getExpensesByMonthPaginated = async ({
-  offsetMonth = 0,
-}: {
-  offsetMonth: number;
-}): Promise<{
+// A null cursor always resolves the latest month again when the list is refreshed.
+export const getExpensesByMonthCursor = async (monthCursor: string | null, includeOlderMonths = true): Promise<{
   expenses: ExpenseRes[];
-  hasMore: boolean;
-  offsetMonth: number;
   month: string;
+  nextMonthCursor: string | null;
 }> => {
-  try {
-    const now = new Date();
-    // 1) Compute the requested month’s start/end
-    const requestedTarget = subMonths(now, offsetMonth);
-    const requestedStart = startOfMonth(requestedTarget);
-    const requestedEnd = endOfMonth(requestedTarget);
-    const label = format(requestedStart, 'MMMM yyyy');
-
-    log.debug("getExpensesByMonthPaginated: start", { offsetMonth, month: label });
-
-    // 2) Fetch that month's expenses
-    const expenses = await db
-      .select()
+  let monthDate: Date;
+  if (monthCursor === null) {
+    const [latest] = await db
+      .select({ dateTime: expensesSchema.dateTime })
       .from(expensesSchema)
-      .where(
-        and(
-          eq(expensesSchema.isTrashed, false),
-          gte(expensesSchema.dateTime, requestedStart),
-          lte(expensesSchema.dateTime, requestedEnd),
-        )
-      )
-      .orderBy(desc(expensesSchema.dateTime));
-
-    // 3) Compute hasMore: do we have any records older than this month's start?
-    const olderAny = await db
-      .select({ id: expensesSchema.id })
-      .from(expensesSchema)
-      .where(
-        and(
-          eq(expensesSchema.isTrashed, false),
-          lt(expensesSchema.dateTime, requestedStart),
-        )
-      )
+      .where(eq(expensesSchema.isTrashed, false))
+      .orderBy(desc(expensesSchema.dateTime), desc(expensesSchema.id))
       .limit(1);
-
-    const result = {
-      expenses,
-      hasMore: olderAny.length > 0,
-      offsetMonth,
-      month: label,
-    };
-
-    log.debug("getExpensesByMonthPaginated: done", { count: expenses.length, hasMore: result.hasMore });
-    return result;
-  } catch (err) {
-    log.error("getExpensesByMonthPaginated: failed", { error: String(err), offsetMonth });
-    throw err;
+    if (!latest) return { expenses: [], month: '', nextMonthCursor: null };
+    monthDate = latest.dateTime;
+  } else {
+    monthDate = parseISO(`${monthCursor}-01`);
   }
+
+  const monthStart = startOfMonth(monthDate);
+  const nextMonthStart = addMonths(monthStart, 1);
+  const [expenses, older] = await Promise.all([
+    db.select().from(expensesSchema)
+      .where(and(
+        eq(expensesSchema.isTrashed, false),
+        gte(expensesSchema.dateTime, monthStart),
+        lt(expensesSchema.dateTime, nextMonthStart),
+      ))
+      .orderBy(desc(expensesSchema.dateTime), desc(expensesSchema.id)),
+    includeOlderMonths ? db.select({ dateTime: expensesSchema.dateTime }).from(expensesSchema)
+      .where(and(
+        eq(expensesSchema.isTrashed, false),
+        lt(expensesSchema.dateTime, monthStart),
+      ))
+      .orderBy(desc(expensesSchema.dateTime), desc(expensesSchema.id))
+      .limit(1) : Promise.resolve([]),
+  ]);
+
+  return {
+    expenses,
+    month: format(monthStart, 'MMMM yyyy'),
+    nextMonthCursor: older[0] ? format(older[0].dateTime, 'yyyy-MM') : null,
+  };
 };
 
 // Get list of months having expenses
 export const getAvailableExpenseMonths = async (): Promise<{
-  offsetMonth: number;
+  monthKey: string;
   month: string;
   count: number;
 }[]> => {
   try {
     log.debug("getAvailableExpenseMonths: start");
 
-    const now = new Date();
-    const availableMonths: { offsetMonth: number; month: string; count: number }[] = [];
-    let currentOffset = 0;
-
-    // Walk back in time month-by-month based on data availability
-    while (true) {
-      // 1) Compute the current month's start/end
-      const requestedTarget = subMonths(now, currentOffset);
-      const requestedStart = startOfMonth(requestedTarget);
-      const requestedEnd = endOfMonth(requestedTarget);
-      // 2) Check if this month has expenses
-      const monthExpenses = await db
-        .select({ id: expensesSchema.id })
-        .from(expensesSchema)
-        .where(
-          and(
-            eq(expensesSchema.isTrashed, false),
-            gte(expensesSchema.dateTime, requestedStart),
-            lte(expensesSchema.dateTime, requestedEnd),
-          )
-        );
-
-      // 3) If month has expenses, add it to available months
-      if (monthExpenses.length > 0) {
-        availableMonths.push({
-          offsetMonth: currentOffset,
-          month: format(requestedStart, 'MMMM yyyy'),
-          count: monthExpenses.length,
-        });
-      }
-
-      // 4) Check if there are more months with data
-      const olderAny = await db
-        .select({ dt: expensesSchema.dateTime })
-        .from(expensesSchema)
-        .where(
-          and(
-            eq(expensesSchema.isTrashed, false),
-            lt(expensesSchema.dateTime, requestedStart),
-          )
-        )
-        .orderBy(desc(expensesSchema.dateTime))
-        .limit(1);
-
-      // 5) If no more data, break
-      if (olderAny.length === 0) {
-        break;
-      }
-
-      // 6) Update offset to the month of the next older expense
-      const nextOlderDate = olderAny[0].dt;
-      currentOffset = differenceInMonths(now, startOfMonth(nextOlderDate));
-    }
-
-    // Sort by offset (newest first)
-    const sorted = availableMonths.sort((a, b) => a.offsetMonth - b.offsetMonth);
-    log.debug("getAvailableExpenseMonths: done", { months: sorted.length });
-    return sorted;
+    const rows = await getTransactionMonths(expensesSchema);
+    const months = rows.map(row => ({
+      ...row,
+      month: format(parseISO(`${row.monthKey}-01`), 'MMMM yyyy'),
+    }));
+    log.debug("getAvailableExpenseMonths: done", { months: months.length });
+    return months;
   } catch (err) {
     log.error("getAvailableExpenseMonths: failed", { error: String(err) });
     throw err;
@@ -295,8 +230,8 @@ export const getExpenseStatsByPeriod = async (
     log.debug("getExpenseStatsByPeriod: start", { period });
 
     // 1. Get period start & end dates, calculate days in period
-    const { start, end } = getPeriodStartEnd(period);
-    const msPerDay = 1000 * 60 * 60 * 24;
+    const now = new Date();
+    const { start, end } = getPeriodStartEnd(period, now);
     let startDate = start;
     let endDate = end;
 
@@ -327,19 +262,7 @@ export const getExpenseStatsByPeriod = async (
     if (startDate) whereConditions.push(gte(expensesSchema.dateTime, startDate));
     if (endDate) whereConditions.push(lte(expensesSchema.dateTime, endDate));
 
-    // Calculate the total days in the period (inclusive)
-    let days: number;
-    if (startDate && endDate) {
-      const now = new Date();
-      const isCurrentRollingPeriod =
-        (period.type === "week" || period.type === "month" || period.type === "year") &&
-        (period.offset ?? 0) === 0 &&
-        endDate.getTime() > now.getTime();
-      const effectiveEndDate = isCurrentRollingPeriod ? now : endDate;
-      days = Math.floor((effectiveEndDate.getTime() - startDate.getTime()) / msPerDay) + 1;
-    } else {
-      days = 0;
-    }
+    const days = getAverageDayCount(period, startDate, endDate, now);
 
 
     // 2. Fetch total, count, max, min in one query using both start and end dates

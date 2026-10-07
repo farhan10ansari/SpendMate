@@ -20,7 +20,7 @@ const PeriodCard = () => {
     const handlePress = useCallback(async () => {
         // Prefetch available periods data so it is ready when screen opens
         await queryClient.prefetchQuery({
-            queryKey: ["stats", 'available-periods'],
+            queryKey: ["stats", 'available-periods', 'calendar-months'],
             queryFn: getAvailablePeriodsWithData,
         });
         router.push("/helper-screens/select-stats-period");

@@ -4,29 +4,38 @@ import { FlashList, ListRenderItem } from "@shopify/flash-list";
 import { getAvailableExpenseMonths } from "@/repositories/ExpenseRepo";
 import MonthTab from "./MonthTab";
 import { useAppTheme } from "@/themes/providers/AppThemeProviders";
+import { useEffect } from "react";
 
 // Define the type for month data
 interface MonthData {
-    offsetMonth: number;
+    monthKey: string;
     month: string;
     count: number;
 }
 
 interface MonthTabsContainerProps {
-    selectedOffsetMonth: number | null; // null means "All"
-    onMonthSelect: (offsetMonth: number | null) => void;
+    selectedMonthKey: string | null; // null means "All"
+    onMonthSelect: (monthKey: string | null) => void;
 }
 
 export default function MonthTabsContainer({
-    selectedOffsetMonth,
+    selectedMonthKey,
     onMonthSelect
 }: MonthTabsContainerProps) {
     const { colors } = useAppTheme();
 
-    const { data: availableMonths = [], isLoading } = useQuery({
-        queryKey: ["expenses", "availableExpenseMonths"],
+    const { data: availableMonths = [], isLoading, isSuccess } = useQuery({
+        queryKey: ["expenses", "availableExpenseMonths", "calendar-months"],
         queryFn: getAvailableExpenseMonths,
     });
+
+    // If edits/deletions remove the selected month, return to the complete list.
+    useEffect(() => {
+        if (isSuccess && selectedMonthKey !== null
+            && !availableMonths.some(month => month.monthKey === selectedMonthKey)) {
+            onMonthSelect(null);
+        }
+    }, [availableMonths, isSuccess, selectedMonthKey, onMonthSelect]);
 
     const styles = StyleSheet.create({
         container: {
@@ -51,8 +60,8 @@ export default function MonthTabsContainer({
         <MonthTab
             month={item.month}
             count={item.count}
-            isSelected={selectedOffsetMonth === item.offsetMonth}
-            onPress={() => onMonthSelect(item.offsetMonth)}
+            isSelected={selectedMonthKey === item.monthKey}
+            onPress={() => onMonthSelect(item.monthKey)}
         />
     );
 
@@ -61,7 +70,8 @@ export default function MonthTabsContainer({
             <FlashList
                 data={availableMonths}
                 renderItem={renderMonthTab}
-                keyExtractor={(item) => item.offsetMonth.toString()}
+                keyExtractor={(item) => item.monthKey}
+                extraData={selectedMonthKey}
                 horizontal
                 showsHorizontalScrollIndicator={false}
                 contentContainerStyle={styles.contentContainer}
@@ -69,7 +79,7 @@ export default function MonthTabsContainer({
                     <MonthTab
                         month="All"
                         count={totalCount}
-                        isSelected={selectedOffsetMonth === null}
+                        isSelected={selectedMonthKey === null}
                         onPress={() => onMonthSelect(null)}
                     />
                 }

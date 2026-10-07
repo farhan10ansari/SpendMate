@@ -1,6 +1,6 @@
 import { StyleSheet } from "react-native";
 import { FAB, Portal } from "react-native-paper";
-import { useRef, useState } from "react";
+import { useCallback, useRef, useState } from "react";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { useIsFocused } from "expo-router/react-navigation";
 import { useBottomTabBarHeight } from "expo-router/js-tabs";
@@ -13,7 +13,7 @@ import { useSnackbarState } from "@/contexts/GlobalSnackbarProvider";
 
 
 export default function ExpensesScreen() {
-    const [selectedOffsetMonth, setSelectedOffsetMonth] = useState<number | null>(null);
+    const [selectedMonthKey, setSelectedMonthKey] = useState<string | null>(null);
     const scrollElementRef = useRef<FlashListRef<ExpenseListItem>>(null);
     const { handleScroll, scrollToTop, showScrollToTop } = useScrollToTop(scrollElementRef);
     const isFocused = useIsFocused();
@@ -21,11 +21,11 @@ export default function ExpensesScreen() {
     const insets = useSafeAreaInsets();
     const tabBarHeight = useBottomTabBarHeight();
 
-    const handleMonthSelect = (offsetMonth: number | null) => {
-        setSelectedOffsetMonth(offsetMonth);
+    const handleMonthSelect = useCallback((monthKey: string | null) => {
+        setSelectedMonthKey(monthKey);
         // Scroll to top when changing tabs
         scrollToTop();
-    };
+    }, [scrollToTop]);
 
     const styles = StyleSheet.create({
         container: {
@@ -47,11 +47,11 @@ export default function ExpensesScreen() {
             background="background"
         >
             <MonthTabsContainer
-                selectedOffsetMonth={selectedOffsetMonth}
+                selectedMonthKey={selectedMonthKey}
                 onMonthSelect={handleMonthSelect}
             />
             <ExpensesList
-                selectedOffsetMonth={selectedOffsetMonth}
+                selectedMonthKey={selectedMonthKey}
                 onScroll={handleScroll}
                 scrollRef={scrollElementRef}
             />

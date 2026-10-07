@@ -1,7 +1,4 @@
-import lodash from 'lodash';
 import { Category, PeriodExpenseStats, PeriodIncomeStats } from "./types";
-import { getCategoriesWithCountsKV } from '@/repositories/ExpenseRepo';
-import { getIncomeSourcesWithCountsKV } from '@/repositories/IncomeRepo';
 
 export interface FinancialSummary {
     netIncome: number;
@@ -14,7 +11,7 @@ export const getFinancialSummary = (
     incomeStats: PeriodIncomeStats
 ): FinancialSummary => {
     const netIncome = parseFloat((incomeStats.total - expenseStats.total).toFixed(2));
-    const savingsRate = incomeStats.total > expenseStats.total
+    const savingsRate = incomeStats.total > 0
         ? parseFloat(((netIncome / incomeStats.total) * 100).toFixed(2))
         : 0;
     // const incomeExpenseRatio = expenseStats.total > 0

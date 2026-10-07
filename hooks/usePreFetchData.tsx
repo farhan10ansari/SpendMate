@@ -7,10 +7,10 @@ export default function usePreFetchData() {
 
     useEffect(() => {
         queryClient.prefetchQuery({
-            queryKey: ["expenses", "availableExpenseMonths"],
+            queryKey: ["expenses", "availableExpenseMonths", "calendar-months"],
             queryFn: getAvailableExpenseMonths,
         });
-    }, []);
+    }, [queryClient]);
 
     return null;
 }
