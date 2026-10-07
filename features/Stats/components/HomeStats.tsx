@@ -127,10 +127,12 @@ function AnimatedNetIncome({ value, color }: { value: number; color: string }) {
   );
 }
 
-export function HomeActivityStats({ kind, stats, isLoading }: {
+export function HomeActivityStats({ kind, stats, isLoading, footer, grouped = false }: {
   kind: 'expense' | 'income';
   stats?: PeriodExpenseStats | PeriodIncomeStats;
   isLoading: boolean;
+  footer?: React.ReactNode;
+  grouped?: boolean;
 }) {
   const { colors } = useAppTheme();
   const { formatCurrency } = useCurrency();
@@ -140,6 +142,8 @@ export function HomeActivityStats({ kind, stats, isLoading }: {
   const expense = kind === 'expense';
   const accent = expense ? colors.primary : colors.tertiary;
   const tint = expense ? colors.primaryContainer : colors.tertiaryContainer;
+  const isGrouped = grouped || Boolean(footer);
+  const tileBackground = isGrouped ? Color(colors.background).mix(Color(tint), 0.08).hex() : colors.surface;
   const narrow = width < 360 || fontScale > 1.2;
   const ready = !isLoading && stats !== undefined;
   const category = stats && 'topCategory' in stats ? categories.get(stats.topCategory ?? '') : null;
@@ -154,15 +158,17 @@ export function HomeActivityStats({ kind, stats, isLoading }: {
   ];
 
   return (
-    <View style={styles.section}>
-      <View style={styles.headingRow}>
+    <View style={[styles.section, isGrouped && styles.storyPanel, isGrouped && {
+      backgroundColor: colors.surface,
+    }]}>
+      <View style={[styles.headingRow, isGrouped && styles.storyHeading]}>
         <View style={[styles.sectionBadge, { backgroundColor: tint }]}><Icon source={expense ? 'arrow-top-right' : 'arrow-bottom-left'} size={20} color={accent} /></View>
         <View style={styles.sectionTitleWrap}>
           <ThemedText style={styles.sectionTitle}>{expense ? 'Spending story' : 'Income story'}</ThemedText>
           <ThemedText color={colors.muted} style={styles.small}>{expense ? 'Where your money went' : 'What came your way'}</ThemedText>
         </View>
       </View>
-      <View style={[styles.totalCard, { backgroundColor: tint }]}>
+      <View style={[styles.totalCard, isGrouped && styles.groupedTotal, { backgroundColor: tint }]}>
         <View style={styles.totalContent}>
           <ThemedText color={expense ? colors.onPrimaryContainer : colors.onTertiaryContainer} style={styles.totalLabel}>{expense ? 'Total expenses' : 'Total income'}</ThemedText>
           <ThemedText color={expense ? colors.onPrimaryContainer : colors.onTertiaryContainer} style={styles.totalValue}>{money(stats?.total)}</ThemedText>
@@ -175,13 +181,27 @@ export function HomeActivityStats({ kind, stats, isLoading }: {
       </View>
       <View style={styles.grid}>
         {tiles.map(tile => (
-          <View key={tile.title} style={[styles.tile, { width: narrow ? '100%' : '48%', backgroundColor: colors.surface, borderColor: colors.border }]}>
-            <View style={[styles.tileBadge, { backgroundColor: tint }]}><Icon source={tile.icon} size={18} color={accent} /></View>
-            <ThemedText color={colors.muted} style={styles.tileLabel}>{tile.title}</ThemedText>
+          <View key={tile.title} style={[styles.tile, isGrouped && styles.groupedTile, {
+            width: narrow ? '100%' : '48%',
+            backgroundColor: tileBackground,
+            borderColor: colors.border,
+          }]}>
+            {isGrouped ? (
+              <View style={styles.tileHeading}>
+                <Icon source={tile.icon} size={16} color={accent} />
+                <ThemedText color={colors.muted} style={[styles.tileLabel, styles.groupedTileLabel]}>{tile.title}</ThemedText>
+              </View>
+            ) : (
+              <>
+                <View style={[styles.tileBadge, { backgroundColor: tint }]}><Icon source={tile.icon} size={18} color={accent} /></View>
+                <ThemedText color={colors.muted} style={styles.tileLabel}>{tile.title}</ThemedText>
+              </>
+            )}
             <ThemedText style={styles.tileValue}>{tile.value}</ThemedText>
           </View>
         ))}
       </View>
+      {footer && <View style={styles.storyFooter}>{footer}</View>}
     </View>
   );
 }
@@ -206,6 +226,13 @@ const styles = StyleSheet.create({
   small: { fontSize: 11, lineHeight: 17 },
   infoText: { marginTop: 12 },
   section: { gap: 10 },
+  storyPanel: { flex: 1, padding: 14, borderRadius: 28, gap: 12 },
+  storyHeading: { paddingHorizontal: 2, paddingBottom: 2 },
+  groupedTotal: { borderRadius: 20 },
+  groupedTile: { borderRadius: 18, borderWidth: 0, gap: 8 },
+  tileHeading: { flexDirection: 'row', alignItems: 'center', gap: 6 },
+  groupedTileLabel: { flex: 1 },
+  storyFooter: { marginTop: 'auto', paddingTop: 2 },
   sectionBadge: { padding: 10, borderRadius: 14 },
   sectionTitleWrap: { flex: 1 },
   sectionTitle: { fontSize: 19, fontWeight: '700', lineHeight: 26 },

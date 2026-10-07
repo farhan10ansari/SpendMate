@@ -12,7 +12,7 @@ function TabLayout() {
   const { colors } = useAppTheme();
   const { hapticSelect } = useHaptics();
   const { bottom } = useSafeAreaInsets();
-  const bottomPadding = Math.max(bottom, 8);
+  const bottomPadding = bottom;
 
   // Pre-fetch data for different tabs
   usePreFetchData();
@@ -27,7 +27,7 @@ function TabLayout() {
       backgroundColor: colors.surface,
       borderColor: colors.outlineVariant,
       shadowColor: colors.shadow,
-      // Keep the custom icons and labels above gesture and three-button navigation.
+      // Reserve the system inset once; every item shares the remaining space.
       height: 64 + bottomPadding,
       paddingBottom: bottomPadding,
     }],
@@ -126,7 +126,8 @@ const styles = StyleSheet.create({
     height: 56,
     margin: 0,
     elevation: 0,
-    top: -10,
+    // Visual lift within the shared tab area, independent of the system inset.
+    transform: [{ translateY: -18 }],
   },
 });
 
@@ -150,7 +151,9 @@ const CustomTabButton = React.memo(({ onPress }: { onPress: () => void }) => {
       containerColor={colors.primary}
       iconColor={colors.onPrimary}
       accessibilityLabel="Add expense or income"
-      style={[styles.customTabButtonIcon, { borderColor: colors.surface }]}
+      style={[styles.customTabButtonIcon, {
+        borderColor: colors.surface,
+      }]}
       onPress={onPress}
     />
   </View>

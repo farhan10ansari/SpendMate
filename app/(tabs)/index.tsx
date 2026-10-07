@@ -92,12 +92,12 @@ export default function HomeScreen() {
           <HomeFinancialSummary expenseStats={expenseStats} incomeStats={incomeStats} isLoading={expensesPending || incomesPending} stretch={columns === 3} />
         </View>
         <View style={[styles.section, { width: columnWidth }]}>
-          <HomeActivityStats kind="expense" stats={expenseStats} isLoading={expensesPending} />
-          <MoreStatsButton routeName="/stats/expenses" color={colors.primary} />
+          <HomeActivityStats grouped kind="expense" stats={expenseStats} isLoading={expensesPending}
+            footer={<MoreStatsButton routeName="/stats/expenses" color={colors.primary} />} />
         </View>
         <View style={[styles.section, { width: columnWidth }]}>
-          <HomeActivityStats kind="income" stats={incomeStats} isLoading={incomesPending} />
-          <MoreStatsButton routeName="/stats/incomes" color={colors.tertiary} />
+          <HomeActivityStats grouped kind="income" stats={incomeStats} isLoading={incomesPending}
+            footer={<MoreStatsButton routeName="/stats/incomes" color={colors.tertiary} />} />
         </View>
       </View>
       <RecentActivity items={recentActivity} isLoading={recentExpenses.isPending || recentIncomes.isPending} isError={recentExpenses.isError || recentIncomes.isError} onRetry={retryRecentActivity} />
