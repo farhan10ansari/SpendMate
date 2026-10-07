@@ -5,11 +5,14 @@ import { Tabs, useRouter } from 'expo-router';
 import React, { useCallback, useMemo } from 'react';
 import { View, StyleSheet } from 'react-native';
 import { Icon, IconButton } from 'react-native-paper';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 function TabLayout() {
   const router = useRouter();
   const { colors } = useAppTheme();
   const { hapticSelect } = useHaptics();
+  const { bottom } = useSafeAreaInsets();
+  const bottomPadding = Math.max(bottom, 8);
 
   // Pre-fetch data for different tabs
   usePreFetchData();
@@ -20,7 +23,14 @@ function TabLayout() {
   }, [hapticSelect, router]);
 
   const screenOptions = useMemo(() => ({
-    tabBarStyle: [styles.tabBar, { backgroundColor: colors.surface, borderColor: colors.outlineVariant, shadowColor: colors.shadow }],
+    tabBarStyle: [styles.tabBar, {
+      backgroundColor: colors.surface,
+      borderColor: colors.outlineVariant,
+      shadowColor: colors.shadow,
+      // Keep the custom icons and labels above gesture and three-button navigation.
+      height: 64 + bottomPadding,
+      paddingBottom: bottomPadding,
+    }],
     tabBarItemStyle: styles.tabBarItem,
     tabBarActiveTintColor: colors.primary,
     tabBarInactiveTintColor: colors.onSurfaceVariant,
@@ -31,7 +41,7 @@ function TabLayout() {
       backgroundColor: colors.background,
     },
     headerShadowVisible: false,
-  }), [colors]);
+  }), [colors, bottomPadding]);
 
   const customTabButtonProps = useMemo(() => ({
     onPress: handleNavigateToNewTransaction,

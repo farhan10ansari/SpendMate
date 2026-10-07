@@ -3,6 +3,7 @@ import { FAB, Portal } from "react-native-paper";
 import { useRef, useState } from "react";
 import { useScrollToTop } from "@/hooks/useScrollToTop";
 import { useIsFocused } from "expo-router/react-navigation";
+import { useBottomTabBarHeight } from "expo-router/js-tabs";
 import MonthTabsContainer from "@/features/Expense/components/MonthTabsContainer";
 import ExpensesList, { ExpenseListItem } from "@/features/Expense/components/ExpenseList";
 import { ScreenWrapper } from "@/components/main/ScreenWrapper";
@@ -18,6 +19,7 @@ export default function ExpensesScreen() {
     const isFocused = useIsFocused();
     const globalSnackbar = useSnackbarState()
     const insets = useSafeAreaInsets();
+    const tabBarHeight = useBottomTabBarHeight();
 
     const handleMonthSelect = (offsetMonth: number | null) => {
         setSelectedOffsetMonth(offsetMonth);
@@ -32,7 +34,7 @@ export default function ExpensesScreen() {
         fab: {
             position: "absolute",
             right: insets.right + 16,
-            bottom: insets.bottom + 60,
+            bottom: tabBarHeight + 16,
             height: 48,
             width: 48,
             justifyContent: 'center',

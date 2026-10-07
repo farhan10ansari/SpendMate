@@ -5,6 +5,7 @@ import { useRouter } from "expo-router";
 import { useInfiniteQuery, useQueryClient } from "@tanstack/react-query";
 import { ActivityIndicator, Button, FAB, Portal } from "react-native-paper";
 import { useIsFocused } from "expo-router/react-navigation";
+import { useBottomTabBarHeight } from "expo-router/js-tabs";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 import { ThemedText } from "@/components/base/ThemedText";
@@ -46,6 +47,7 @@ export default function IncomesScreen() {
   const { handleScroll, scrollToTop, showScrollToTop } = useScrollToTop(flashListRef);
   const globalSnackbar = useSnackbarState()
   const insets = useSafeAreaInsets();
+  const tabBarHeight = useBottomTabBarHeight();
   const theme = useAppTheme();
   const { uses24HourClock } = useLocalization()
   const { formatCurrency } = useCurrency()
@@ -237,7 +239,7 @@ export default function IncomesScreen() {
           style={[
             styles.fab,
             {
-              bottom: insets.bottom + 60,
+              bottom: tabBarHeight + 16,
               right: insets.right + 16,
             }
           ]}
