@@ -5,7 +5,6 @@ import Color from 'color';
 import { StyleSheet, View } from 'react-native';
 import { IncomeData, useIncomeStore } from './IncomeStoreProvider';
 import AmountInput from '@/components/input/AmountInput';
-import CategoriesInput from '@/components/input/CategoriesInput';
 import ConfirmButton from '@/components/input/ConfirmButton';
 import DateInput from '@/components/input/DateInput';
 import NotesInput from '@/components/input/NotesInput';
@@ -74,7 +73,6 @@ export default function IncomeForm({ onSubmit, type = "create", isActive = true 
                     />
                 </View>
                 {/* Source */}
-                {type === 'create' ? (
                 <View style={styles.dropdownRow}>
                     <TransactionDropdown label="Income source" required icon="cash-plus" accent="tertiary" layout="grid"
                         error={errors.source}
@@ -82,21 +80,6 @@ export default function IncomeForm({ onSubmit, type = "create", isActive = true 
                         onSelect={(source) => updateIncome({ source })}
                         manageRoute="/menu/(manage-categories)/income-sources" />
                 </View>
-                ) : (
-                <View style={[styles.inputSection, { backgroundColor: colors.surface, borderRadius: 18, padding: 10 }]}>
-                    <ThemedText type="defaultSemiBold" numberOfLines={1} accessibilityLiveRegion="polite"
-                        style={[styles.sectionTitle, { color: errors.source ? colors.error : colors.muted }]}>
-                        {errors.source ?? <>Source <ThemedText color={colors.error}>*</ThemedText></>}
-                    </ThemedText>
-                    <CategoriesInput
-                        categories={sources}
-                        category={income.source}
-                        setCategory={(category) => updateIncome({ source: category })}
-                        colorType='tertiary'
-                        type='income'
-                    />
-                </View>
-                )}
                 {/* Description (Notes) */}
                 <View style={[styles.inputSection, { backgroundColor: colors.surface, borderRadius: 18, padding: 10 }]}>
                     <ThemedText type='defaultSemiBold' style={[styles.sectionTitle, { color: colors.muted }]}>

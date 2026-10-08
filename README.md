@@ -18,7 +18,7 @@ and 12 theme collections. Previously called <strong>SpendMate</strong>.
 </p>
 
 <p align="center">
-  <img src="https://img.shields.io/badge/version-2.0.8-087f5b" alt="Version 2.0.8" />
+  <img src="https://img.shields.io/badge/version-2.0.9-087f5b" alt="Version 2.0.9" />
   <img src="https://img.shields.io/badge/Expo-SDK%2057-000020" alt="Expo SDK 57" />
   <img src="https://img.shields.io/badge/Bun-1.4.0-f9f1e1" alt="Bun 1.4.0" />
   <a href="LICENSE"><img src="https://img.shields.io/badge/license-BSL%201.1-yellow" alt="Business Source License 1.1" /></a>

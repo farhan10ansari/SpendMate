@@ -1,0 +1,86 @@
+diff --git a/android/src/main/java/com/swmansion/rnscreens/bottomsheet/SheetAnimationCoordinator.kt b/android/src/main/java/com/swmansion/rnscreens/bottomsheet/SheetAnimationCoordinator.kt
+index 337436ed618c9a526bb8a886441acbf88bc17d6e..f42582552397a5d97dbc1a44b7dc7169ecea4fc3 100644
+--- a/android/src/main/java/com/swmansion/rnscreens/bottomsheet/SheetAnimationCoordinator.kt
++++ b/android/src/main/java/com/swmansion/rnscreens/bottomsheet/SheetAnimationCoordinator.kt
+@@ -31,9 +31,11 @@ internal class SheetAnimationCoordinator(
+ 
+     private var lastKeyboardBottomOffset: Int = 0
+     private var lastScreenContainerBottomOffset: Int = 0
++    private var lastScreenContainerTopOffset: Int = 0
+     private val screenContainerRect = android.graphics.Rect()
+ 
+     private var lastBottomSystemBarInset: Int = 0
++    private var lastTopSystemBarInset: Int = 0
+ 
+     internal fun createSheetEnterAnimator(sheetAnimationContext: SheetDelegate.SheetAnimationContext): Animator {
+         val animatorSet = AnimatorSet()
+@@ -227,6 +229,12 @@ internal class SheetAnimationCoordinator(
+     internal fun handleKeyboardInsetsProgress(insets: WindowInsetsCompat) {
+         lastKeyboardBottomOffset = insets.getInsets(WindowInsetsCompat.Type.ime()).bottom
+         lastBottomSystemBarInset = insets.getInsets(WindowInsetsCompat.Type.systemBars()).bottom
++        lastTopSystemBarInset =
++            maxOf(
++                insets.getInsets(WindowInsetsCompat.Type.systemBars()).top,
++                insets.getInsets(WindowInsetsCompat.Type.displayCutout()).top,
++            )
++        updateScreenContainerBottomOffset()
+         // Prioritize enter/exit animations over direct keyboard inset reactions.
+         // We store the latest keyboard offset in `lastKeyboardBottomOffset`
+         // so that it can always be respected when applying translations in `updateSheetTranslationY`.
+@@ -277,6 +285,7 @@ internal class SheetAnimationCoordinator(
+         screen.container?.let { container ->
+             if (container.isLaidOut && container.height > 0) {
+                 container.getGlobalVisibleRect(screenContainerRect)
++                lastScreenContainerTopOffset = maxOf(0, screenContainerRect.top)
+                 lastScreenContainerBottomOffset = maxOf(0, container.rootView.height - screenContainerRect.bottom)
+             }
+         }
+@@ -303,7 +312,18 @@ internal class SheetAnimationCoordinator(
+         // By subtracting the nav bar height from our shift, we let that empty padding slide behind
+         // the keyboard. This keeps the sheet's actual content flush against the keyboard's top edge
+         // without requiring size updates.
+-        return maxOf(0f, maxAllowedUpwardShift - navigationBarHeightWithinContainer.toFloat())
++        val keyboardShift = maxOf(0f, maxAllowedUpwardShift - navigationBarHeightWithinContainer.toFloat())
++        if (!screen.sheetShouldOverflowTopInset) {
++            return keyboardShift
++        }
++
++        // Overflow sheets can reserve the top safe area through their detent.
++        // That reserved gap is not space the keyboard may consume. Clamp the
++        // final shift (after navigation-bar compensation) to the actual layout
++        // top, with window insets converted into the container's coordinates.
++        val topInsetWithinContainer = maxOf(0, lastTopSystemBarInset - lastScreenContainerTopOffset)
++        val safeUpwardTravel = maxOf(0, screen.top - topInsetWithinContainer).toFloat()
++        return minOf(keyboardShift, safeUpwardTravel)
+     }
+ 
+     private fun createSheetSlideInAnimator(): ValueAnimator {
+diff --git a/android/src/main/java/com/swmansion/rnscreens/bottomsheet/SheetDelegate.kt b/android/src/main/java/com/swmansion/rnscreens/bottomsheet/SheetDelegate.kt
+index 800407998ed12d559a6fde732dde1a6ae8b3f172..f75cb701176bc066ae798fd8353621b6366e5131 100644
+--- a/android/src/main/java/com/swmansion/rnscreens/bottomsheet/SheetDelegate.kt
++++ b/android/src/main/java/com/swmansion/rnscreens/bottomsheet/SheetDelegate.kt
+@@ -353,6 +353,12 @@ class SheetDelegate(
+         // This ensures the sheet respects the safe area.
+         lastTopInset = maxOf(systemBarsInsets.top, displayCutoutInsets.top)
+ 
++        // Stacked sheets can remain resumed and receive the same window insets.
++        // A covered sheet must not resize for the foreground sheet's keyboard.
++        if (screen.container?.topScreen !== screen) {
++            return insets
++        }
++
+         if (isImeVisible) {
+             isKeyboardVisible = true
+             keyboardState = KeyboardVisible(imeInset.bottom)
+@@ -433,6 +439,11 @@ class SheetDelegate(
+     // the footer repositions itself. The footer can't get these frames via dispatch (Screen has
+     // DISPATCH_MODE_STOP), so we push them in here.
+     internal fun handleKeyboardInsetsProgress(insets: WindowInsetsCompat) {
++        // The animation callback is attached to each sheet, including covered
++        // ones. Only the foreground sheet should follow keyboard translation.
++        if (screen.container?.topScreen !== screen) {
++            return
++        }
+         screen.sheetAnimationCoordinator.handleKeyboardInsetsProgress(insets)
+         screen.footer?.handleKeyboardInsetsProgress(insets)
+     }

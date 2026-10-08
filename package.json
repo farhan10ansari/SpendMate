@@ -1,7 +1,7 @@
 {
   "name": "money-manager",
   "main": "expo-router/entry",
-  "version": "2.0.8",
+  "version": "2.0.9",
   "scripts": {
     "prepare": "node scripts/install-git-hooks.mjs",
     "check:version-bump": "node scripts/check-version-bump.mjs",
@@ -91,5 +91,8 @@
         "listUnknownPackages": false
       }
     }
+  },
+  "patchedDependencies": {
+    "react-native-screens@4.26.2": "patches/react-native-screens@4.26.2.patch"
   }
 }

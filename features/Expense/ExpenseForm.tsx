@@ -4,11 +4,9 @@ import React, { useEffect, useState } from 'react';
 import Color from 'color';
 import { StyleSheet, View } from 'react-native';
 import AmountInput from '@/components/input/AmountInput';
-import CategoriesInput from '@/components/input/CategoriesInput';
 import ConfirmButton from '@/components/input/ConfirmButton';
 import DateInput from '@/components/input/DateInput';
 import NotesInput from '@/components/input/NotesInput';
-import PaymentMethodInput from '@/components/input/PaymentMethodInput';
 import TimeInput from '@/components/input/TimeInput';
 import { ExpenseData, useExpenseStore } from './ExpenseStoreProvider';
 import { useEnabledExpenseCategories } from '@/contexts/CategoryDataProvider';
@@ -77,7 +75,6 @@ export default function ExpenseForm({ onSubmit, type = "create", isActive = true
           />
         </View>
         {/* Categories */}
-        {type === 'create' ? (
           <View style={styles.dropdownRow}>
             <TransactionDropdown label="Category" required icon="shape-outline" layout="grid"
               error={errors.category}
@@ -91,20 +88,6 @@ export default function ExpenseForm({ onSubmit, type = "create", isActive = true
                 if (method) updateExpense({ paymentMethod: method.name });
               }} />
           </View>
-        ) : (
-        <View style={[styles.categoriesContainer, { backgroundColor: colors.surface, borderRadius: 18, padding: 10 }]}>
-          <ThemedText type="defaultSemiBold" numberOfLines={1} accessibilityLiveRegion="polite"
-            style={[styles.sectionTitle, { color: errors.category ? colors.error : colors.muted }]}>
-            {errors.category ?? <>Categories <ThemedText color={colors.error}>*</ThemedText></>}
-          </ThemedText>
-          <CategoriesInput
-            categories={categories}
-            category={expense.category}
-            setCategory={(category) => updateExpense({ category })}
-            type='expense'
-          />
-        </View>
-        )}
         {/* Notes */}
         <View style={[styles.notesContainer, { backgroundColor: colors.surface, borderRadius: 18, padding: 10 }]}>
           <ThemedText type='defaultSemiBold' style={[styles.sectionTitle, { color: colors.muted }]}>
@@ -115,15 +98,6 @@ export default function ExpenseForm({ onSubmit, type = "create", isActive = true
             setNote={(description => updateExpense({ description }))}
           />
         </View>
-        {/* Payment Method */}
-        {type === 'edit' && (
-        <View style={[styles.notesContainer, { backgroundColor: colors.surface, borderRadius: 18, padding: 10 }]}>
-          <ThemedText type='defaultSemiBold' style={[styles.sectionTitle, { color: colors.muted }]}>
-            Payment Method
-          </ThemedText>
-          <PaymentMethodInput paymentMethod={expense.paymentMethod} setPaymentMethod={(paymentMethod => updateExpense({ paymentMethod }))} />
-        </View>
-        )}
         {/* Date & Time */}
         <View style={[styles.datetimeContainer, { backgroundColor: colors.surface, borderRadius: 18, padding: 10 }]}>
           <ThemedText type='defaultSemiBold' numberOfLines={1} accessibilityLiveRegion="polite"
@@ -172,10 +146,6 @@ const styles = StyleSheet.create({
     marginBottom: 4,
     justifyContent: 'center',
     alignItems: 'center',
-  },
-  categoriesContainer: {
-    marginTop: 10,
-    gap: 2,
   },
   dropdownRow: { flexDirection: 'row', gap: 10, marginTop: 10 },
   notesContainer: {

@@ -1,6 +1,7 @@
-import { useLayoutEffect } from "react";
 import { View } from "react-native";
-import { KeyboardAwareScrollView, useKeyboardState } from "react-native-keyboard-controller";
+import { KeyboardAwareScrollView } from "react-native-keyboard-controller";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
+import { TRANSACTION_FORM_BOTTOM_CLEARANCE } from "@/components/input/ConfirmButton";
 import { useAppTheme } from "@/themes/providers/AppThemeProviders";
 import FormSheetHeader from "@/components/main/FormSheetHeader";
 import ExpenseForm from "@/features/Expense/ExpenseForm";
@@ -13,13 +14,7 @@ import { useTransactionForm } from "@/hooks/useTransactionForm";
 export default function EditExpenseScreen() {
     const navigation = useNavigation();
     const { colors } = useAppTheme();
-    const keyboardVisible = useKeyboardState(state => state.isVisible);
-
-    useLayoutEffect(() => {
-        navigation.setOptions({
-            sheetAllowedDetents: keyboardVisible ? [1] : [0.75, 1],
-        });
-    }, [navigation, keyboardVisible]);
+    const { bottom } = useSafeAreaInsets();
     const { id } = useLocalSearchParams<{ id: string }>();
     const { handleUpdateExpense } = useTransactionForm();
 
@@ -44,7 +39,7 @@ export default function EditExpenseScreen() {
             />
             <KeyboardAwareScrollView
                 bottomOffset={80}
-                contentContainerStyle={{ flexGrow: 1, paddingBottom: 120 }}
+                contentContainerStyle={{ flexGrow: 1, paddingBottom: bottom + TRANSACTION_FORM_BOTTOM_CLEARANCE }}
                 keyboardShouldPersistTaps="handled"
                 showsVerticalScrollIndicator={false}
             >

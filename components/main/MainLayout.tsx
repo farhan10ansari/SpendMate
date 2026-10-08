@@ -47,17 +47,12 @@ export default function MainLayout() {
   }), [colors.card]);
 
   // Memoize specific variations
-  const formSheetWithDetents = useMemo(() => ({
-    ...formSheetOptions,
-    sheetAllowedDetents: [0.75, 1],
-  }), [formSheetOptions]);
-
   const formSheetFitContent = useMemo(() => ({
     ...formSheetOptions,
     sheetAllowedDetents: "fitToContents" as const,
   }), [formSheetOptions]);
 
-  const addFormSheetOptions = useMemo(() => ({
+  const transactionFormSheetOptions = useMemo(() => ({
     ...formSheetOptions,
     // Android's native top inset can arrive after the sheet's initial layout.
     // Measure against the full stack and reserve the already-known safe area.
@@ -88,7 +83,7 @@ export default function MainLayout() {
         name="transaction/new"
         options={{
           title: 'Create Expense',
-          ...addFormSheetOptions,
+          ...transactionFormSheetOptions,
         }}
       />
 
@@ -105,7 +100,7 @@ export default function MainLayout() {
         name="expense/[id]/edit"
         options={{
           title: 'Edit Expense',
-          ...formSheetWithDetents,
+          ...transactionFormSheetOptions,
         }}
       />
 
@@ -122,7 +117,7 @@ export default function MainLayout() {
         name="income/[id]/edit"
         options={{
           title: 'Edit Income',
-          ...formSheetWithDetents,
+          ...transactionFormSheetOptions,
         }}
       />
 
