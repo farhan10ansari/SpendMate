@@ -6,6 +6,7 @@ import { ColorType } from "@/lib/types";
 import { Icon } from "react-native-paper";
 import { useCurrency } from "@/contexts/CurrencyProvider";
 import { ThemedText } from '@/components/base/ThemedText';
+import { KeyboardController } from 'react-native-keyboard-controller';
 
 
 export type AmountInputProps = {
@@ -23,6 +24,18 @@ export default function AmountInput({ amount, setAmount, onFocus, onBlur, colorT
     const decimalPlaces = currencyData.decimalPlaces;
 
     const inputRef = useRef<TextInput>(null);
+
+    const focusAmount = () => {
+        const input = inputRef.current;
+        if (!input) return;
+        // React Native focus() is a no-op for an already-focused field, even
+        // after Android Back dismisses its keyboard. Restore it natively.
+        if (input.isFocused()) {
+            KeyboardController.setFocusTo('current');
+        } else {
+            input.focus();
+        }
+    };
 
     // Create dynamic regex based on decimal places
     
@@ -46,7 +59,7 @@ export default function AmountInput({ amount, setAmount, onFocus, onBlur, colorT
 
 
     return (
-        <Pressable style={styles.inputContainer} onPress={() => inputRef.current?.focus()}>
+        <Pressable style={styles.inputContainer} onPress={focusAmount}>
             {currencyData.icon ? <Icon source={currencyData.icon} size={24} color={colors[colorType]} /> : <ThemedText color={colors[colorType]} fontSize={22}>{currencyData.symbol}</ThemedText>}
             <TextInput
                 // autoFocus
