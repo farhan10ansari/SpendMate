@@ -1,11 +1,11 @@
 import usePersistentAppStore from "@/stores/usePersistentAppStore";
 import { DarkTheme, DefaultTheme, ThemeProvider } from "expo-router/react-navigation";
 import { createContext, useContext, useEffect, useMemo } from "react";
-import { Platform, useColorScheme } from "react-native";
+import { Platform, View, useColorScheme } from "react-native";
 import { PaperProvider } from "react-native-paper";
 import { customLightTheme } from "../theme";
 import { getThemeCollection } from '../collections';
-import * as NavigationBar from 'expo-navigation-bar';
+import { NavigationBar } from 'expo-navigation-bar';
 
 const ThemeContext = createContext(customLightTheme);
 
@@ -42,29 +42,22 @@ function AppThemeProvider({ children }: { children: React.ReactNode }) {
 
     useEffect(() => {
         if (Platform.OS === 'android') {
-            // Set navigation bar style based on your app theme
-            if (appliedTheme === 'dark') {
-                NavigationBar.setStyle('dark'); // Dark bar with light icons
-            } else if (appliedTheme === 'light') {
-                NavigationBar.setStyle('light'); // Light bar with dark icons
-            } else {
-                if (colorScheme === 'dark') {
-                    NavigationBar.setStyle('dark');
-                } else {
-                    NavigationBar.setStyle('light');
-                }
-            }
+            // Style describes the buttons, not the background. The transparent
+            // system bar shows the app's themed surface underneath it.
+            NavigationBar.setStyle(theme.dark ? 'light' : 'dark');
         }
-    }, [appliedTheme, colorScheme]);
+    }, [theme.dark]);
 
 
     return (
         <ThemeContext.Provider value={contextValue}>
-            <ThemeProvider value={navigationTheme}>
-                <PaperProvider theme={theme}>
-                    {children}
-                </PaperProvider>
-            </ThemeProvider>
+            <View style={{ flex: 1, backgroundColor: theme.colors.surface }}>
+                <ThemeProvider value={navigationTheme}>
+                    <PaperProvider theme={theme}>
+                        {children}
+                    </PaperProvider>
+                </ThemeProvider>
+            </View>
         </ThemeContext.Provider>
     );
 }

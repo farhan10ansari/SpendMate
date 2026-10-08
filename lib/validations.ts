@@ -9,6 +9,8 @@ type AmountValidationOptions = {
     formatCurrency: (amount: number) => string;
 };
 
+export type TransactionFieldErrors = Partial<Record<'amount' | 'category' | 'source' | 'date', string>>;
+
 const validateAmount = (amount: string, { decimalPlaces, formatCurrency }: AmountValidationOptions): ValidationResult => {
     // Match the decimal notation accepted by AmountInput, without parseFloat's
     // partial parsing (for example, "1abc" must not become 1).
@@ -21,6 +23,24 @@ const validateAmount = (amount: string, { decimalPlaces, formatCurrency }: Amoun
         return { isValid: false, errorMessage: `Minimum amount should be ${formatCurrency(minimumAmount)}` };
     }
     return { isValid: true };
+};
+
+export const getExpenseFieldErrors = (expense: ExpenseData, options: AmountValidationOptions): TransactionFieldErrors => {
+    const errors: TransactionFieldErrors = {};
+    const amount = validateAmount(expense.amount, options);
+    if (!amount.isValid) errors.amount = amount.errorMessage;
+    if (!expense.category) errors.category = 'Please select a category';
+    if (!expense.datetime) errors.date = 'Please select a date and time';
+    return errors;
+};
+
+export const getIncomeFieldErrors = (income: IncomeData, options: AmountValidationOptions): TransactionFieldErrors => {
+    const errors: TransactionFieldErrors = {};
+    const amount = validateAmount(income.amount, options);
+    if (!amount.isValid) errors.amount = amount.errorMessage;
+    if (!income.source) errors.source = 'Please select an income source';
+    if (!income.dateTime) errors.date = 'Please select a date and time';
+    return errors;
 };
 
 // Extracted validation functions

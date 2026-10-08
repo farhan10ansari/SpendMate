@@ -3,10 +3,14 @@ import { Stack, useRouter } from "expo-router";
 import CustomBackButton from "../ui/CustomBackButton";
 import { useCallback, useMemo } from "react";
 import usePersistentAppStore from "@/stores/usePersistentAppStore";
+import { Platform, useWindowDimensions } from "react-native";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 export default function MainLayout() {
   const router = useRouter();
   const { colors } = useAppTheme();
+  const { height } = useWindowDimensions();
+  const { top } = useSafeAreaInsets();
   const onboardingCompleted = usePersistentAppStore(state => state.uiFlags.onboardingCompleted);
 
   const handleGoBack = useCallback(() => {
@@ -53,6 +57,16 @@ export default function MainLayout() {
     sheetAllowedDetents: "fitToContents" as const,
   }), [formSheetOptions]);
 
+  const addFormSheetOptions = useMemo(() => ({
+    ...formSheetOptions,
+    // Android's native top inset can arrive after the sheet's initial layout.
+    // Measure against the full stack and reserve the already-known safe area.
+    sheetShouldOverflowTopInset: Platform.OS === 'android',
+    sheetAllowedDetents: [Platform.OS === 'android'
+      ? Math.max(0.1, Math.min(1, (height - top) / Math.max(height, 1)))
+      : 1],
+  }), [formSheetOptions, height, top]);
+
 
   return (
     <Stack screenOptions={screenOptions}>
@@ -74,7 +88,7 @@ export default function MainLayout() {
         name="transaction/new"
         options={{
           title: 'Create Expense',
-          ...formSheetWithDetents,
+          ...addFormSheetOptions,
         }}
       />
 
@@ -113,6 +127,14 @@ export default function MainLayout() {
       />
 
       {/* Helper Screens */}
+      <Stack.Screen
+        name="helper-screens/select-transaction-option"
+        options={{
+          ...formSheetFitContent,
+          sheetExpandsWhenScrolledToEdge: false,
+          headerShown: false,
+        }}
+      />
       <Stack.Screen
         name="helper-screens/select-stats-period"
         options={{

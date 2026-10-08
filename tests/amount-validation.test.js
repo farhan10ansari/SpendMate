@@ -1,5 +1,5 @@
 import { expect, test } from 'bun:test';
-import { validateExpenseData, validateIncomeData } from '../lib/validations';
+import { validateExpenseData, validateIncomeData, getExpenseFieldErrors, getIncomeFieldErrors } from '../lib/validations';
 
 const date = new Date('2026-09-14T00:00:00Z');
 for (const [kind, validate, fields] of [
@@ -41,3 +41,25 @@ for (const [kind, validate, fields] of [
         }
     });
 }
+
+const inlineOptions = { decimalPlaces: 2, formatCurrency: value => '₹' + value.toFixed(2) };
+
+test('inline expense validation reports all missing mandatory fields together', () => {
+    const errors = getExpenseFieldErrors({ amount: '', category: null, datetime: null }, inlineOptions);
+    expect(errors.amount).toBe('Please enter a valid amount');
+    expect(errors.category).toBe('Please select a category');
+    expect(errors.date).toBe('Please select a date and time');
+});
+
+test('inline income validation reports all missing mandatory fields together', () => {
+    const errors = getIncomeFieldErrors({ amount: '', source: null, dateTime: null }, inlineOptions);
+    expect(errors.amount).toBe('Please enter a valid amount');
+    expect(errors.source).toBe('Please select an income source');
+    expect(errors.date).toBe('Please select a date and time');
+});
+
+test('correcting fields clears their inline errors without requiring optional fields', () => {
+    expect(getExpenseFieldErrors({ amount: '0.01', category: 'food', datetime: date }, inlineOptions)).toEqual({});
+    expect(getIncomeFieldErrors({ amount: '0.01', source: 'salary', dateTime: date }, inlineOptions)).toEqual({});
+    expect(getExpenseFieldErrors({ amount: '0', category: 'food', datetime: date }, inlineOptions)).toEqual({ amount: 'Minimum amount should be ₹0.01' });
+});

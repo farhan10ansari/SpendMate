@@ -63,6 +63,12 @@
       "expo-sharing",
       "expo-status-bar",
       [
+        "expo-navigation-bar",
+        {
+          "enforceContrast": false
+        }
+      ],
+      [
         "expo-build-properties",
         {
           "android": {

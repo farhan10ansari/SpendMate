@@ -6,6 +6,11 @@ import { Button, Portal } from "react-native-paper";
 import { useAppTheme } from "@/themes/providers/AppThemeProviders";
 import { useSafeAreaInsets } from "react-native-safe-area-context";
 
+const BUTTON_HEIGHT = 40;
+const BUTTON_BOTTOM_GAP = 16;
+// Reserve the button and a gap above/below it when scrolling form fields.
+export const TRANSACTION_FORM_BOTTOM_CLEARANCE = BUTTON_HEIGHT + BUTTON_BOTTOM_GAP + 16;
+
 type ConfirmButtonProps = {
     onPress?: () => void;
     type: 'create' | 'edit';
@@ -38,7 +43,7 @@ export default function ConfirmButton({ onPress, type, kind = 'expense' }: Confi
     return (
         <Portal>
             {show && (
-                <Animated.View style={[styles.anchor, { bottom: bottomInset + 16 }, keyboardStyle]}>
+                <Animated.View style={[styles.anchor, { bottom: bottomInset + BUTTON_BOTTOM_GAP }, keyboardStyle]}>
                     <Button
                         mode="contained"
                         compact
@@ -62,7 +67,7 @@ const styles = StyleSheet.create({
     compactFab: {
         borderRadius: 12,
     },
-    compactContent: { height: 40, paddingHorizontal: 2 },
+    compactContent: { height: BUTTON_HEIGHT, paddingHorizontal: 2 },
     compactLabel: { marginHorizontal: 8, marginVertical: 0 },
     anchor: {
         position: 'absolute',

@@ -10,6 +10,8 @@ import { useTransactionForm } from "@/hooks/useTransactionForm";
 import { Keyboard, KeyboardAvoidingView, Platform, StyleSheet, View, useWindowDimensions } from "react-native";
 import { ScrollView } from "react-native-gesture-handler";
 import { TabView } from 'react-native-tab-view';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
+import { TRANSACTION_FORM_BOTTOM_CLEARANCE } from '@/components/input/ConfirmButton';
 
 
 type TransactionType = 'expense' | 'income';
@@ -25,6 +27,7 @@ export default function NewTransactionScreen() {
     const { defaultTab } = useLocalSearchParams<{ defaultTab?: TransactionType }>();
     const [activeTab, setActiveTab] = useState<TransactionType>(defaultTab ?? 'expense');
     const { width } = useWindowDimensions();
+    const { bottom } = useSafeAreaInsets();
 
 
     const {
@@ -93,7 +96,7 @@ export default function NewTransactionScreen() {
                     renderScene={({ route }) => (
                     <ScrollView
                         style={styles.container}
-                        contentContainerStyle={styles.scrollContentContainer}
+                        contentContainerStyle={[styles.scrollContentContainer, { paddingBottom: bottom + TRANSACTION_FORM_BOTTOM_CLEARANCE }]}
                         showsVerticalScrollIndicator={false}
                         keyboardShouldPersistTaps="handled"
                     >
@@ -115,7 +118,6 @@ const styles = StyleSheet.create({
         flex: 1,
     },
     scrollContentContainer: {
-        paddingBottom: 120,
         flexGrow: 1,
     },
 });

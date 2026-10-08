@@ -8,9 +8,11 @@ import { themeOptions } from '@/lib/constants';
 import { useHaptics } from '@/contexts/HapticsProvider';
 import Color from 'color';
 import { getThemeCollection, themeCollections, ThemeCollectionId } from '@/themes/collections';
+import { useSafeAreaInsets } from 'react-native-safe-area-context';
 
 export default function ThemesScreen() {
   const { colors, dark } = useAppTheme();
+  const { bottom } = useSafeAreaInsets();
   const theme = usePersistentAppStore(state => state.theme);
   const setTheme = usePersistentAppStore(state => state.setTheme);
   const collectionId = usePersistentAppStore(state => state.themeCollection);
@@ -20,7 +22,7 @@ export default function ThemesScreen() {
   const selectedTheme = themeOptions.find(option => option.key === theme);
 
   return (
-    <ScreenWrapper background="background" withScrollView contentContainerStyle={styles.content}>
+    <ScreenWrapper background="background" withScrollView contentContainerStyle={[styles.content, { paddingBottom: bottom + 32 }]}>
       <View style={[styles.card, { backgroundColor: colors.surface, borderColor: colors.border }]}>
         <View style={styles.headingRow}>
           <View style={[styles.badge, { backgroundColor: colors.surfaceVariant }]}>
@@ -127,7 +129,7 @@ export default function ThemesScreen() {
 }
 
 const styles = StyleSheet.create({
-  content: { padding: 16, paddingBottom: 32, gap: 16 },
+  content: { padding: 16, gap: 16 },
   card: { width: '100%', maxWidth: 600, alignSelf: 'center', padding: 16, borderRadius: 24, borderWidth: StyleSheet.hairlineWidth, gap: 16 },
   headingRow: { flexDirection: 'row', alignItems: 'center', gap: 10 },
   badge: { padding: 10, borderRadius: 14 },

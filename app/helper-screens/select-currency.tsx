@@ -7,6 +7,7 @@ import { currenciesData, CurrencyData } from "@/lib/currencies";
 import { FlashList } from "@shopify/flash-list";
 import { useCurrency } from "@/contexts/CurrencyProvider";
 import { useHaptics } from "@/contexts/HapticsProvider";
+import { useSafeAreaInsets } from "react-native-safe-area-context";
 
 const baseStyles = StyleSheet.create({
     rippleClip: { borderRadius: 8, overflow: 'hidden', marginBottom: 8 },
@@ -36,6 +37,7 @@ const baseStyles = StyleSheet.create({
 
 export default function AllCurrenciesScreen() {
     const { colors } = useAppTheme();
+    const { bottom } = useSafeAreaInsets();
     const { currencyCode, updateCurrency } = useCurrency();
     const { hapticImpact } = useHaptics();
 
@@ -71,7 +73,7 @@ export default function AllCurrenciesScreen() {
                     renderItem={renderItem}
                     keyExtractor={(item) => item.code}
                     showsVerticalScrollIndicator={true}
-                    contentContainerStyle={{ padding: 16 }}
+                    contentContainerStyle={{ padding: 16, paddingBottom: bottom + 16 }}
                 />
             </View>
         </ScreenWrapper>
